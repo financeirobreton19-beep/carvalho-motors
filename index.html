@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Carvalho Motors - Sistema Integrado (Corrigido)</title>
+    <title>Carvalho Motors - Sistema Integrado</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #f0f2f5; color: #1a1a1a; padding: 20px; }
@@ -27,7 +29,7 @@
         .sub-content { display: none; }
         .sub-content.active { display: block; }
         .guia-header { background: var(--branco); border-radius: 16px; padding: 16px 24px; margin-bottom: 20px; border-left: 4px solid var(--verde-carvalho); }
-        .guia-header h2 { color: var(--verde-carvalho); font-size: 20px; display: flex; align-items: center; gap: 10px; }
+        .guia-header h2 { font-size: 20px; display: flex; align-items: center; gap: 10px; color: var(--verde-carvalho); }
         .guia-header h2 i { font-size: 28px; }
         .guia-header p { color: var(--texto-cinza); font-size: 13px; margin-top: 4px; }
         .card { background: var(--branco); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
@@ -51,7 +53,7 @@
         .dias-31-60 { background-color: #fff9c4; }
         .dias-61-90 { background-color: #fff3e0; }
         .dias-90-mais { background-color: #ffebee; }
-        .btn-sm { padding: 4px 8px; font-size: 11px; margin: 1px; border-radius: 6px; }
+        .btn-sm { padding: 4px 8px; font-size: 11px; margin: 1px; border-radius: 6px; cursor: pointer; border: none; }
         button { background: var(--verde-carvalho); color: white; border: none; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s; font-size: 12px; }
         button:hover { background: var(--verde-escuro); }
         .btn-outline { background: transparent; border: 1px solid var(--verde-carvalho); color: var(--verde-carvalho); }
@@ -111,7 +113,7 @@
         .modal-content { background: white; border-radius: 16px; padding: 20px; width: 90%; max-width: 850px; max-height: 85vh; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .modal-header h3 { font-size: 18px; color: var(--verde-carvalho); }
-        .modal-header button { background: none; color: #999; font-size: 20px; padding: 0; margin: 0; }
+        .modal-header button { background: none; color: #999; font-size: 20px; padding: 0; margin: 0; cursor: pointer; }
         .toast { position: fixed; bottom: 20px; right: 20px; background: #333; color: white; padding: 10px 18px; border-radius: 8px; z-index: 1100; font-size: 13px; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
         .toggle-icon { transition: transform 0.2s; }
@@ -119,14 +121,30 @@
         .btn-group { display: flex; gap: 5px; flex-wrap: wrap; }
         .botoes-acao { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
         .custo-item { border-bottom: 1px solid #e2e8f0; padding: 8px; margin-bottom: 8px; }
+        .custo-item:last-child { border-bottom: none; }
         .status-pendente { border-left: 3px solid var(--warning); }
         .status-andamento { border-left: 3px solid var(--info); }
         .status-finalizado { border-left: 3px solid var(--success); background: #f0fdf4; }
-        /* Melhorias na aba Documentos e Processos */
-        .processos-card { overflow-x: auto; }
-        .processos-table { min-width: 600px; }
-        .documentos-table { min-width: 700px; }
-        @media (max-width: 768px) { body { padding: 12px; } .tab-btn { padding: 10px 8px; font-size: 11px; } .stats-grid { gap: 12px; } .stat-card { min-width: 140px; padding: 12px; } .stat-card h2 { font-size: 20px; } .charts-container { flex-direction: column; } }
+        .processos-card, .documentos-table, .processos-table { overflow-x: auto; }
+        .processos-table th, .processos-table td { padding: 12px 8px; vertical-align: middle; }
+        .processos-table .badge { white-space: nowrap; }
+        .sync-indicator { position: fixed; bottom: 20px; left: 20px; background: rgba(0,0,0,0.7); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; z-index: 1100; }
+        .last-sync { position: fixed; bottom: 20px; left: 180px; background: rgba(0,0,0,0.5); color: #ccc; padding: 4px 12px; border-radius: 20px; font-size: 10px; z-index: 1100; }
+        .btn-pdf { background: #dc2626; }
+        .btn-pdf:hover { background: #b91c1c; }
+        .btn-excel { background: #10b981; }
+        .btn-excel:hover { background: #059669; }
+        .filtro-placa { flex: 2; }
+        @media (max-width: 768px) { 
+            body { padding: 12px; } 
+            .tab-btn { padding: 10px 8px; font-size: 11px; } 
+            .stats-grid { gap: 12px; } 
+            .stat-card { min-width: 140px; padding: 12px; } 
+            .stat-card h2 { font-size: 20px; } 
+            .charts-container { flex-direction: column; } 
+            .sync-indicator, .last-sync { font-size: 9px; padding: 2px 8px; }
+            .processos-table th, .processos-table td { padding: 8px 4px; font-size: 11px; }
+        }
     </style>
 </head>
 <body>
@@ -157,7 +175,7 @@
     <div id="abaEstoque" class="tab-content">
         <div class="guia-header"><h2><i class="fas fa-motorcycle"></i> Estoque - Veículos e Peças</h2><p>Gestão de veículos, motos, capacetes e acessórios</p></div>
         <div class="card">
-            <h3 onclick="toggleFormularioEstoque()"><i class="fas fa-plus-circle"></i> Nova Entrada de Item <i class="fas fa-chevron-down toggle-icon" id="toggleIconEstoque"></i></h3>
+            <h3 onclick="toggleFormulario('formularioEstoque', 'toggleIconEstoque')"><i class="fas fa-plus-circle"></i> Nova Entrada de Item <i class="fas fa-chevron-down toggle-icon" id="toggleIconEstoque"></i></h3>
             <div id="formularioEstoque" class="formulario-expansivel">
                 <div class="form-row">
                     <div class="form-group"><label>Tipo</label><select id="tipoItem"><option value="veiculo">🚗 Veículo / Moto</option><option value="capacete">🪖 Capacete</option><option value="peca">🔧 Peça / Acessório</option></select></div>
@@ -189,7 +207,7 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group"><label>Km</label><input type="number" id="km" placeholder="Km"></div>
-                        <div class="form-group"><label>Valor da Compra (Fixo)</label><input type="number" id="valorCompra" placeholder="0"></div>
+                        <div class="form-group"><label>Valor da Compra</label><input type="number" id="valorCompra" placeholder="0"></div>
                     </div>
                 </div>
                 <div id="camposPeca" style="display:none;">
@@ -214,7 +232,8 @@
                 <div class="filter-group"><label>Buscar</label><input type="text" id="filtroBuscaEstoque" placeholder="Placa, modelo ou nome..." onkeyup="filtrarItens()"></div>
                 <div class="filter-group"><label>Tipo</label><select id="filtroTipoEstoque" onchange="filtrarItens()"><option value="">Todos</option><option value="veiculo">Veículos</option><option value="capacete">Capacetes</option><option value="peca">Peças</option></select></div>
                 <div class="filter-group"><label>Status</label><select id="filtroStatusEstoque" onchange="filtrarItens()"><option value="">Todos</option><option value="Em estoque">Em estoque</option><option value="Reservado">Reservado</option><option value="Vendido">Vendido</option></select></div>
-                <div class="filter-group"><button class="btn-outline" onclick="exportarItens()"><i class="fas fa-download"></i> Exportar CSV</button></div>
+                <div class="filter-group"><button class="btn-outline btn-excel" onclick="exportarItens()"><i class="fas fa-file-excel"></i> Exportar CSV</button></div>
+                <div class="filter-group"><button class="btn-outline btn-pdf" onclick="gerarPDFEstoque()"><i class="fas fa-file-pdf"></i> Gerar PDF</button></div>
             </div>
         </div>
         <div class="card">
@@ -230,7 +249,7 @@
     <div id="abaPessoas" class="tab-content">
         <div class="guia-header"><h2><i class="fas fa-users"></i> Pessoas - Clientes e Fornecedores</h2><p>Cadastro e gestão de clientes e fornecedores</p></div>
         <div class="card">
-            <h3 onclick="toggleFormularioPessoas()"><i class="fas fa-user-plus"></i> Cadastrar Nova Pessoa <i class="fas fa-chevron-down toggle-icon" id="toggleIconPessoas"></i></h3>
+            <h3 onclick="toggleFormulario('formularioPessoas', 'toggleIconPessoas')"><i class="fas fa-user-plus"></i> Cadastrar Nova Pessoa <i class="fas fa-chevron-down toggle-icon" id="toggleIconPessoas"></i></h3>
             <div id="formularioPessoas" class="formulario-expansivel">
                 <div class="form-row"><div class="form-group"><label>Tipo</label><select id="tipoPessoa"><option value="cliente">Cliente</option><option value="fornecedor">Fornecedor</option></select></div><div class="form-group"><label>Nome / Razão Social</label><input type="text" id="nomePessoa" placeholder="Nome completo"></div><div class="form-group"><label>CPF / CNPJ</label><input type="text" id="documentoPessoa" placeholder="CPF ou CNPJ"></div><div class="form-group"><label>Telefone</label><input type="text" id="telefonePessoa" placeholder="(11) 99999-9999"></div></div>
                 <div class="form-row"><div class="form-group"><label>Email</label><input type="email" id="emailPessoa" placeholder="email@exemplo.com"></div><div class="form-group"><label>Endereço</label><input type="text" id="enderecoPessoa" placeholder="Endereço completo"></div><div class="form-group"><label>CEP</label><input type="text" id="cepPessoa" placeholder="00000-000"></div></div>
@@ -240,7 +259,7 @@
         </div>
         <div class="card">
             <h3><i class="fas fa-filter"></i> Filtros</h3>
-            <div class="filters-bar"><div class="filter-group"><label>Buscar</label><input type="text" id="filtroBuscaPessoas" placeholder="Nome, documento ou telefone..." onkeyup="filtrarPessoas()"></div><div class="filter-group"><label>Tipo</label><select id="filtroTipoPessoas" onchange="filtrarPessoas()"><option value="">Todos</option><option value="cliente">Apenas Clientes</option><option value="fornecedor">Apenas Fornecedores</option></select></div><div class="filter-group"><button class="btn-outline" onclick="exportarPessoas()">Exportar CSV</button></div></div>
+            <div class="filters-bar"><div class="filter-group"><label>Buscar</label><input type="text" id="filtroBuscaPessoas" placeholder="Nome, documento ou telefone..." onkeyup="filtrarPessoas()"></div><div class="filter-group"><label>Tipo</label><select id="filtroTipoPessoas" onchange="filtrarPessoas()"><option value="">Todos</option><option value="cliente">Apenas Clientes</option><option value="fornecedor">Apenas Fornecedores</option></select></div><div class="filter-group"><button class="btn-outline btn-excel" onclick="exportarPessoas()"><i class="fas fa-file-excel"></i> Exportar CSV</button></div></div>
         </div>
         <div class="card"><h3>Lista de Pessoas</h3><div class="table-wrapper"><table id="tabelaPessoas"><thead><tr><th>Tipo</th><th>Nome</th><th>Documento</th><th>Telefone</th><th>Email</th><th>Endereço</th><th>Observações</th><th>Ações</th></tr></thead><tbody id="pessoasBody"></tbody></table></div><div class="pagination" id="paginacaoPessoas"></div><div class="records-info" id="infoPessoas"></div></div>
     </div>
@@ -251,7 +270,7 @@
         <div class="sub-tabs"><div class="sub-tab active" data-sub="entradas"><i class="fas fa-arrow-down"></i> Entradas</div><div class="sub-tab" data-sub="saidas"><i class="fas fa-arrow-up"></i> Saídas</div><div class="sub-tab" data-sub="extrato"><i class="fas fa-list"></i> Extrato</div><div class="sub-tab" data-sub="resultados"><i class="fas fa-chart-line"></i> Resultados</div></div>
         <div id="sub-entradas" class="sub-content active">
             <div class="card"><h3 onclick="toggleFormulario('formEntradas', 'iconEntradas')"><i class="fas fa-plus-circle"></i> Registrar Entrada <i class="fas fa-chevron-down toggle-icon" id="iconEntradas"></i></h3><div id="formEntradas" class="formulario-expansivel"><div class="form-row"><div class="form-group"><label>Data</label><input type="date" id="entradaData"></div><div class="form-group"><label>Descrição</label><input type="text" id="entradaDesc" placeholder="Ex: Venda Golf GTI"></div><div class="form-group"><label>Categoria</label><select id="entradaCategoria"><option value="Venda Veículo">Venda Veículo</option><option value="Venda Equipamento">Venda Equipamento</option><option value="Serviço">Serviço</option><option value="Aporte">Aporte</option><option value="Outras Entradas">Outras Entradas</option></select></div><div class="form-group"><label>Forma Pagamento</label><select id="entradaFormaPagamento"><option value="Espécie">Espécie</option><option value="Cartão">Cartão</option><option value="Pix">Pix</option><option value="Transferência">Transferência</option></select></div></div><div class="form-row"><div class="form-group"><label>Valor Total</label><input type="number" id="entradaValor" placeholder="0"></div><div class="form-group"><label>Valor Recebido</label><input type="number" id="entradaRecebido" placeholder="0"></div><div class="form-group"><label>Vencimento</label><input type="date" id="entradaVencimiento"></div><div class="form-group"><label>Status</label><select id="entradaStatus"><option value="Pago Total">Pago Total</option><option value="Pago Parcial">Pago Parcial</option><option value="Pendente">Pendente</option></select></div></div><div class="form-row"><div class="form-group"><label>Cliente</label><input type="text" id="entradaCliente" placeholder="Nome do cliente"></div><div class="form-group"><label>Observações</label><input type="text" id="entradaObs" placeholder="Observações..."></div></div><button onclick="registrarEntrada()">Registrar Entrada</button></div></div>
-            <div class="card"><h3><i class="fas fa-filter"></i> Filtros</h3><div class="filters-bar"><div class="filter-group"><label>Data Início</label><input type="date" id="filtroEntradaInicio"></div><div class="filter-group"><label>Data Fim</label><input type="date" id="filtroEntradaFim"></div><div class="filter-group"><label>Status</label><select id="filtroEntradaStatus"><option value="">Todos</option><option value="Pago Total">Pago Total</option><option value="Pago Parcial">Pago Parcial</option><option value="Pendente">Pendente</option></select></div><div class="filter-group"><button class="btn-outline" onclick="filtrarEntradas()">Buscar</button></div></div></div>
+            <div class="card"><h3><i class="fas fa-filter"></i> Filtros</h3><div class="filters-bar"><div class="filter-group"><label>Data Início</label><input type="date" id="filtroEntradaInicio"></div><div class="filter-group"><label>Data Fim</label><input type="date" id="filtroEntradaFim"></div><div class="filter-group"><label>Status</label><select id="filtroEntradaStatus"><option value="">Todos</option><option value="Pago Total">Pago Total</option><option value="Pago Parcial">Pago Parcial</option><option value="Pendente">Pendente</option></select></div><div class="filter-group"><button class="btn-outline" onclick="filtrarEntradas()">Buscar</button></div><div class="filter-group"><button class="btn-outline btn-pdf" onclick="gerarPDFSaidas()"><i class="fas fa-file-pdf"></i> PDF Saídas</button></div></div></div>
             <div class="card"><div class="table-wrapper"><table id="tabelaEntradas"><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Forma Pgto</th><th>Valor Total</th><th>Recebido</th><th>Pendente</th><th>Status</th><th>Vencimento</th><th>Ações</th></tr></thead><tbody id="entradasBody"></tbody></table></div><div class="pagination" id="paginacaoEntradas"></div><div class="records-info" id="infoEntradas"></div></div>
         </div>
         <div id="sub-saidas" class="sub-content">
@@ -260,7 +279,7 @@
             <div class="card"><div class="table-wrapper"><table id="tabelaSaidas"><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Forma Pgto</th><th>Origem</th><th>Valor</th><th>Status</th><th>Vencimento</th><th>Ações</th></tr></thead><tbody id="saidasBody"></tbody></table></div><div class="pagination" id="paginacaoSaidas"></div><div class="records-info" id="infoSaidas"></div></div>
         </div>
         <div id="sub-extrato" class="sub-content">
-            <div class="card"><h3><i class="fas fa-dollar-sign"></i> Saldo Inicial</h3><div class="form-row"><div class="form-group"><label>Saldo Inicial (R$)</label><input type="number" id="saldoInicial" placeholder="0" value="0"></div><div class="form-group"><button onclick="atualizarSaldoInicial()">Atualizar Saldo Inicial</button></div></div></div>
+            <div class="card"><h3><i class="fas fa-dollar-sign"></i> Saldo Inicial</h3><div class="form-row"><div class="form-group"><label>Saldo Inicial (R$)</label><input type="number" id="saldoInicialInput" placeholder="0"></div><div class="form-group"><button onclick="atualizarSaldoInicial()">Atualizar Saldo Inicial</button></div></div></div>
             <div class="card"><h3><i class="fas fa-filter"></i> Filtros</h3><div class="filters-bar"><div class="filter-group"><label>Data Início</label><input type="date" id="filtroExtratoInicio"></div><div class="filter-group"><label>Data Fim</label><input type="date" id="filtroExtratoFim"></div><div class="filter-group"><label>Tipo</label><select id="filtroExtratoTipo"><option value="">Todos</option><option value="entrada">Entradas</option><option value="saida">Saídas</option></select></div><div class="filter-group"><button class="btn-outline" onclick="filtrarExtrato()">Buscar</button></div></div></div>
             <div class="card"><div class="table-wrapper"><table id="tabelaExtrato"><thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Categoria</th><th>Forma Pgto</th><th>Valor</th><th>Status</th></tr></thead><tbody id="extratoBody"></tbody></table></div><div class="pagination" id="paginacaoExtrato"></div><div class="records-info" id="infoExtrato"></div><div style="margin-top:20px; padding:16px; background:#f8fafc; border-radius:12px; text-align:center;"><h4>Saldo Atual</h4><div style="font-size:28px; font-weight:700; color:var(--verde-carvalho);" id="saldoAtual">R$ 0,00</div></div></div>
         </div>
@@ -272,18 +291,18 @@
         </div>
     </div>
 
-    <!-- DOCUMENTOS (RENDERIZAÇÃO MELHORADA) -->
+    <!-- DOCUMENTOS -->
     <div id="abaDocumentos" class="tab-content">
         <div class="guia-header"><h2><i class="fas fa-folder-open"></i> Documentos - Central de Arquivos</h2><p>Armazenamento e gestão de documentos de veículos, clientes e fornecedores</p></div>
-        <div class="card"><h3 onclick="toggleFormularioDocumentos()"><i class="fas fa-upload"></i> Anexar Documento <i class="fas fa-chevron-down toggle-icon" id="iconDocumentos"></i></h3><div id="formDocumentos" class="formulario-expansivel"><div class="form-row"><div class="form-group"><label>Vincular a</label><select id="docTipoVinculo"><option value="veiculo">Veículo</option><option value="cliente">Cliente</option><option value="fornecedor">Fornecedor</option><option value="processo">Processo Transferência</option></select></div><div class="form-group"><label>Referência (Placa ou Nome)</label><input type="text" id="docReferencia" placeholder="Ex: ABC1234 ou João Silva"></div><div class="form-group"><label>Tipo de Documento</label><select id="docTipo"><optgroup label="Veículo"><option value="CRLV">CRLV</option><option value="DUT">DUT</option><option value="Nota Fiscal Veículo">Nota Fiscal</option></optgroup><optgroup label="Cliente"><option value="RG">RG</option><option value="CPF">CPF</option><option value="CNH">CNH</option></optgroup><optgroup label="Fornecedor"><option value="Contrato Fornecedor">Contrato</option><option value="Nota Fiscal Fornecedor">Nota Fiscal</option></optgroup><optgroup label="Processo"><option value="PROCURAÇÃO">PROCURAÇÃO</option><option value="Comprovante de Transferência">Comprovante de Transferência</option><option value="Comunicado de Venda">Comunicado de Venda</option></optgroup></select></div><div class="form-group"><label>Arquivo</label><input type="file" id="docArquivo" accept=".pdf,.jpg,.png,.jpeg"></div></div><div class="form-row"><div class="form-group"><label>Observações</label><input type="text" id="docObs" placeholder="Observações..."></div></div><div class="botoes-acao"><button onclick="anexarDocumento(false)"><i class="fas fa-paperclip"></i> Anexar e Limpar</button><button onclick="anexarDocumento(true)" class="btn-outline"><i class="fas fa-plus-circle"></i> Anexar +1</button><button onclick="limparFormularioDocumentos()" class="btn-outline"><i class="fas fa-eraser"></i> Limpar Formulário</button></div></div></div>
-        <div class="card"><h3 onclick="toggleFormularioProcesso()"><i class="fas fa-exchange-alt"></i> Acompanhamento de Transferência <i class="fas fa-chevron-down toggle-icon" id="toggleIconProcesso"></i></h3><div id="formularioProcesso" class="formulario-expansivel"><div class="form-row"><div class="form-group"><label>Placa do Veículo</label><input type="text" id="processoPlaca" placeholder="ABC1234" style="text-transform: uppercase;"></div><div class="form-group"><label>Status</label><select id="processoStatus"><option value="pendente">📌 Pendente</option><option value="aguardando_assinatura">✍️ Aguardando Assinatura</option><option value="aguardando_documento">📄 Aguardando Documento</option><option value="em_cartorio">🏛️ Em Cartório</option><option value="em_transferencia">🚗 Em Transferência</option><option value="finalizado">✅ Finalizado</option></select></div><div class="form-group"><label>Data Início</label><input type="date" id="processoDataInicio"></div></div><div class="form-row"><div class="form-group"><label>Observação</label><input type="text" id="processoObs" placeholder="Observações..."></div><div class="form-group"><button onclick="adicionarProcessoTransferencia()" style="margin-top: 22px;"><i class="fas fa-plus"></i> Iniciar Processo</button></div></div></div></div>
-        <div class="card"><h3><i class="fas fa-filter"></i> Filtros</h3><div class="filters-bar"><div class="filter-group"><label>Buscar</label><input type="text" id="filtroBuscaDocs" placeholder="Referência, tipo..." onkeyup="filtrarDocumentos()"></div><div class="filter-group"><label>Vinculado a</label><select id="filtroVinculoDocs" onchange="filtrarDocumentos()"><option value="">Todos</option><option value="veiculo">Veículo</option><option value="cliente">Cliente</option><option value="fornecedor">Fornecedor</option><option value="processo">Processo</option></select></div><div class="filter-group"><button class="btn-outline" onclick="exportarDocumentos()">Exportar CSV</button></div></div></div>
+        <div class="card"><h3 onclick="toggleFormulario('formDocumentos', 'iconDocumentos')"><i class="fas fa-upload"></i> Anexar Documento <i class="fas fa-chevron-down toggle-icon" id="iconDocumentos"></i></h3><div id="formDocumentos" class="formulario-expansivel"><div class="form-row"><div class="form-group"><label>Vincular a</label><select id="docTipoVinculo"><option value="veiculo">Veículo</option><option value="cliente">Cliente</option><option value="fornecedor">Fornecedor</option><option value="processo">Processo Transferência</option></select></div><div class="form-group"><label>Referência (Placa ou Nome)</label><input type="text" id="docReferencia" placeholder="Ex: ABC1234 ou João Silva"></div><div class="form-group"><label>Tipo de Documento</label><select id="docTipo"><optgroup label="Veículo"><option value="CRLV">CRLV</option><option value="DUT">DUT</option><option value="Nota Fiscal Veículo">Nota Fiscal</option></optgroup><optgroup label="Cliente"><option value="RG">RG</option><option value="CPF">CPF</option><option value="CNH">CNH</option></optgroup><optgroup label="Fornecedor"><option value="Contrato Fornecedor">Contrato</option><option value="Nota Fiscal Fornecedor">Nota Fiscal</option></optgroup><optgroup label="Processo"><option value="PROCURAÇÃO">PROCURAÇÃO</option><option value="Comprovante de Transferência">Comprovante de Transferência</option><option value="Comunicado de Venda">Comunicado de Venda</option></optgroup></select></div><div class="form-group"><label>Arquivo</label><input type="file" id="docArquivo" accept=".pdf,.jpg,.png,.jpeg"></div></div><div class="form-row"><div class="form-group"><label>Observações</label><input type="text" id="docObs" placeholder="Observações..."></div></div><div class="botoes-acao"><button onclick="anexarDocumento(false)"><i class="fas fa-paperclip"></i> Anexar e Limpar</button><button onclick="anexarDocumento(true)" class="btn-outline"><i class="fas fa-plus-circle"></i> Anexar +1</button><button onclick="limparFormularioDocumentos()" class="btn-outline"><i class="fas fa-eraser"></i> Limpar Formulário</button></div></div></div>
+        <div class="card"><h3 onclick="toggleFormulario('formularioProcesso', 'toggleIconProcesso')"><i class="fas fa-exchange-alt"></i> Acompanhamento de Transferência <i class="fas fa-chevron-down toggle-icon" id="toggleIconProcesso"></i></h3><div id="formularioProcesso" class="formulario-expansivel"><div class="form-row"><div class="form-group"><label>Placa do Veículo</label><input type="text" id="processoPlaca" placeholder="ABC1234" style="text-transform: uppercase;"></div><div class="form-group"><label>Status</label><select id="processoStatus"><option value="pendente">📌 Pendente</option><option value="aguardando_assinatura">✍️ Aguardando Assinatura</option><option value="aguardando_documento">📄 Aguardando Documento</option><option value="em_cartorio">🏛️ Em Cartório</option><option value="em_transferencia">🚗 Em Transferência</option><option value="finalizado">✅ Finalizado</option></select></div><div class="form-group"><label>Data Início</label><input type="date" id="processoDataInicio"></div></div><div class="form-row"><div class="form-group"><label>Observação</label><input type="text" id="processoObs" placeholder="Observações..."></div><div class="form-group"><button onclick="adicionarProcessoTransferencia()" style="margin-top: 22px;"><i class="fas fa-plus"></i> Iniciar Processo</button></div></div></div></div>
+        <div class="card"><h3><i class="fas fa-filter"></i> Filtros</h3><div class="filters-bar"><div class="filter-group filtro-placa"><label>Buscar por Placa/Nome</label><input type="text" id="filtroBuscaDocs" placeholder="Ex: ABC1234 ou João Silva" onkeyup="filtrarDocumentos()"></div><div class="filter-group"><label>Vinculado a</label><select id="filtroVinculoDocs" onchange="filtrarDocumentos()"><option value="">Todos</option><option value="veiculo">Veículo</option><option value="cliente">Cliente</option><option value="fornecedor">Fornecedor</option><option value="processo">Processo</option></select></div><div class="filter-group"><button class="btn-outline btn-excel" onclick="exportarDocumentos()"><i class="fas fa-file-excel"></i> Exportar CSV</button></div></div></div>
         <div class="card"><h3><i class="fas fa-list"></i> Lista de Documentos</h3><div class="table-wrapper"><table class="documentos-table"><thead><tr><th>Data</th><th>Vinculado a</th><th>Referência</th><th>Tipo</th><th>Arquivo</th><th>Observações</th><th>Ações</th></tr></thead><tbody id="documentosBody"></tbody></table></div><div class="pagination" id="paginacaoDocumentos"></div><div class="records-info" id="infoDocumentos"></div></div>
         <div class="card processos-card"><h3><i class="fas fa-truck"></i> Processos de Transferência Ativos</h3><div class="table-wrapper"><table class="processos-table"><thead><tr><th>Placa</th><th>Status</th><th>Data Início</th><th>Última Atualização</th><th>Observações</th><th>Ações</th></tr></thead><tbody id="processosBody"></tbody></table></div></div>
     </div>
 </div>
 
-<!-- MODAIS (mantidos) -->
+<!-- MODAIS -->
 <div id="modalVenda" class="modal"><div class="modal-content"><div class="modal-header"><h3>Registrar Venda</h3><button onclick="fecharModal('modalVenda')">✕</button></div><div class="form-group"><label>Data da Venda</label><input type="date" id="vendaData"></div><div class="form-group"><label>Comprador</label><input type="text" id="vendaComprador" list="clientesList" placeholder="Selecione um cliente"><datalist id="clientesList"></datalist></div><div class="form-group"><label>Valor da Venda</label><input type="number" id="vendaValor" placeholder="0"></div><div class="form-group"><label>Forma de Pagamento</label><select id="vendaFormaPagamento"><option>Espécie</option><option>Pix</option><option>Cartão</option><option>Transferência</option><option>Financiamento</option></select></div><div class="form-group" id="campoQuantidadeVenda" style="display:none;"><label>Quantidade</label><input type="number" id="vendaQuantidade" value="1" min="1"></div><div style="display:flex; gap:10px; margin-top:20px;"><button onclick="fecharModal('modalVenda')" class="btn-outline">Cancelar</button><button id="confirmarVendaBtn" style="background:var(--success)">Confirmar Venda</button></div></div></div>
 <div id="modalNovoFornecedor" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-truck"></i> Cadastrar Novo Fornecedor</h3><button onclick="fecharModal('modalNovoFornecedor')">✕</button></div><div class="form-row"><div class="form-group"><label>Nome / Razão Social *</label><input type="text" id="novoFornecedorNome" placeholder="Ex: Auto Peças Silva"></div><div class="form-group"><label>CNPJ</label><input type="text" id="novoFornecedorCnpj" placeholder="00.000.000/0001-00"></div></div><div class="form-row"><div class="form-group"><label>Telefone</label><input type="text" id="novoFornecedorTelefone" placeholder="(11) 99999-9999"></div><div class="form-group"><label>E-mail</label><input type="email" id="novoFornecedorEmail" placeholder="contato@empresa.com"></div></div><div class="form-row"><div class="form-group"><label>CEP</label><input type="text" id="novoFornecedorCep" placeholder="00000-000"></div><div class="form-group"><label>Endereço</label><input type="text" id="novoFornecedorEndereco" placeholder="Rua, número, bairro"></div></div><div class="botoes-acao"><button onclick="fecharModal('modalNovoFornecedor')" class="btn-outline">Cancelar</button><button onclick="salvarNovoFornecedor()" style="background: var(--verde-carvalho)">Salvar Fornecedor</button></div></div></div>
 <div id="modalAnexosVeiculo" class="modal"><div class="modal-content" style="max-width: 700px;"><div class="modal-header"><h3><i class="fas fa-paperclip"></i> Documentos do Veículo: <span id="veiculoPlacaAnexo"></span></h3><button onclick="fecharModal('modalAnexosVeiculo')">✕</button></div><div style="margin-bottom: 16px;"><div class="form-row"><div class="form-group"><label>Tipo do Documento</label><select id="tipoAnexo"><option value="consulta_veicular">📋 Consulta Veicular</option><option value="laudo">📄 Laudo</option><option value="historico">📜 Histórico</option><option value="nota_fiscal">🧾 Nota Fiscal</option><option value="outro">📁 Outro</option></select></div><div class="form-group"><label>Arquivo</label><input type="file" id="arquivoAnexo" accept=".pdf,.jpg,.png,.jpeg"></div><div class="form-group"><label>Observação</label><input type="text" id="obsAnexo" placeholder="Observações..."></div><div><button onclick="uploadAnexoVeiculo()" style="margin-top: 22px;">📎 Anexar</button></div></div></div><div id="listaAnexosVeiculo" style="max-height: 400px; overflow-y: auto;"></div><div style="margin-top: 16px; text-align: right;"><button onclick="fecharModal('modalAnexosVeiculo')" class="btn-outline">Fechar</button></div></div></div>
@@ -295,6 +314,9 @@
 <div id="modalEditarEntrada" class="modal"><div class="modal-content"><div class="modal-header"><h3>Editar Entrada</h3><button onclick="fecharModal('modalEditarEntrada')">✕</button></div><div id="editarEntradaForm"></div><div style="display:flex; gap:10px; margin-top:20px;"><button onclick="fecharModal('modalEditarEntrada')" class="btn-outline">Cancelar</button><button id="confirmarEditarEntradaBtn" style="background:var(--verde-carvalho)">Salvar</button></div></div></div>
 <div id="modalEditarSaida" class="modal"><div class="modal-content"><div class="modal-header"><h3>Editar Saída</h3><button onclick="fecharModal('modalEditarSaida')">✕</button></div><div id="editarSaidaForm"></div><div style="display:flex; gap:10px; margin-top:20px;"><button onclick="fecharModal('modalEditarSaida')" class="btn-outline">Cancelar</button><button id="confirmarEditarSaidaBtn" style="background:var(--verde-carvalho)">Salvar</button></div></div></div>
 
+<div class="sync-indicator" id="syncIndicator">🔄 Monitorando...</div>
+<div class="last-sync" id="lastSyncTime">Última sinc: --:--:--</div>
+
 <script>
 // ==================== FUNÇÕES DE SEGURANÇA ====================
 function escapeHtml(str) {
@@ -304,57 +326,119 @@ function escapeHtml(str) {
         if (m === '<') return '&lt;';
         if (m === '>') return '&gt;';
         return m;
-    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-        return c;
     });
 }
 
 // ==================== DADOS GLOBAIS ====================
-let pessoas = JSON.parse(localStorage.getItem('car_pessoas')) || [
-    {id:1, tipo:"cliente", nome:"João Silva", documento:"123.456.789-00", telefone:"(11) 99999-1111", email:"joao@email.com", endereco:"Rua A, 123", cep:"01234-567", obs:"Cliente desde 2023"},
-    {id:2, tipo:"fornecedor", nome:"AutoPeças Silva", documento:"12.345.678/0001-90", telefone:"(11) 3333-4444", email:"contato@autopecas.com", endereco:"Rua B, 456", cep:"04567-890", obs:"Fornecedor de peças"},
-    {id:3, tipo:"cliente", nome:"Maria Oliveira", documento:"987.654.321-00", telefone:"(11) 98888-2222", email:"maria@email.com", endereco:"Rua C, 789", cep:"05678-901", obs:""},
-    {id:4, tipo:"fornecedor", nome:"Moto Peças Brasil", documento:"98.765.432/0001-11", telefone:"(11) 9999-8888", email:"vendas@motopecas.com", endereco:"Rua D, 1011", cep:"06789-012", obs:"Peças para motos"}
-];
-
-let itens = JSON.parse(localStorage.getItem('car_estoque')) || [
-    {id:1, tipo:"veiculo", dataEntrada:"2024-01-15", fornecedor:"AutoPeças Silva", fornecedorId:2, placa:"ABC1234", renavam:"123456789", chassi:"9BWZZZ377VT004251", modelo:"Golf GTI", marca:"Volkswagen", ano:2020, cor:"Preto", km:45000, valorCompra:85000, valorVenda:99000, custosAdicionaisTotal:0, status:"Em estoque", obs:"Veículo completo", vendido:false, dadosVenda:null},
-    {id:2, tipo:"veiculo", dataEntrada:"2024-02-10", fornecedor:"Moto Peças Brasil", fornecedorId:4, placa:"DEF5678", renavam:"987654321", chassi:"9C2JC0510PR000123", modelo:"CG 160", marca:"Honda", ano:2023, cor:"Vermelha", km:0, valorCompra:12000, valorVenda:14900, custosAdicionaisTotal:0, status:"Em estoque", obs:"Moto zero km", vendido:false, dadosVenda:null},
-    {id:3, tipo:"capacete", dataEntrada:"2024-03-01", fornecedor:"AutoPeças Silva", fornecedorId:2, nomeItem:"Capacete LS2", quantidade:5, precoCompra:250, precoVenda:450, status:"Em estoque", obs:"Tamanho M", vendido:false, dadosVenda:null},
-    {id:4, tipo:"peca", dataEntrada:"2024-03-15", fornecedor:"AutoPeças Silva", fornecedorId:2, nomeItem:"Pastilha de Freio", quantidade:10, precoCompra:45, precoVenda:89, status:"Em estoque", obs:"Pastilha cerâmica", vendido:false, dadosVenda:null}
-];
-
-let movimentacoes = JSON.parse(localStorage.getItem('car_financeiro')) || [
-    {id:1, tipo:"entrada", data:"2024-06-05", descricao:"Venda Golf GTI", valorTotal:99000, valorRecebido:99000, categoria:"Venda Veículo", formaPagamento:"Pix", status:"Pago Total", vencimento:"2024-06-05", cliente:"João Silva", obs:""},
-    {id:2, tipo:"entrada", data:"2024-06-03", descricao:"Venda Capacete LS2", valorTotal:450, valorRecebido:450, categoria:"Venda Equipamento", formaPagamento:"Espécie", status:"Pago Total", vencimento:"2024-06-03", cliente:"Maria", obs:""},
-    {id:3, tipo:"saida", data:"2024-06-04", descricao:"Compra Honda CG", valorTotal:12000, categoria:"Compra Veículo", formaPagamento:"Transferência", origem:"Banco do Brasil", status:"Pago", vencimento:"2024-06-04", fornecedor:"Moto Peças", obs:""},
-    {id:4, tipo:"saida", data:"2024-06-02", descricao:"Combustível", valorTotal:300, categoria:"Combustível", formaPagamento:"Cartão", origem:"Nubank", status:"Pago", vencimento:"2024-06-02", fornecedor:"Posto Ipiranga", obs:""}
-];
-
-let documentos = JSON.parse(localStorage.getItem('car_documentos_central')) || [
-    {id:1, data:"2024-06-05", tipoVinculo:"veiculo", referencia:"ABC1234", tipo:"CRLV", nomeArquivo:"crlv_abc1234.pdf", conteudo:null, obs:"Documento original"},
-    {id:2, data:"2024-06-04", tipoVinculo:"cliente", referencia:"João Silva", tipo:"RG", nomeArquivo:"joao_rg.pdf", conteudo:null, obs:""},
-    {id:3, data:"2024-06-03", tipoVinculo:"veiculo", referencia:"DEF5678", tipo:"Nota Fiscal Veículo", nomeArquivo:"nota_honda.pdf", conteudo:null, obs:"NFe 123456"}
-];
-
-let fornecedoresCompletos = JSON.parse(localStorage.getItem('car_fornecedores_completos')) || [];
-let custosAdicionais = JSON.parse(localStorage.getItem('car_custos_adicionais')) || [];
-let anexosEstoque = JSON.parse(localStorage.getItem('car_anexos_estoque')) || [];
-let processosTransferencia = JSON.parse(localStorage.getItem('car_processos_transferencia')) || [];
-
-let saldoInicial = parseFloat(localStorage.getItem('car_saldoInicial')) || 0;
+let pessoas = [];
+let itens = [];
+let movimentacoes = [];
+let documentos = [];
+let fornecedoresCompletos = [];
+let custosAdicionais = [];
+let anexosEstoque = [];
+let processosTransferencia = [];
+let saldoInicial = 0;
 let paginaAtual = { entradas: 1, saidas: 1, extrato: 1, itens: 1, pessoas: 1, docs: 1 };
 let itemSelecionado = null;
 let pagamentoItem = null;
-let pessoaSelecionada = null;
 let veiculoAtualAnexos = null;
 let veiculoAtualCustos = null;
 let processoEditando = null;
 let itemEditando = null;
+let entradaEditando = null;
+let saidaEditando = null;
 
 let graficoMensal = null, graficoCategoria = null, graficoVendasDashboard = null, graficoTopCategorias = null;
 
-// ==================== FUNÇÕES AUXILIARES ====================
+let ultimoHash = '';
+let pollingInterval = null;
+
+// ==================== CALCULAR HASH DOS DADOS ====================
+function calcularHashDados() {
+    return JSON.stringify({
+        pessoas: pessoas.map(p => p.id + p.nome + p.telefone + p.email),
+        itens: itens.map(i => i.id + i.status + (i.vendido ? '1' : '0') + (i.quantidade || 0) + i.valorVenda + i.custosAdicionaisTotal),
+        movimentacoes: movimentacoes.map(m => m.id + m.status + m.valorRecebido + m.valorTotal),
+        processos: processosTransferencia.map(p => p.id + p.status),
+        custos: custosAdicionais.map(c => c.id + c.valor)
+    });
+}
+
+// ==================== CARREGAR DADOS DO LOCALSTORAGE ====================
+function carregarDados() {
+    const storedPessoas = localStorage.getItem('car_pessoas');
+    if (storedPessoas) {
+        pessoas = JSON.parse(storedPessoas);
+    } else {
+        pessoas = [
+            {id:1, tipo:"cliente", nome:"João Silva", documento:"123.456.789-00", telefone:"(11) 99999-1111", email:"joao@email.com", endereco:"Rua A, 123", cep:"01234-567", obs:"Cliente desde 2023"},
+            {id:2, tipo:"fornecedor", nome:"AutoPeças Silva", documento:"12.345.678/0001-90", telefone:"(11) 3333-4444", email:"contato@autopecas.com", endereco:"Rua B, 456", cep:"04567-890", obs:"Fornecedor de peças"},
+            {id:3, tipo:"cliente", nome:"Maria Oliveira", documento:"987.654.321-00", telefone:"(11) 98888-2222", email:"maria@email.com", endereco:"Rua C, 789", cep:"05678-901", obs:""},
+            {id:4, tipo:"fornecedor", nome:"Moto Peças Brasil", documento:"98.765.432/0001-11", telefone:"(11) 9999-8888", email:"vendas@motopecas.com", endereco:"Rua D, 1011", cep:"06789-012", obs:"Peças para motos"}
+        ];
+    }
+    
+    const storedItens = localStorage.getItem('car_estoque');
+    if (storedItens) {
+        itens = JSON.parse(storedItens);
+    } else {
+        itens = [
+            {id:1, tipo:"veiculo", dataEntrada:"2024-01-15", fornecedor:"AutoPeças Silva", fornecedorId:2, placa:"ABC1234", renavam:"123456789", chassi:"9BWZZZ377VT004251", modelo:"Golf GTI", marca:"Volkswagen", ano:2020, cor:"Preto", km:45000, valorCompra:85000, valorVenda:99000, custosAdicionaisTotal:0, status:"Em estoque", obs:"Veículo completo", vendido:false, dadosVenda:null},
+            {id:2, tipo:"veiculo", dataEntrada:"2024-02-10", fornecedor:"Moto Peças Brasil", fornecedorId:4, placa:"DEF5678", renavam:"987654321", chassi:"9C2JC0510PR000123", modelo:"CG 160", marca:"Honda", ano:2023, cor:"Vermelha", km:0, valorCompra:12000, valorVenda:14900, custosAdicionaisTotal:0, status:"Em estoque", obs:"Moto zero km", vendido:false, dadosVenda:null},
+            {id:3, tipo:"capacete", dataEntrada:"2024-03-01", fornecedor:"AutoPeças Silva", fornecedorId:2, nomeItem:"Capacete LS2", quantidade:5, precoCompra:250, precoVenda:450, status:"Em estoque", obs:"Tamanho M", vendido:false, dadosVenda:null},
+            {id:4, tipo:"peca", dataEntrada:"2024-03-15", fornecedor:"AutoPeças Silva", fornecedorId:2, nomeItem:"Pastilha de Freio", quantidade:10, precoCompra:45, precoVenda:89, status:"Em estoque", obs:"Pastilha cerâmica", vendido:false, dadosVenda:null}
+        ];
+    }
+    
+    const storedMov = localStorage.getItem('car_financeiro');
+    if (storedMov) {
+        movimentacoes = JSON.parse(storedMov);
+    } else {
+        movimentacoes = [
+            {id:1, tipo:"entrada", data:"2024-06-05", descricao:"Venda Golf GTI", valorTotal:99000, valorRecebido:99000, categoria:"Venda Veículo", formaPagamento:"Pix", status:"Pago Total", vencimento:"2024-06-05", cliente:"João Silva", obs:""},
+            {id:2, tipo:"entrada", data:"2024-06-03", descricao:"Venda Capacete LS2", valorTotal:450, valorRecebido:450, categoria:"Venda Equipamento", formaPagamento:"Espécie", status:"Pago Total", vencimento:"2024-06-03", cliente:"Maria", obs:""},
+            {id:3, tipo:"saida", data:"2024-06-04", descricao:"Compra Honda CG", valorTotal:12000, categoria:"Compra Veículo", formaPagamento:"Transferência", origem:"Banco do Brasil", status:"Pago", vencimento:"2024-06-04", fornecedor:"Moto Peças", obs:""},
+            {id:4, tipo:"saida", data:"2024-06-02", descricao:"Combustível", valorTotal:300, categoria:"Combustível", formaPagamento:"Cartão", origem:"Nubank", status:"Pago", vencimento:"2024-06-02", fornecedor:"Posto Ipiranga", obs:""}
+        ];
+    }
+    
+    const storedDocs = localStorage.getItem('car_documentos_central');
+    if (storedDocs) {
+        documentos = JSON.parse(storedDocs);
+    } else {
+        documentos = [
+            {id:1, data:"2024-06-05", tipoVinculo:"veiculo", referencia:"ABC1234", tipo:"CRLV", nomeArquivo:"crlv_abc1234.pdf", conteudo:null, obs:"Documento original"},
+            {id:2, data:"2024-06-04", tipoVinculo:"cliente", referencia:"João Silva", tipo:"RG", nomeArquivo:"joao_rg.pdf", conteudo:null, obs:""},
+            {id:3, data:"2024-06-03", tipoVinculo:"veiculo", referencia:"DEF5678", tipo:"Nota Fiscal Veículo", nomeArquivo:"nota_honda.pdf", conteudo:null, obs:"NFe 123456"}
+        ];
+    }
+    
+    fornecedoresCompletos = JSON.parse(localStorage.getItem('car_fornecedores_completos')) || [];
+    custosAdicionais = JSON.parse(localStorage.getItem('car_custos_adicionais')) || [];
+    anexosEstoque = JSON.parse(localStorage.getItem('car_anexos_estoque')) || [];
+    processosTransferencia = JSON.parse(localStorage.getItem('car_processos_transferencia')) || [];
+    saldoInicial = parseFloat(localStorage.getItem('car_saldoInicial')) || 0;
+    
+    if (fornecedoresCompletos.length === 0 && pessoas.length > 0) {
+        let fornecedoresAntigos = pessoas.filter(p => p.tipo === 'fornecedor');
+        fornecedoresAntigos.forEach(f => {
+            fornecedoresCompletos.push({
+                id: f.id,
+                nome: f.nome,
+                telefone: f.telefone || '',
+                email: f.email || '',
+                cnpj: f.documento || '',
+                endereco: f.endereco || '',
+                cep: f.cep || '',
+                dataCadastro: new Date().toISOString().slice(0,10)
+            });
+        });
+        salvar();
+    }
+}
+
+// ==================== SALVAR E ATUALIZAR ====================
 function salvar() { 
     localStorage.setItem('car_pessoas', JSON.stringify(pessoas));
     localStorage.setItem('car_estoque', JSON.stringify(itens));
@@ -365,21 +449,139 @@ function salvar() {
     localStorage.setItem('car_custos_adicionais', JSON.stringify(custosAdicionais));
     localStorage.setItem('car_anexos_estoque', JSON.stringify(anexosEstoque));
     localStorage.setItem('car_processos_transferencia', JSON.stringify(processosTransferencia));
+    
+    ultimoHash = calcularHashDados();
+    
+    // Atualizar apenas a aba visível
+    const abaAtiva = document.querySelector('.tab-content.active');
+    if (abaAtiva) {
+        const id = abaAtiva.id;
+        if (id === 'abaDashboard') atualizarDashboard();
+        else if (id === 'abaEstoque') renderizarItens();
+        else if (id === 'abaPessoas') renderizarPessoas();
+        else if (id === 'abaFinanceiro') {
+            const subAtiva = document.querySelector('#abaFinanceiro .sub-content.active');
+            if (subAtiva) {
+                if (subAtiva.id === 'sub-entradas') renderEntradas();
+                else if (subAtiva.id === 'sub-saidas') renderSaidas();
+                else if (subAtiva.id === 'sub-extrato') renderExtrato();
+                else if (subAtiva.id === 'sub-resultados') atualizarResultados();
+            }
+        } else if (id === 'abaDocumentos') {
+            renderDocumentos();
+            renderProcessos();
+        }
+    }
+    
+    // Atualizar indicador
+    const syncIndicator = document.getElementById('syncIndicator');
+    const lastSyncSpan = document.getElementById('lastSyncTime');
+    if (syncIndicator) {
+        syncIndicator.style.opacity = '1';
+        syncIndicator.innerHTML = '✅ Sincronizado';
+        if (lastSyncSpan) {
+            const now = new Date();
+            lastSyncSpan.innerHTML = `Última sinc: ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+        }
+        setTimeout(() => {
+            if (syncIndicator) {
+                syncIndicator.style.opacity = '0.6';
+                syncIndicator.innerHTML = '🔄 Monitorando';
+            }
+        }, 2000);
+    }
 }
 
-function atualizarTudo() {
-    renderizarItens();
-    atualizarDashboard();
-    renderEntradas();
-    renderSaidas();
-    renderExtrato();
-    atualizarResultados();
-    renderDocumentos();
-    renderProcessos();
-    renderizarPessoas();
-    atualizarListaClientesDatalist();
+// ==================== DETECTAR MUDANÇAS EXTERNAS ====================
+function verificarMudancasExternas() {
+    if (document.hidden) return;
+    
+    const hashAtual = calcularHashDados();
+    
+    if (hashAtual !== ultimoHash) {
+        console.log('🔄 Mudança detectada! Recarregando dados...');
+        
+        const novosPessoas = JSON.parse(localStorage.getItem('car_pessoas'));
+        const novosItens = JSON.parse(localStorage.getItem('car_estoque'));
+        const novosMovimentacoes = JSON.parse(localStorage.getItem('car_financeiro'));
+        const novosDocs = JSON.parse(localStorage.getItem('car_documentos_central'));
+        const novosProcessos = JSON.parse(localStorage.getItem('car_processos_transferencia'));
+        const novosCustos = JSON.parse(localStorage.getItem('car_custos_adicionais'));
+        const novosAnexos = JSON.parse(localStorage.getItem('car_anexos_estoque'));
+        
+        if (novosPessoas) pessoas = novosPessoas;
+        if (novosItens) itens = novosItens;
+        if (novosMovimentacoes) movimentacoes = novosMovimentacoes;
+        if (novosDocs) documentos = novosDocs;
+        if (novosProcessos) processosTransferencia = novosProcessos;
+        if (novosCustos) custosAdicionais = novosCustos;
+        if (novosAnexos) anexosEstoque = novosAnexos;
+        
+        ultimoHash = hashAtual;
+        
+        const abaAtiva = document.querySelector('.tab-content.active');
+        if (abaAtiva) {
+            const id = abaAtiva.id;
+            if (id === 'abaDashboard') atualizarDashboard();
+            else if (id === 'abaEstoque') renderizarItens();
+            else if (id === 'abaPessoas') renderizarPessoas();
+            else if (id === 'abaFinanceiro') {
+                const subAtiva = document.querySelector('#abaFinanceiro .sub-content.active');
+                if (subAtiva) {
+                    if (subAtiva.id === 'sub-entradas') renderEntradas();
+                    else if (subAtiva.id === 'sub-saidas') renderSaidas();
+                    else if (subAtiva.id === 'sub-extrato') renderExtrato();
+                    else if (subAtiva.id === 'sub-resultados') atualizarResultados();
+                }
+            } else if (id === 'abaDocumentos') {
+                renderDocumentos();
+                renderProcessos();
+            }
+        }
+        
+        const syncIndicator = document.getElementById('syncIndicator');
+        if (syncIndicator) {
+            syncIndicator.style.opacity = '1';
+            syncIndicator.innerHTML = '🔄 Dados sincronizados!';
+            setTimeout(() => {
+                if (syncIndicator) {
+                    syncIndicator.style.opacity = '0.6';
+                    syncIndicator.innerHTML = '🔄 Monitorando';
+                }
+            }, 3000);
+        }
+    }
 }
 
+// ==================== EVENTOS DE SINCRONIZAÇÃO ====================
+window.addEventListener('storage', function(e) {
+    if (e.key && e.key.startsWith('car_')) {
+        console.log('📦 Storage event detectado:', e.key);
+        verificarMudancasExternas();
+    }
+});
+
+window.addEventListener('focus', function() {
+    console.log('📱 Janela focada - forçando verificação');
+    verificarMudancasExternas();
+});
+
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        console.log('👁️ Aba visível novamente - atualizando');
+        verificarMudancasExternas();
+    }
+});
+
+// Iniciar polling (3 segundos)
+function iniciarPolling() {
+    if (pollingInterval) clearInterval(pollingInterval);
+    pollingInterval = setInterval(() => {
+        verificarMudancasExternas();
+    }, 3000);
+}
+
+// ==================== FUNÇÕES AUXILIARES ====================
 function toast(msg, duracao = 4000) { 
     let t = document.createElement('div'); 
     t.className = 'toast'; 
@@ -389,17 +591,17 @@ function toast(msg, duracao = 4000) {
     setTimeout(() => t.remove(), duracao); 
 }
 
-function fecharModal(id) { document.getElementById(id).classList.remove('show'); }
+function fecharModal(id) { 
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.remove('show'); 
+}
+
 function toggleFormulario(formId, iconId) { 
     let div = document.getElementById(formId); 
     let icon = document.getElementById(iconId); 
     if(div) div.classList.toggle('visible'); 
     if(icon) icon.classList.toggle('rotated'); 
 }
-function toggleFormularioEstoque() { toggleFormulario('formularioEstoque', 'toggleIconEstoque'); }
-function toggleFormularioPessoas() { toggleFormulario('formularioPessoas', 'toggleIconPessoas'); }
-function toggleFormularioDocumentos() { toggleFormulario('formDocumentos', 'iconDocumentos'); }
-function toggleFormularioProcesso() { toggleFormulario('formularioProcesso', 'toggleIconProcesso'); }
 
 function mudarAba(aba) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -432,7 +634,10 @@ function mudarAba(aba) {
 }
 
 // ==================== DASHBOARD ====================
-function diasEstoque(data) { return Math.floor((new Date() - new Date(data)) / (1000*60*60*24)); }
+function diasEstoque(data) { 
+    if (!data) return 0;
+    return Math.floor((new Date() - new Date(data)) / (1000*60*60*24)); 
+}
 
 function getCustosAdicionaisTotal(veiculoId) {
     return custosAdicionais.filter(c => c.veiculoId === veiculoId).reduce((sum, c) => sum + c.valor, 0);
@@ -447,63 +652,89 @@ function getLucroItem(item) {
 }
 
 function atualizarDashboard() {
-    let veiculosEmEstoque = itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque' && !i.vendido).length;
-    let vendasMes = movimentacoes.filter(m => { if(m.tipo !== 'entrada') return false; let data = new Date(m.data); let hoje = new Date(); return data.getMonth() === hoje.getMonth() && data.getFullYear() === hoje.getFullYear(); }).reduce((s, m) => s + (m.valorRecebido || m.valorTotal), 0);
-    let totalEntradas = movimentacoes.filter(m => m.tipo === 'entrada').reduce((s, m) => s + (m.valorRecebido || m.valorTotal), 0);
-    let totalSaidas = movimentacoes.filter(m => m.tipo === 'saida' && m.status === 'Pago').reduce((s, m) => s + m.valorTotal, 0);
-    let lucroMes = totalEntradas - totalSaidas;
-    let totalDias = itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque').reduce((s, i) => s + diasEstoque(i.dataEntrada), 0);
-    let mediaDias = itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque').length > 0 ? Math.floor(totalDias / itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque').length) : 0;
-    let alertasCount = 0;
-    let veiculosParados = itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque' && diasEstoque(i.dataEntrada) > 60).length;
-    alertasCount += veiculosParados;
-    let contasReceber = movimentacoes.filter(m => m.tipo === 'entrada' && m.status !== 'Pago Total').reduce((s, m) => s + (m.valorTotal - (m.valorRecebido || 0)), 0);
-    if (contasReceber > 0) alertasCount++;
-    let estoqueBaixo = itens.filter(i => i.quantidade && i.quantidade < 5 && i.status === 'Em estoque' && !i.vendido).length;
-    alertasCount += estoqueBaixo;
-    let processosPendentes = processosTransferencia.filter(p => p.status !== 'finalizado').length;
-    alertasCount += processosPendentes;
+    const veiculosEmEstoque = itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque' && !i.vendido).length;
+    const hoje = new Date();
+    const vendasMes = movimentacoes.filter(m => { 
+        if(m.tipo !== 'entrada') return false; 
+        const data = new Date(m.data); 
+        return data.getMonth() === hoje.getMonth() && data.getFullYear() === hoje.getFullYear(); 
+    }).reduce((s, m) => s + (m.valorRecebido || m.valorTotal), 0);
+    const totalEntradas = movimentacoes.filter(m => m.tipo === 'entrada').reduce((s, m) => s + (m.valorRecebido || m.valorTotal), 0);
+    const totalSaidas = movimentacoes.filter(m => m.tipo === 'saida' && m.status === 'Pago').reduce((s, m) => s + m.valorTotal, 0);
+    const lucroMes = totalEntradas - totalSaidas;
+    const totalDias = itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque').reduce((s, i) => s + diasEstoque(i.dataEntrada), 0);
+    const veiculosEmEstoqueCount = itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque').length;
+    const mediaDias = veiculosEmEstoqueCount > 0 ? Math.floor(totalDias / veiculosEmEstoqueCount) : 0;
     
-    document.getElementById('statsGridDashboard').innerHTML = `
-        <div class="stat-card" onclick="mudarAba('estoque')"><i class="fas fa-motorcycle"></i><h2>${veiculosEmEstoque}</h2><p>Veículos em Estoque</p></div>
-        <div class="stat-card" onclick="mudarAba('financeiro')"><i class="fas fa-dollar-sign"></i><h2>R$ ${vendasMes.toLocaleString()}</h2><p>Vendas do Mês</p></div>
-        <div class="stat-card" onclick="mudarAba('financeiro')"><i class="fas fa-chart-line"></i><h2 style="color: ${lucroMes >= 0 ? 'green' : 'red'}">R$ ${lucroMes.toLocaleString()}</h2><p>Lucro do Mês</p></div>
-        <div class="stat-card" onclick="mudarAba('estoque')"><i class="fas fa-clock"></i><h2>${mediaDias}</h2><p>Média de Dias em Estoque</p></div>
-        <div class="stat-card" onclick="mudarAba('documentos')"><i class="fas fa-exchange-alt"></i><h2 style="color: ${processosPendentes > 0 ? 'orange' : 'green'}">${processosPendentes}</h2><p>Processos Pendentes</p></div>
-        <div class="stat-card" onclick="mudarAba('estoque')"><i class="fas fa-exclamation-triangle"></i><h2 style="color: ${alertasCount > 0 ? 'red' : 'green'}">${alertasCount}</h2><p>Alertas e Pendências</p></div>
-    `;
+    const veiculosParados = itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque' && diasEstoque(i.dataEntrada) > 60).length;
+    const contasReceber = movimentacoes.filter(m => m.tipo === 'entrada' && m.status !== 'Pago Total').reduce((s, m) => s + (m.valorTotal - (m.valorRecebido || 0)), 0);
+    const estoqueBaixo = itens.filter(i => i.quantidade && i.quantidade < 5 && i.status === 'Em estoque' && !i.vendido).length;
+    const processosPendentes = processosTransferencia.filter(p => p.status !== 'finalizado').length;
+    const alertasCount = (veiculosParados > 0 ? 1 : 0) + (contasReceber > 0 ? 1 : 0) + (estoqueBaixo > 0 ? 1 : 0) + (processosPendentes > 0 ? 1 : 0);
     
-    let meses = [];
-    let vendasPorMes = [];
-    let hoje = new Date();
+    const statsGrid = document.getElementById('statsGridDashboard');
+    if (statsGrid) {
+        statsGrid.innerHTML = `
+            <div class="stat-card" onclick="mudarAba('estoque')"><i class="fas fa-motorcycle"></i><h2>${veiculosEmEstoque}</h2><p>Veículos em Estoque</p></div>
+            <div class="stat-card" onclick="mudarAba('financeiro')"><i class="fas fa-dollar-sign"></i><h2>R$ ${vendasMes.toLocaleString()}</h2><p>Vendas do Mês</p></div>
+            <div class="stat-card" onclick="mudarAba('financeiro')"><i class="fas fa-chart-line"></i><h2 style="color: ${lucroMes >= 0 ? 'green' : 'red'}">R$ ${lucroMes.toLocaleString()}</h2><p>Lucro do Mês</p></div>
+            <div class="stat-card" onclick="mudarAba('estoque')"><i class="fas fa-clock"></i><h2>${mediaDias}</h2><p>Média de Dias em Estoque</p></div>
+            <div class="stat-card" onclick="mudarAba('documentos')"><i class="fas fa-exchange-alt"></i><h2 style="color: ${processosPendentes > 0 ? 'orange' : 'green'}">${processosPendentes}</h2><p>Processos Pendentes</p></div>
+            <div class="stat-card" onclick="mudarAba('estoque')"><i class="fas fa-exclamation-triangle"></i><h2 style="color: ${alertasCount > 0 ? 'red' : 'green'}">${alertasCount}</h2><p>Alertas e Pendências</p></div>
+        `;
+    }
+    
+    // Gráfico de vendas mensais
+    const meses = [];
+    const vendasPorMes = [];
     for (let i = 5; i >= 0; i--) {
-        let mes = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+        const mes = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
         meses.push(mes.toLocaleString('pt-BR', { month: 'short' }));
-        let total = movimentacoes.filter(m => { if(m.tipo !== 'entrada') return false; let data = new Date(m.data); return data.getMonth() === mes.getMonth() && data.getFullYear() === mes.getFullYear(); }).reduce((s, m) => s + (m.valorRecebido || m.valorTotal), 0);
+        const total = movimentacoes.filter(m => { 
+            if(m.tipo !== 'entrada') return false; 
+            const data = new Date(m.data); 
+            return data.getMonth() === mes.getMonth() && data.getFullYear() === mes.getFullYear(); 
+        }).reduce((s, m) => s + (m.valorRecebido || m.valorTotal), 0);
         vendasPorMes.push(total);
     }
-    if(graficoVendasDashboard) graficoVendasDashboard.destroy();
-    let ctx = document.getElementById('graficoVendasDashboard').getContext('2d');
-    graficoVendasDashboard = new Chart(ctx, { type: 'line', data: { labels: meses, datasets: [{ label: 'Vendas (R$)', data: vendasPorMes, borderColor: '#1a5f2c', backgroundColor: 'rgba(26,95,44,0.1)', tension: 0.3, fill: true }] }, options: { responsive: true, maintainAspectRatio: true } });
+    const ctxVendas = document.getElementById('graficoVendasDashboard');
+    if (ctxVendas) {
+        if (graficoVendasDashboard) graficoVendasDashboard.destroy();
+        graficoVendasDashboard = new Chart(ctxVendas.getContext('2d'), { 
+            type: 'line', 
+            data: { labels: meses, datasets: [{ label: 'Vendas (R$)', data: vendasPorMes, borderColor: '#1a5f2c', backgroundColor: 'rgba(26,95,44,0.1)', tension: 0.3, fill: true }] }, 
+            options: { responsive: true, maintainAspectRatio: true } 
+        });
+    }
     
-    let categorias = {};
-    movimentacoes.forEach(m => { let valor = m.tipo === 'entrada' ? (m.valorRecebido || m.valorTotal) : -m.valorTotal; if(!categorias[m.categoria]) categorias[m.categoria] = 0; categorias[m.categoria] += valor; });
-    let categoriasOrdenadas = Object.entries(categorias).sort((a,b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 5);
-    if(graficoTopCategorias) graficoTopCategorias.destroy();
-    let ctx2 = document.getElementById('graficoTopCategorias').getContext('2d');
-    graficoTopCategorias = new Chart(ctx2, { type: 'doughnut', data: { labels: categoriasOrdenadas.map(c => c[0]), datasets: [{ data: categoriasOrdenadas.map(c => Math.abs(c[1])), backgroundColor: ['#1a5f2c', '#dc2626', '#f59e0b', '#3b82f6', '#10b981'] }] }, options: { responsive: true, maintainAspectRatio: true } });
+    // Gráfico de categorias
+    const categorias = {};
+    movimentacoes.forEach(m => { 
+        const valor = m.tipo === 'entrada' ? (m.valorRecebido || m.valorTotal) : -m.valorTotal; 
+        if(!categorias[m.categoria]) categorias[m.categoria] = 0; 
+        categorias[m.categoria] += valor; 
+    });
+    const categoriasOrdenadas = Object.entries(categorias).sort((a,b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 5);
+    const ctxCategorias = document.getElementById('graficoTopCategorias');
+    if (ctxCategorias) {
+        if (graficoTopCategorias) graficoTopCategorias.destroy();
+        graficoTopCategorias = new Chart(ctxCategorias.getContext('2d'), { 
+            type: 'doughnut', 
+            data: { labels: categoriasOrdenadas.map(c => c[0]), datasets: [{ data: categoriasOrdenadas.map(c => Math.abs(c[1])), backgroundColor: ['#1a5f2c', '#dc2626', '#f59e0b', '#3b82f6', '#10b981'] }] }, 
+            options: { responsive: true, maintainAspectRatio: true } 
+        });
+    }
     
+    // Alertas
     let alertasHtml = '';
     if(veiculosParados > 0) alertasHtml += `<div class="alert-item" onclick="mudarAba('estoque')"><i class="fas fa-car alert-danger"></i><div style="flex:1"><strong>${veiculosParados} veículos parados</strong><span style="font-size:12px; color:#666;"> - Há mais de 60 dias em estoque</span></div><span class="badge badge-urgente">Urgente</span></div>`;
     if(contasReceber > 0) alertasHtml += `<div class="alert-item" onclick="mudarAba('financeiro')"><i class="fas fa-hand-holding-usd alert-warning"></i><div style="flex:1"><strong>R$ ${contasReceber.toLocaleString()} a receber</strong><span style="font-size:12px; color:#666;"> - Entradas com pagamento pendente</span></div><span class="badge badge-atencao">Pendente</span></div>`;
     if(estoqueBaixo > 0) alertasHtml += `<div class="alert-item" onclick="mudarAba('estoque')"><i class="fas fa-tools alert-warning"></i><div style="flex:1"><strong>${estoqueBaixo} itens com estoque baixo</strong><span style="font-size:12px; color:#666;"> - Abaixo do mínimo recomendado</span></div><span class="badge badge-atencao">Atenção</span></div>`;
     if(processosPendentes > 0) alertasHtml += `<div class="alert-item" onclick="mudarAba('documentos')"><i class="fas fa-exchange-alt alert-info"></i><div style="flex:1"><strong>${processosPendentes} processos de transferência pendentes</strong><span style="font-size:12px; color:#666;"> - Acompanhe na guia Documentos</span></div><span class="badge badge-atencao">Atenção</span></div>`;
     
-    let docsFaltando = documentos.filter(d => !d.conteudo).length;
-    if(docsFaltando > 0) alertasHtml += `<div class="alert-item" onclick="mudarAba('documentos')"><i class="fas fa-file-alt alert-warning"></i><div style="flex:1"><strong>${docsFaltando} documentos sem arquivo</strong><span style="font-size:12px; color:#666;"> - Anexe os documentos pendentes</span></div><span class="badge badge-atencao">Atenção</span></div>`;
-    
     if(alertasHtml === '') alertasHtml = `<div class="alert-item"><i class="fas fa-check-circle alert-success"></i><div style="flex:1"><strong>Tudo em ordem!</strong><span style="font-size:12px; color:#666;"> - Nenhuma pendência no momento</span></div></div>`;
-    document.getElementById('alertasList').innerHTML = alertasHtml;
+    const alertasList = document.getElementById('alertasList');
+    if (alertasList) alertasList.innerHTML = alertasHtml;
 }
 
 // ==================== FORNECEDORES ====================
@@ -519,80 +750,187 @@ function atualizarSelectFornecedores() {
 function exibirDetalhesFornecedor(id) {
     let fornecedor = fornecedoresCompletos.find(f => f.id === id);
     if (!fornecedor) return;
-    document.getElementById('fornTelefone').innerText = fornecedor.telefone || '—';
-    document.getElementById('fornEmail').innerText = fornecedor.email || '—';
-    document.getElementById('fornCnpj').innerText = fornecedor.cnpj || '—';
-    document.getElementById('fornEndereco').innerText = fornecedor.endereco || '—';
-    document.getElementById('detalhesFornecedor').style.display = 'block';
+    const fornTelefone = document.getElementById('fornTelefone');
+    const fornEmail = document.getElementById('fornEmail');
+    const fornCnpj = document.getElementById('fornCnpj');
+    const fornEndereco = document.getElementById('fornEndereco');
+    if (fornTelefone) fornTelefone.innerText = fornecedor.telefone || '—';
+    if (fornEmail) fornEmail.innerText = fornecedor.email || '—';
+    if (fornCnpj) fornCnpj.innerText = fornecedor.cnpj || '—';
+    if (fornEndereco) fornEndereco.innerText = fornecedor.endereco || '—';
+    const detalhes = document.getElementById('detalhesFornecedor');
+    if (detalhes) detalhes.style.display = 'block';
 }
 
 function abrirModalNovoFornecedor() {
-    document.getElementById('novoFornecedorNome').value = '';
-    document.getElementById('novoFornecedorCnpj').value = '';
-    document.getElementById('novoFornecedorTelefone').value = '';
-    document.getElementById('novoFornecedorEmail').value = '';
-    document.getElementById('novoFornecedorCep').value = '';
-    document.getElementById('novoFornecedorEndereco').value = '';
-    document.getElementById('modalNovoFornecedor').classList.add('show');
+    const modal = document.getElementById('modalNovoFornecedor');
+    if (modal) modal.classList.add('show');
 }
 
 function salvarNovoFornecedor() {
-    let nome = document.getElementById('novoFornecedorNome').value.trim();
+    let nome = document.getElementById('novoFornecedorNome')?.value.trim();
     if (!nome) { toast("⚠️ Informe o nome do fornecedor!"); return; }
     let novoFornecedor = {
-        id: Date.now(), nome: nome, cnpj: document.getElementById('novoFornecedorCnpj').value,
-        telefone: document.getElementById('novoFornecedorTelefone').value, email: document.getElementById('novoFornecedorEmail').value,
-        cep: document.getElementById('novoFornecedorCep').value, endereco: document.getElementById('novoFornecedorEndereco').value,
+        id: Date.now(), 
+        nome: nome, 
+        cnpj: document.getElementById('novoFornecedorCnpj')?.value || '',
+        telefone: document.getElementById('novoFornecedorTelefone')?.value || '',
+        email: document.getElementById('novoFornecedorEmail')?.value || '',
+        cep: document.getElementById('novoFornecedorCep')?.value || '',
+        endereco: document.getElementById('novoFornecedorEndereco')?.value || '',
         dataCadastro: new Date().toISOString().slice(0,10)
     };
     fornecedoresCompletos.push(novoFornecedor);
     salvar();
     atualizarSelectFornecedores();
     let select = document.getElementById('fornecedorSelect');
-    select.value = novoFornecedor.id;
-    exibirDetalhesFornecedor(novoFornecedor.id);
+    if (select) {
+        select.value = novoFornecedor.id;
+        exibirDetalhesFornecedor(novoFornecedor.id);
+    }
     fecharModal('modalNovoFornecedor');
     toast(`✅ Fornecedor "${escapeHtml(nome)}" cadastrado!`);
 }
 
-// ==================== CUSTOS ADICIONAIS ====================
+// ==================== CUSTOS ADICIONAIS COM INTEGRAÇÃO FINANCEIRA ====================
 function abrirCustosAdicionais(veiculoId) {
     let veiculo = itens.find(i => i.id === veiculoId);
     if (!veiculo) return;
     veiculoAtualCustos = veiculo;
-    document.getElementById('veiculoPlacaCustos').innerText = veiculo.placa || veiculo.nomeItem;
-    document.getElementById('novoCustoData').value = new Date().toISOString().slice(0,10);
+    const placaSpan = document.getElementById('veiculoPlacaCustos');
+    if (placaSpan) placaSpan.innerText = veiculo.placa || veiculo.nomeItem;
+    const dataInput = document.getElementById('novoCustoData');
+    if (dataInput) dataInput.value = new Date().toISOString().slice(0,10);
     carregarListaCustosAdicionais(veiculoId);
-    document.getElementById('modalCustosAdicionais').classList.add('show');
+    const modal = document.getElementById('modalCustosAdicionais');
+    if (modal) modal.classList.add('show');
 }
 
 function carregarListaCustosAdicionais(veiculoId) {
     let custos = custosAdicionais.filter(c => c.veiculoId === veiculoId);
     let container = document.getElementById('listaCustosAdicionais');
-    if (custos.length === 0) { container.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;"><i class="fas fa-coins"></i> Nenhum custo adicional cadastrado.</div>'; document.getElementById('totalCustosAdicionais').innerHTML = 'R$ 0,00'; return; }
+    if (!container) return;
+    if (custos.length === 0) { 
+        container.innerHTML = '<div style="text-align: center; padding: 20px; color: #999;"><i class="fas fa-coins"></i> Nenhum custo adicional cadastrado.</div>'; 
+        const totalSpan = document.getElementById('totalCustosAdicionais');
+        if (totalSpan) totalSpan.innerHTML = 'R$ 0,00';
+        return; 
+    }
     let total = 0;
-    container.innerHTML = custos.map(c => { total += c.valor; return `<div class="custo-item"><div style="display: flex; justify-content: space-between;"><div><span class="badge badge-peca">${escapeHtml(c.tipo)}</span> <strong>R$ ${c.valor.toLocaleString()}</strong><br><small>📅 ${c.data} | ${c.fornecedor ? '🏢 ' + escapeHtml(c.fornecedor) : ''}</small>${c.observacao ? `<br><small><i class="fas fa-comment"></i> ${escapeHtml(c.observacao)}</small>` : ''}</div><div><button class="btn-sm btn-danger" onclick="removerCustoAdicional(${c.id}, ${veiculoId})"><i class="fas fa-trash"></i></button></div></div></div>`; }).join('');
-    document.getElementById('totalCustosAdicionais').innerHTML = `R$ ${total.toLocaleString()}`;
+    container.innerHTML = custos.map(c => { 
+        total += c.valor; 
+        return `<div class="custo-item"><div style="display: flex; justify-content: space-between; align-items: center;"><div><span class="badge badge-peca">${escapeHtml(c.tipo)}</span> <strong>R$ ${c.valor.toLocaleString()}</strong><br><small>📅 ${c.data} | ${c.fornecedor ? '🏢 ' + escapeHtml(c.fornecedor) : ''}</small>${c.observacao ? `<br><small><i class="fas fa-comment"></i> ${escapeHtml(c.observacao)}</small>` : ''}</div><div><button class="btn-sm btn-warning" onclick="editarCustoAdicional(${c.id}, ${veiculoId})" title="Editar"><i class="fas fa-edit"></i></button><button class="btn-sm btn-danger" onclick="removerCustoAdicional(${c.id}, ${veiculoId})" title="Excluir"><i class="fas fa-trash"></i></button></div></div></div>`; 
+    }).join('');
+    const totalSpan = document.getElementById('totalCustosAdicionais');
+    if (totalSpan) totalSpan.innerHTML = `R$ ${total.toLocaleString()}`;
     let veiculo = itens.find(i => i.id === veiculoId);
-    if (veiculo) { veiculo.custosAdicionaisTotal = total; salvar(); }
+    if (veiculo) { 
+        veiculo.custosAdicionaisTotal = total; 
+        salvar(); 
+    }
     renderizarItens();
     atualizarDashboard();
 }
 
 function adicionarCustoAdicional() {
     if (!veiculoAtualCustos) return;
-    let valor = parseFloat(document.getElementById('novoCustoValor').value);
+    let valor = parseFloat(document.getElementById('novoCustoValor')?.value);
     if (!valor || valor <= 0) { toast("⚠️ Informe um valor válido!"); return; }
-    let novoCusto = { id: Date.now(), veiculoId: veiculoAtualCustos.id, tipo: document.getElementById('novoCustoTipo').options[document.getElementById('novoCustoTipo').selectedIndex].text, valor: valor, data: document.getElementById('novoCustoData').value, fornecedor: document.getElementById('novoCustoFornecedor').value, observacao: document.getElementById('novoCustoObs').value };
+    
+    const tipoSelect = document.getElementById('novoCustoTipo');
+    const tipoTexto = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex]?.text || 'Outro' : 'Outro';
+    const data = document.getElementById('novoCustoData')?.value || new Date().toISOString().slice(0,10);
+    const fornecedor = document.getElementById('novoCustoFornecedor')?.value || '';
+    const observacao = document.getElementById('novoCustoObs')?.value || '';
+    
+    const novoCusto = { 
+        id: Date.now(), 
+        veiculoId: veiculoAtualCustos.id, 
+        tipo: tipoTexto, 
+        valor: valor, 
+        data: data, 
+        fornecedor: fornecedor, 
+        observacao: observacao 
+    };
     custosAdicionais.push(novoCusto);
+    
+    // INTEGRAÇÃO FINANCEIRA: Criar saída automática para o custo
+    const novaSaida = {
+        id: Date.now(),
+        tipo: "saida",
+        data: data,
+        descricao: `${tipoTexto} - ${veiculoAtualCustos.placa || veiculoAtualCustos.nomeItem}`,
+        valorTotal: valor,
+        categoria: tipoTexto,
+        formaPagamento: "Espécie",
+        origem: fornecedor || "Caixa",
+        status: "Pago",
+        vencimento: data,
+        fornecedor: fornecedor,
+        obs: `Custo adicional automático: ${observacao}`
+    };
+    movimentacoes.push(novaSaida);
+    
     salvar();
-    document.getElementById('novoCustoValor').value = ''; document.getElementById('novoCustoFornecedor').value = ''; document.getElementById('novoCustoObs').value = '';
+    
+    // Limpar campos
+    const valorInput = document.getElementById('novoCustoValor');
+    const fornecedorInput = document.getElementById('novoCustoFornecedor');
+    const obsInput = document.getElementById('novoCustoObs');
+    if (valorInput) valorInput.value = '';
+    if (fornecedorInput) fornecedorInput.value = '';
+    if (obsInput) obsInput.value = '';
+    
     carregarListaCustosAdicionais(veiculoAtualCustos.id);
-    toast(`✅ Custo adicional de ${escapeHtml(novoCusto.tipo)} adicionado!`);
+    toast(`✅ Custo adicional de ${escapeHtml(tipoTexto)} adicionado! Lançamento criado em Saídas.`);
+}
+
+function editarCustoAdicional(id, veiculoId) {
+    let custo = custosAdicionais.find(c => c.id === id);
+    if (!custo) return;
+    
+    const novoValor = prompt("Digite o novo valor:", custo.valor);
+    if (novoValor === null) return;
+    const valorNum = parseFloat(novoValor);
+    if (isNaN(valorNum) || valorNum <= 0) { toast("❌ Valor inválido!"); return; }
+    
+    // Ajustar movimentação financeira correspondente
+    const saidaRelacionada = movimentacoes.find(m => 
+        m.tipo === 'saida' && 
+        m.descricao.includes(custo.tipo) && 
+        m.descricao.includes(veiculoAtualCustos?.placa || '')
+    );
+    
+    custo.valor = valorNum;
+    if (saidaRelacionada) {
+        saidaRelacionada.valorTotal = valorNum;
+        saidaRelacionada.descricao = `${custo.tipo} - ${veiculoAtualCustos?.placa || ''} (editado)`;
+    }
+    
+    salvar();
+    carregarListaCustosAdicionais(veiculoId);
+    toast(`✅ Custo atualizado para R$ ${valorNum.toLocaleString()}`);
 }
 
 function removerCustoAdicional(id, veiculoId) {
-    if (confirm("Remover este custo adicional?")) { custosAdicionais = custosAdicionais.filter(c => c.id !== id); salvar(); carregarListaCustosAdicionais(veiculoId); toast("Custo adicional removido!"); }
+    if (confirm("Remover este custo adicional? A movimentação financeira também será removida.")) { 
+        const custoRemovido = custosAdicionais.find(c => c.id === id);
+        // Remover movimentação financeira correspondente
+        if (custoRemovido) {
+            const saidaRelacionada = movimentacoes.findIndex(m => 
+                m.tipo === 'saida' && 
+                m.descricao.includes(custoRemovido.tipo) && 
+                m.descricao.includes(custoRemovido.veiculoId)
+            );
+            if (saidaRelacionada !== -1) {
+                movimentacoes.splice(saidaRelacionada, 1);
+            }
+        }
+        custosAdicionais = custosAdicionais.filter(c => c.id !== id); 
+        salvar(); 
+        carregarListaCustosAdicionais(veiculoId); 
+        toast("Custo adicional removido!"); 
+    }
 }
 
 // ==================== ANEXOS ====================
@@ -600,34 +938,53 @@ function abrirAnexosVeiculo(veiculoId) {
     let veiculo = itens.find(i => i.id === veiculoId);
     if (!veiculo) return;
     veiculoAtualAnexos = veiculo;
-    document.getElementById('veiculoPlacaAnexo').innerText = veiculo.placa || veiculo.nomeItem;
+    const placaSpan = document.getElementById('veiculoPlacaAnexo');
+    if (placaSpan) placaSpan.innerText = veiculo.placa || veiculo.nomeItem;
     carregarListaAnexos(veiculoId);
-    document.getElementById('modalAnexosVeiculo').classList.add('show');
+    const modal = document.getElementById('modalAnexosVeiculo');
+    if (modal) modal.classList.add('show');
 }
 
 function carregarListaAnexos(veiculoId) {
     let anexos = anexosEstoque.filter(a => a.veiculoId === veiculoId);
     let container = document.getElementById('listaAnexosVeiculo');
+    if (!container) return;
     if (anexos.length === 0) { container.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;"><i class="fas fa-folder-open"></i> Nenhum documento anexado.</div>'; return; }
     let totalTamanho = anexos.reduce((sum, a) => sum + (a.tamanho || 0), 0);
     let limite = 10 * 1024 * 1024;
     let alertaLimite = totalTamanho > limite ? '<div class="badge badge-urgente" style="margin-bottom: 10px;">⚠️ Limite de 10MB excedido!</div>' : `<div style="font-size: 11px; color: #666; margin-bottom: 10px;">📊 ${(totalTamanho / 1024 / 1024).toFixed(2)}MB de ${limite/1024/1024}MB utilizados</div>`;
-    container.innerHTML = alertaLimite + anexos.map(a => `<div style="border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:8px;background:white;"><div style="display:flex;justify-content:space-between;"><div><span class="badge badge-veiculo">${escapeHtml(a.tipo)}</span> <strong>${escapeHtml(a.nomeArquivo)}</strong><br><small>📅 ${a.dataUpload} | 💾 ${(a.tamanho / 1024).toFixed(1)}KB</small>${a.observacao ? `<br><small><i class="fas fa-comment"></i> ${escapeHtml(a.observacao)}</small>` : ''}</div><div><button class="btn-sm btn-outline" onclick="baixarAnexo(${a.id})"><i class="fas fa-download"></i></button><button class="btn-sm btn-danger" onclick="removerAnexo(${a.id}, ${veiculoId})"><i class="fas fa-trash"></i></button></div></div></div>`).join('');
+    container.innerHTML = alertaLimite + anexos.map(a => `<div style="border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:8px;background:white;"><div style="display:flex;justify-content:space-between;align-items:center;"><div><span class="badge badge-veiculo">${escapeHtml(a.tipo)}</span> <strong>${escapeHtml(a.nomeArquivo)}</strong><br><small>📅 ${a.dataUpload} | 💾 ${(a.tamanho / 1024).toFixed(1)}KB</small>${a.observacao ? `<br><small><i class="fas fa-comment"></i> ${escapeHtml(a.observacao)}</small>` : ''}</div><div><button class="btn-sm btn-outline" onclick="baixarAnexo(${a.id})"><i class="fas fa-download"></i></button><button class="btn-sm btn-danger" onclick="removerAnexo(${a.id}, ${veiculoId})"><i class="fas fa-trash"></i></button></div></div></div>`).join('');
 }
 
 function uploadAnexoVeiculo() {
     if (!veiculoAtualAnexos) return;
-    let file = document.getElementById('arquivoAnexo').files[0];
+    let file = document.getElementById('arquivoAnexo')?.files[0];
     if (!file) { toast("📁 Selecione um arquivo!"); return; }
     let anexosExistentes = anexosEstoque.filter(a => a.veiculoId === veiculoAtualAnexos.id);
     let totalExistente = anexosExistentes.reduce((sum, a) => sum + (a.tamanho || 0), 0);
     if (totalExistente + file.size > 10 * 1024 * 1024) { toast("❌ Limite de 10MB por veículo excedido!"); return; }
     let reader = new FileReader();
     reader.onload = function(e) {
-        let novoAnexo = { id: Date.now(), veiculoId: veiculoAtualAnexos.id, placa: veiculoAtualAnexos.placa || veiculoAtualAnexos.nomeItem, nomeArquivo: file.name, tipo: document.getElementById('tipoAnexo').options[document.getElementById('tipoAnexo').selectedIndex].text, arquivo: e.target.result, tamanho: file.size, dataUpload: new Date().toISOString().slice(0,10), observacao: document.getElementById('obsAnexo').value };
+        const tipoSelect = document.getElementById('tipoAnexo');
+        const tipoTexto = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex]?.text || 'Documento' : 'Documento';
+        const obs = document.getElementById('obsAnexo')?.value || '';
+        let novoAnexo = { 
+            id: Date.now(), 
+            veiculoId: veiculoAtualAnexos.id, 
+            placa: veiculoAtualAnexos.placa || veiculoAtualAnexos.nomeItem, 
+            nomeArquivo: file.name, 
+            tipo: tipoTexto, 
+            arquivo: e.target.result, 
+            tamanho: file.size, 
+            dataUpload: new Date().toISOString().slice(0,10), 
+            observacao: obs 
+        };
         anexosEstoque.push(novoAnexo);
         salvar();
-        document.getElementById('arquivoAnexo').value = ''; document.getElementById('obsAnexo').value = '';
+        const arquivoInput = document.getElementById('arquivoAnexo');
+        const obsInput = document.getElementById('obsAnexo');
+        if (arquivoInput) arquivoInput.value = '';
+        if (obsInput) obsInput.value = '';
         carregarListaAnexos(veiculoAtualAnexos.id);
         toast(`✅ Arquivo "${escapeHtml(file.name)}" anexado!`);
     };
@@ -636,25 +993,49 @@ function uploadAnexoVeiculo() {
 
 function baixarAnexo(id) {
     let anexo = anexosEstoque.find(a => a.id === id);
-    if (anexo && anexo.arquivo) { let a = document.createElement('a'); a.href = anexo.arquivo; a.download = anexo.nomeArquivo; a.click(); }
+    if (anexo && anexo.arquivo) { 
+        let a = document.createElement('a'); 
+        a.href = anexo.arquivo; 
+        a.download = anexo.nomeArquivo; 
+        a.click(); 
+        toast(`📥 Baixando: ${anexo.nomeArquivo}`);
+    }
     else toast("❌ Arquivo não disponível");
 }
 
 function removerAnexo(id, veiculoId) {
-    if (confirm("Excluir este documento?")) { anexosEstoque = anexosEstoque.filter(a => a.id !== id); salvar(); carregarListaAnexos(veiculoId); toast("Documento removido!"); }
+    if (confirm("Excluir este documento?")) { 
+        anexosEstoque = anexosEstoque.filter(a => a.id !== id); 
+        salvar(); 
+        carregarListaAnexos(veiculoId); 
+        toast("Documento removido!"); 
+    }
 }
 
 // ==================== PROCESSOS TRANSFERÊNCIA ====================
 function adicionarProcessoTransferencia() {
-    let placa = document.getElementById('processoPlaca').value.toUpperCase();
+    let placa = document.getElementById('processoPlaca')?.value.toUpperCase();
     if (!placa) { toast("⚠️ Informe a placa!"); return; }
     let veiculo = itens.find(i => i.placa === placa);
     if (!veiculo) { toast("⚠️ Veículo não encontrado!"); return; }
     if (processosTransferencia.find(p => p.placa === placa)) { toast("⚠️ Processo já existe!"); return; }
-    let novoProcesso = { id: Date.now(), placa: placa, status: document.getElementById('processoStatus').value, dataInicio: document.getElementById('processoDataInicio').value || new Date().toISOString().slice(0,10), dataAtualizacao: new Date().toISOString().slice(0,10), observacoes: document.getElementById('processoObs').value ? [document.getElementById('processoObs').value] : [], documentosAnexados: [] };
+    let novoProcesso = { 
+        id: Date.now(), 
+        placa: placa, 
+        status: document.getElementById('processoStatus')?.value || 'pendente', 
+        dataInicio: document.getElementById('processoDataInicio')?.value || new Date().toISOString().slice(0,10), 
+        dataAtualizacao: new Date().toISOString().slice(0,10), 
+        observacoes: document.getElementById('processoObs')?.value ? [document.getElementById('processoObs').value] : [], 
+        documentosAnexados: [] 
+    };
     processosTransferencia.push(novoProcesso);
     salvar();
-    document.getElementById('processoPlaca').value = ''; document.getElementById('processoObs').value = ''; document.getElementById('processoDataInicio').value = '';
+    const placaInput = document.getElementById('processoPlaca');
+    const obsInput = document.getElementById('processoObs');
+    const dataInput = document.getElementById('processoDataInicio');
+    if (placaInput) placaInput.value = '';
+    if (obsInput) obsInput.value = '';
+    if (dataInput) dataInput.value = '';
     renderProcessos();
     atualizarDashboard();
     toast(`✅ Processo para placa ${placa} iniciado!`);
@@ -663,7 +1044,10 @@ function adicionarProcessoTransferencia() {
 function renderProcessos() {
     let container = document.getElementById('processosBody');
     if (!container) return;
-    if (processosTransferencia.length === 0) { container.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum processo cadastrado</td></tr>'; return; }
+    if (processosTransferencia.length === 0) { 
+        container.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum processo cadastrado</td></tr>'; 
+        return; 
+    }
     container.innerHTML = processosTransferencia.map(p => {
         let statusClass = '', statusText = '';
         switch(p.status) {
@@ -676,7 +1060,7 @@ function renderProcessos() {
             default: statusClass = 'badge-pendente'; statusText = p.status;
         }
         let ultimaObs = p.observacoes && p.observacoes.length > 0 ? p.observacoes[p.observacoes.length - 1] : '-';
-        return `<tr class="${p.status === 'finalizado' ? 'status-finalizado' : (p.status === 'pendente' ? 'status-pendente' : 'status-andamento')}"><td><strong>${escapeHtml(p.placa)}</strong></td><td><span class="badge ${statusClass}">${statusText}</span></td><td>${p.dataInicio}</td><td>${p.dataAtualizacao}</td><td><small>${escapeHtml(ultimaObs)}</small></td><td class="btn-group"><button class="btn-sm btn-info" onclick="editarProcesso(${p.id})"><i class="fas fa-edit"></i></button><button class="btn-sm btn-danger" onclick="excluirProcesso(${p.id})"><i class="fas fa-trash"></i></button></td></tr>`;
+        return `<tr class="${p.status === 'finalizado' ? 'status-finalizado' : (p.status === 'pendente' ? 'status-pendente' : 'status-andamento')}"></td><strong>${escapeHtml(p.placa)}</strong></td><span class="badge ${statusClass}">${statusText}</span></td>${p.dataInicio}</td>${p.dataAtualizacao}<td><small>${escapeHtml(ultimaObs)}</small><td><td class="btn-group"><button class="btn-sm btn-info" onclick="editarProcesso(${p.id})"><i class="fas fa-edit"></i></button><button class="btn-sm btn-danger" onclick="excluirProcesso(${p.id})"><i class="fas fa-trash"></i></button></td></tr>`;
     }).join('');
 }
 
@@ -684,29 +1068,55 @@ function editarProcesso(id) {
     let processo = processosTransferencia.find(p => p.id === id);
     if (!processo) return;
     processoEditando = processo;
-    document.getElementById('editProcessoStatus').value = processo.status;
-    document.getElementById('editProcessoObs').value = '';
-    document.getElementById('modalEditarProcesso').classList.add('show');
-    document.getElementById('confirmarEditarProcessoBtn').onclick = () => {
-        processo.status = document.getElementById('editProcessoStatus').value;
-        let novaObs = document.getElementById('editProcessoObs').value;
-        if (novaObs) { if (!processo.observacoes) processo.observacoes = []; processo.observacoes.push(`${new Date().toISOString().slice(0,10)}: ${novaObs}`); }
-        processo.dataAtualizacao = new Date().toISOString().slice(0,10);
-        salvar();
-        renderProcessos();
-        atualizarDashboard();
-        fecharModal('modalEditarProcesso');
-        toast(`✅ Processo ${processo.placa} atualizado!`);
-    };
+    const statusSelect = document.getElementById('editProcessoStatus');
+    if (statusSelect) statusSelect.value = processo.status;
+    const obsInput = document.getElementById('editProcessoObs');
+    if (obsInput) obsInput.value = '';
+    const modal = document.getElementById('modalEditarProcesso');
+    if (modal) modal.classList.add('show');
+    
+    const confirmBtn = document.getElementById('confirmarEditarProcessoBtn');
+    if (confirmBtn) {
+        confirmBtn.onclick = () => {
+            processo.status = document.getElementById('editProcessoStatus')?.value || processo.status;
+            let novaObs = document.getElementById('editProcessoObs')?.value;
+            if (novaObs) { 
+                if (!processo.observacoes) processo.observacoes = []; 
+                processo.observacoes.push(`${new Date().toISOString().slice(0,10)}: ${novaObs}`); 
+            }
+            processo.dataAtualizacao = new Date().toISOString().slice(0,10);
+            salvar();
+            renderProcessos();
+            atualizarDashboard();
+            fecharModal('modalEditarProcesso');
+            toast(`✅ Processo ${processo.placa} atualizado!`);
+        };
+    }
 }
 
 function excluirProcesso(id) {
-    if (confirm("Excluir este processo?")) { processosTransferencia = processosTransferencia.filter(p => p.id !== id); salvar(); renderProcessos(); atualizarDashboard(); toast("Processo removido!"); }
+    if (confirm("Excluir este processo?")) { 
+        processosTransferencia = processosTransferencia.filter(p => p.id !== id); 
+        salvar(); 
+        renderProcessos(); 
+        atualizarDashboard(); 
+        toast("Processo removido!"); 
+    }
 }
 
 // ==================== ESTOQUE ====================
-function getLinhaClass(dias) { if (dias <= 30) return 'dias-0-30'; if (dias <= 60) return 'dias-31-60'; if (dias <= 90) return 'dias-61-90'; return 'dias-90-mais'; }
-function getTipoBadge(tipo) { if (tipo === 'veiculo') return '<span class="badge badge-veiculo"><i class="fas fa-car"></i> Veículo</span>'; if (tipo === 'capacete') return '<span class="badge badge-peca"><i class="fas fa-motorcycle"></i> Capacete</span>'; return '<span class="badge badge-peca"><i class="fas fa-tools"></i> Peça</span>'; }
+function getLinhaClass(dias) { 
+    if (dias <= 30) return 'dias-0-30'; 
+    if (dias <= 60) return 'dias-31-60'; 
+    if (dias <= 90) return 'dias-61-90'; 
+    return 'dias-90-mais'; 
+}
+
+function getTipoBadge(tipo) { 
+    if (tipo === 'veiculo') return '<span class="badge badge-veiculo"><i class="fas fa-car"></i> Veículo</span>'; 
+    if (tipo === 'capacete') return '<span class="badge badge-peca"><i class="fas fa-motorcycle"></i> Capacete</span>'; 
+    return '<span class="badge badge-peca"><i class="fas fa-tools"></i> Peça</span>'; 
+}
 
 function atualizarResumoEstoque() {
     let emEstoque = itens.filter(i => i.status === 'Em estoque' && !i.vendido);
@@ -720,19 +1130,40 @@ function atualizarResumoEstoque() {
     let valorTotalVenda = emEstoque.reduce((s,i) => s + (i.valorVenda || i.precoVenda || 0) * (i.quantidade || 1), 0);
     let custoTotalReal = valorTotalCompra + valorTotalCustos;
     let lucroPotencial = valorTotalVenda - custoTotalReal;
-    document.getElementById('resumoEstoque').innerHTML = `<div class="resumo-card"><h4>Veículos</h4><div class="valor">${veiculos}</div></div><div class="resumo-card"><h4>Capacetes</h4><div class="valor">${capacetes}</div></div><div class="resumo-card"><h4>Peças</h4><div class="valor">${pecas}</div></div><div class="resumo-card"><h4>Média dias</h4><div class="valor">${media}</div></div><div class="resumo-card"><h4>Valor Compra</h4><div class="valor">R$ ${valorTotalCompra.toLocaleString()}</div></div><div class="resumo-card"><h4>Custos Adicionais</h4><div class="valor" style="color:#f59e0b">R$ ${valorTotalCustos.toLocaleString()}</div></div><div class="resumo-card"><h4>Custo Total</h4><div class="valor">R$ ${custoTotalReal.toLocaleString()}</div></div><div class="resumo-card"><h4>Lucro Potencial</h4><div class="valor" style="color:${lucroPotencial>=0?'green':'red'}">R$ ${lucroPotencial.toLocaleString()}</div></div>`;
+    const resumoDiv = document.getElementById('resumoEstoque');
+    if (resumoDiv) {
+        resumoDiv.innerHTML = `<div class="resumo-card"><h4>Veículos</h4><div class="valor">${veiculos}</div></div><div class="resumo-card"><h4>Capacetes</h4><div class="valor">${capacetes}</div></div><div class="resumo-card"><h4>Peças</h4><div class="valor">${pecas}</div></div><div class="resumo-card"><h4>Média dias</h4><div class="valor">${media}</div></div><div class="resumo-card"><h4>Valor Compra</h4><div class="valor">R$ ${valorTotalCompra.toLocaleString()}</div></div><div class="resumo-card"><h4>Custos Adicionais</h4><div class="valor" style="color:#f59e0b">R$ ${valorTotalCustos.toLocaleString()}</div></div><div class="resumo-card"><h4>Custo Total</h4><div class="valor">R$ ${custoTotalReal.toLocaleString()}</div></div><div class="resumo-card"><h4>Lucro Potencial</h4><div class="valor" style="color:${lucroPotencial>=0?'green':'red'}">R$ ${lucroPotencial.toLocaleString()}</div></div>`;
+    }
 }
 
 let filtrosItens = { busca: "", tipo: "", status: "" };
-function filtrarItens() { filtrosItens.busca = document.getElementById('filtroBuscaEstoque')?.value || ''; filtrosItens.tipo = document.getElementById('filtroTipoEstoque')?.value || ''; filtrosItens.status = document.getElementById('filtroStatusEstoque')?.value || ''; paginaAtual.itens = 1; renderizarItens(); }
+function filtrarItens() { 
+    filtrosItens.busca = document.getElementById('filtroBuscaEstoque')?.value || ''; 
+    filtrosItens.tipo = document.getElementById('filtroTipoEstoque')?.value || ''; 
+    filtrosItens.status = document.getElementById('filtroStatusEstoque')?.value || ''; 
+    paginaAtual.itens = 1; 
+    renderizarItens(); 
+}
 
 function renderizarItens() {
-    let filtrados = itens.filter(i => { let busca = !filtrosItens.busca || (i.placa && i.placa.includes(filtrosItens.busca.toUpperCase())) || (i.modelo && i.modelo.toLowerCase().includes(filtrosItens.busca.toLowerCase())) || (i.nomeItem && i.nomeItem.toLowerCase().includes(filtrosItens.busca.toLowerCase())); let tipo = !filtrosItens.tipo || i.tipo === filtrosItens.tipo; let status = !filtrosItens.status || i.status === filtrosItens.status; return busca && tipo && status; });
+    let filtrados = itens.filter(i => { 
+        let busca = !filtrosItens.busca || 
+            (i.placa && i.placa.toUpperCase().includes(filtrosItens.busca.toUpperCase())) || 
+            (i.modelo && i.modelo.toLowerCase().includes(filtrosItens.busca.toLowerCase())) || 
+            (i.nomeItem && i.nomeItem.toLowerCase().includes(filtrosItens.busca.toLowerCase()));
+        let tipo = !filtrosItens.tipo || i.tipo === filtrosItens.tipo; 
+        let status = !filtrosItens.status || i.status === filtrosItens.status; 
+        return busca && tipo && status; 
+    });
     let totalPaginas = Math.ceil(filtrados.length / 15);
     let start = (paginaAtual.itens - 1) * 15;
     let paginados = filtrados.slice(start, start + 15);
     let qtdAnexos = (veiculoId) => anexosEstoque.filter(a => a.veiculoId === veiculoId).length;
-    document.getElementById('itensBody').innerHTML = paginados.map(i => {
+    
+    const tbody = document.getElementById('itensBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = paginados.map(i => {
         let dias = diasEstoque(i.dataEntrada);
         let linhaClass = getLinhaClass(dias);
         let valorCompra = (i.tipo === 'veiculo' ? i.valorCompra : i.precoCompra) || 0;
@@ -749,46 +1180,94 @@ function renderizarItens() {
         let anexosCount = i.tipo === 'veiculo' ? qtdAnexos(i.id) : 0;
         return `<tr class="${linhaClass}"><td>${getTipoBadge(i.tipo)}</td><td><strong>${escapeHtml(nomeExibicao)}</strong></td><td><small>${escapeHtml(detalhe)}</small></td><td><strong>R$ ${valorCompra.toLocaleString()}</strong></td><td><span class="badge badge-atencao">R$ ${custosAdicionaisValor.toLocaleString()}</span></td><td><strong>R$ ${valorVenda.toLocaleString()}</strong></td><td><span class="badge ${statusClass}">${statusTexto}</span></td><td>${dias} dias</td><td style="color:${lucroColor}">R$ ${lucro.toLocaleString()}</td><td>${escapeHtml(observacao)}</td><td>${i.tipo === 'veiculo' ? `<button class="btn-sm btn-outline" onclick="abrirAnexosVeiculo(${i.id})"><i class="fas fa-paperclip"></i> (${anexosCount})</button>` : '-'}</td><td class="btn-group">${!i.vendido && i.status !== 'Vendido' ? `<button class="btn-sm btn-success" onclick="abrirVenda(${i.id})"><i class="fas fa-tag"></i> Vender</button>` : ''}${i.vendido ? `<button class="btn-sm btn-warning" onclick="desfazerVenda(${i.id})"><i class="fas fa-undo"></i> Desfazer</button>` : ''}${i.tipo === 'veiculo' ? `<button class="btn-sm btn-info" onclick="abrirCustosAdicionais(${i.id})"><i class="fas fa-coins"></i> Custos</button>` : ''}<button class="btn-sm btn-info" onclick="abrirEdicaoCompletaItem(${i.id})"><i class="fas fa-edit"></i> Editar</button><button class="btn-sm btn-danger" onclick="excluirItem(${i.id})"><i class="fas fa-trash"></i> Excluir</button></td></tr>`;
     }).join('');
-    document.getElementById('infoItens').innerHTML = `📊 Exibindo ${filtrados.length > 0 ? start+1 : 0} a ${Math.min(start+15, filtrados.length)} de ${filtrados.length} itens`;
-    // Paginação
-    let pagHtml = `<button onclick="paginarItens(1)" ${paginaAtual.itens === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>
+    
+    const infoSpan = document.getElementById('infoItens');
+    if (infoSpan) infoSpan.innerHTML = `📊 Exibindo ${filtrados.length > 0 ? start+1 : 0} a ${Math.min(start+15, filtrados.length)} de ${filtrados.length} itens`;
+    
+    const pagDiv = document.getElementById('paginacaoItens');
+    if (pagDiv) {
+        pagDiv.innerHTML = `<button onclick="paginarItens(1)" ${paginaAtual.itens === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>
                    <button onclick="paginarItens(${paginaAtual.itens-1})" ${paginaAtual.itens === 1 ? 'disabled' : ''}>Anterior</button>
                    <span>Página ${paginaAtual.itens} de ${totalPaginas || 1}</span>
                    <button onclick="paginarItens(${paginaAtual.itens+1})" ${paginaAtual.itens >= totalPaginas ? 'disabled' : ''}>Próximo</button>
                    <button onclick="paginarItens(${totalPaginas})" ${paginaAtual.itens >= totalPaginas ? 'disabled' : ''}><i class="fas fa-angle-double-right"></i></button>`;
-    document.getElementById('paginacaoItens').innerHTML = pagHtml;
+    }
     atualizarResumoEstoque();
 }
 
-function paginarItens(pagina) { paginaAtual.itens = pagina; renderizarItens(); }
+function paginarItens(pagina) { 
+    paginaAtual.itens = pagina; 
+    renderizarItens(); 
+}
 
 function adicionarItem() {
-    let tipo = document.getElementById('tipoItem').value;
-    let dataEntrada = document.getElementById('dataEntrada').value;
-    let fornecedorId = document.getElementById('fornecedorSelect').value;
+    let tipo = document.getElementById('tipoItem')?.value;
+    let dataEntrada = document.getElementById('dataEntrada')?.value;
+    let fornecedorId = document.getElementById('fornecedorSelect')?.value;
     let fornecedorNome = '';
-    if (fornecedorId) { let fornecedorObj = fornecedoresCompletos.find(f => f.id == fornecedorId); fornecedorNome = fornecedorObj ? fornecedorObj.nome : ''; }
-    let status = document.getElementById('statusItem').value;
-    let obs = document.getElementById('obsItem').value;
+    if (fornecedorId) { 
+        let fornecedorObj = fornecedoresCompletos.find(f => f.id == fornecedorId); 
+        fornecedorNome = fornecedorObj ? fornecedorObj.nome : ''; 
+    }
+    let status = document.getElementById('statusItem')?.value;
+    let obs = document.getElementById('obsItem')?.value;
     if (!dataEntrada) { toast("⚠️ Preencha a data de entrada!"); return; }
     if (tipo === 'veiculo') {
-        let placa = document.getElementById('placa').value.toUpperCase();
+        let placa = document.getElementById('placa')?.value.toUpperCase();
         if(!placa) { toast("⚠️ Preencha a placa!"); return; }
-        let valorCompra = parseFloat(document.getElementById('valorCompra').value) || 0;
-        let novoVeiculo = { id: Date.now(), tipo, dataEntrada, fornecedor: fornecedorNome, fornecedorId: fornecedorId || null, placa, renavam: document.getElementById('renavam').value, chassi: document.getElementById('chassi').value, marca: document.getElementById('marca').value, modelo: document.getElementById('modelo').value, ano: parseInt(document.getElementById('ano').value)||0, cor: document.getElementById('cor').value, km: parseInt(document.getElementById('km').value)||0, valorCompra: valorCompra, valorVenda: parseFloat(document.getElementById('valorVenda').value)||0, custosAdicionaisTotal: 0, status, obs, vendido: false, dadosVenda: null };
+        let valorCompra = parseFloat(document.getElementById('valorCompra')?.value) || 0;
+        let novoVeiculo = { 
+            id: Date.now(), 
+            tipo, 
+            dataEntrada, 
+            fornecedor: fornecedorNome, 
+            fornecedorId: fornecedorId || null, 
+            placa, 
+            renavam: document.getElementById('renavam')?.value || '', 
+            chassi: document.getElementById('chassi')?.value || '', 
+            marca: document.getElementById('marca')?.value || '', 
+            modelo: document.getElementById('modelo')?.value || '', 
+            ano: parseInt(document.getElementById('ano')?.value) || 0, 
+            cor: document.getElementById('cor')?.value || '', 
+            km: parseInt(document.getElementById('km')?.value) || 0, 
+            valorCompra: valorCompra, 
+            valorVenda: parseFloat(document.getElementById('valorVenda')?.value) || 0, 
+            custosAdicionaisTotal: 0, 
+            status, 
+            obs, 
+            vendido: false, 
+            dadosVenda: null 
+        };
         itens.push(novoVeiculo);
         toast(`✅ Veículo ${placa} cadastrado! Valor Compra: R$ ${valorCompra.toLocaleString()}`);
     } else {
-        let nomeItem = document.getElementById('nomeItem').value;
+        let nomeItem = document.getElementById('nomeItem')?.value;
         if(!nomeItem) { toast("⚠️ Preencha o nome do item!"); return; }
-        itens.push({ id: Date.now(), tipo, dataEntrada, fornecedor: fornecedorNome, fornecedorId: fornecedorId || null, nomeItem, quantidade: parseInt(document.getElementById('quantidade').value)||1, precoCompra: parseFloat(document.getElementById('precoCompraPeca').value)||0, precoVenda: parseFloat(document.getElementById('precoVendaPeca').value)||0, status, obs, vendido: false, dadosVenda: null });
+        let quantidade = parseInt(document.getElementById('quantidade')?.value) || 1;
+        let precoCompra = parseFloat(document.getElementById('precoCompraPeca')?.value) || 0;
+        let precoVenda = parseFloat(document.getElementById('precoVendaPeca')?.value) || 0;
+        itens.push({ 
+            id: Date.now(), 
+            tipo, 
+            dataEntrada, 
+            fornecedor: fornecedorNome, 
+            fornecedorId: fornecedorId || null, 
+            nomeItem, 
+            quantidade: quantidade, 
+            precoCompra: precoCompra, 
+            precoVenda: precoVenda, 
+            status, 
+            obs, 
+            vendido: false, 
+            dadosVenda: null 
+        });
         toast(`✅ ${nomeItem} cadastrado!`);
     }
     salvar(); 
-    renderizarItens(); 
-    atualizarDashboard();
-    document.getElementById('formularioEstoque').classList.remove('visible');
-    document.getElementById('toggleIconEstoque').classList.remove('rotated');
+    const formEstoque = document.getElementById('formularioEstoque');
+    const toggleIcon = document.getElementById('toggleIconEstoque');
+    if (formEstoque) formEstoque.classList.remove('visible');
+    if (toggleIcon) toggleIcon.classList.remove('rotated');
 }
 
 function abrirEdicaoCompletaItem(id) {
@@ -817,189 +1296,414 @@ function abrirEdicaoCompletaItem(id) {
     } else {
         html += `
         <div class="form-row"><div class="form-group"><label>Nome</label><input type="text" id="editNomeItem" value="${escapeHtml(item.nomeItem || '')}"></div>
-        <div class="form-group"><label>Quantidade</label><input type="number" id="editQuantidade" value="${item.quantidade || 0}"></div>
+        <div class="form-group"><label>Quantidade</label><input type="number" id="editQuantidade" value="${item.quantidade || 0}" min="0"></div>
         <div class="form-group"><label>Preço Compra</label><input type="number" id="editPrecoCompra" value="${item.precoCompra || 0}"></div>
         <div class="form-group"><label>Preço Venda</label><input type="number" id="editPrecoVenda" value="${item.precoVenda || 0}"></div></div>`;
     }
     html += `<div class="form-row"><div class="form-group"><label>Status</label><select id="editStatus"><option ${item.status === 'Em estoque' ? 'selected' : ''}>Em estoque</option><option ${item.status === 'Reservado' ? 'selected' : ''}>Reservado</option></select></div>
     <div class="form-group"><label>Observações</label><input type="text" id="editObs" value="${escapeHtml(item.obs || '')}"></div></div>`;
     
-    document.getElementById('editarItemForm').innerHTML = html;
-    document.getElementById('modalEditarEstoque').classList.add('show');
+    const formDiv = document.getElementById('editarItemForm');
+    if (formDiv) formDiv.innerHTML = html;
     
-    document.getElementById('confirmarEdicaoEstoqueBtn').onclick = () => {
-        item.dataEntrada = document.getElementById('editDataEntrada').value;
-        item.fornecedorId = document.getElementById('editFornecedorId').value;
-        let forn = fornecedoresCompletos.find(f => f.id == item.fornecedorId);
-        item.fornecedor = forn ? forn.nome : '';
-        if (item.tipo === 'veiculo') {
-            item.placa = document.getElementById('editPlaca').value.toUpperCase();
-            item.renavam = document.getElementById('editRenavam').value;
-            item.chassi = document.getElementById('editChassi').value;
-            item.marca = document.getElementById('editMarca').value;
-            item.modelo = document.getElementById('editModelo').value;
-            item.ano = parseInt(document.getElementById('editAno').value) || 0;
-            item.cor = document.getElementById('editCor').value;
-            item.km = parseInt(document.getElementById('editKm').value) || 0;
-            item.valorCompra = parseFloat(document.getElementById('editValorCompra').value) || 0;
-            item.valorVenda = parseFloat(document.getElementById('editValorVenda').value) || 0;
-        } else {
-            item.nomeItem = document.getElementById('editNomeItem').value;
-            item.quantidade = parseInt(document.getElementById('editQuantidade').value) || 0;
-            item.precoCompra = parseFloat(document.getElementById('editPrecoCompra').value) || 0;
-            item.precoVenda = parseFloat(document.getElementById('editPrecoVenda').value) || 0;
-            if (item.quantidade === 0 && !item.vendido) { item.vendido = true; item.status = "Vendido"; }
-            else if (item.quantidade > 0 && item.vendido) { item.vendido = false; item.status = "Em estoque"; }
-        }
-        item.status = document.getElementById('editStatus').value;
-        item.obs = document.getElementById('editObs').value;
-        salvar();
-        renderizarItens();
-        atualizarDashboard();
-        fecharModal('modalEditarEstoque');
-        toast("✏️ Item atualizado com sucesso!");
-    };
+    const modal = document.getElementById('modalEditarEstoque');
+    if (modal) modal.classList.add('show');
+    
+    const confirmBtn = document.getElementById('confirmarEdicaoEstoqueBtn');
+    if (confirmBtn) {
+        confirmBtn.onclick = () => {
+            item.dataEntrada = document.getElementById('editDataEntrada')?.value || item.dataEntrada;
+            item.fornecedorId = document.getElementById('editFornecedorId')?.value;
+            let forn = fornecedoresCompletos.find(f => f.id == item.fornecedorId);
+            item.fornecedor = forn ? forn.nome : '';
+            if (item.tipo === 'veiculo') {
+                item.placa = document.getElementById('editPlaca')?.value.toUpperCase() || item.placa;
+                item.renavam = document.getElementById('editRenavam')?.value || '';
+                item.chassi = document.getElementById('editChassi')?.value || '';
+                item.marca = document.getElementById('editMarca')?.value || '';
+                item.modelo = document.getElementById('editModelo')?.value || '';
+                item.ano = parseInt(document.getElementById('editAno')?.value) || 0;
+                item.cor = document.getElementById('editCor')?.value || '';
+                item.km = parseInt(document.getElementById('editKm')?.value) || 0;
+                item.valorCompra = parseFloat(document.getElementById('editValorCompra')?.value) || 0;
+                item.valorVenda = parseFloat(document.getElementById('editValorVenda')?.value) || 0;
+            } else {
+                item.nomeItem = document.getElementById('editNomeItem')?.value || '';
+                const novaQuantidade = parseInt(document.getElementById('editQuantidade')?.value) || 0;
+                const diffQuantidade = novaQuantidade - (item.quantidade || 0);
+                item.quantidade = novaQuantidade;
+                item.precoCompra = parseFloat(document.getElementById('editPrecoCompra')?.value) || 0;
+                item.precoVenda = parseFloat(document.getElementById('editPrecoVenda')?.value) || 0;
+                if (item.quantidade === 0 && !item.vendido) { 
+                    item.vendido = true; 
+                    item.status = "Vendido"; 
+                } else if (item.quantidade > 0 && item.vendido) { 
+                    item.vendido = false; 
+                    item.status = "Em estoque"; 
+                }
+            }
+            item.status = document.getElementById('editStatus')?.value || item.status;
+            item.obs = document.getElementById('editObs')?.value || '';
+            salvar();
+            fecharModal('modalEditarEstoque');
+            toast("✏️ Item atualizado com sucesso!");
+        };
+    }
 }
 
 function abrirVenda(id) {
     let item = itens.find(i => i.id === id);
     if(!item) return;
-    if (item.tipo !== 'veiculo' && item.quantidade === 0) { toast("⚠️ Item sem estoque!"); return; }
+    if (item.tipo !== 'veiculo' && (item.quantidade === 0 || item.quantidade < 1)) { toast("⚠️ Item sem estoque!"); return; }
     itemSelecionado = item;
-    document.getElementById('vendaData').value = new Date().toISOString().slice(0,10);
-    document.getElementById('vendaComprador').value = '';
-    document.getElementById('vendaValor').value = item.tipo === 'veiculo' ? item.valorVenda : item.precoVenda;
-    if (item.tipo !== 'veiculo') { document.getElementById('campoQuantidadeVenda').style.display = 'block'; document.getElementById('vendaQuantidade').value = 1; document.getElementById('vendaQuantidade').max = item.quantidade; }
-    else { document.getElementById('campoQuantidadeVenda').style.display = 'none'; }
+    const dataInput = document.getElementById('vendaData');
+    if (dataInput) dataInput.value = new Date().toISOString().slice(0,10);
+    const compradorInput = document.getElementById('vendaComprador');
+    if (compradorInput) compradorInput.value = '';
+    const valorInput = document.getElementById('vendaValor');
+    if (valorInput) valorInput.value = item.tipo === 'veiculo' ? item.valorVenda : item.precoVenda;
+    
+    const campoQuantidade = document.getElementById('campoQuantidadeVenda');
+    if (item.tipo !== 'veiculo') { 
+        if (campoQuantidade) campoQuantidade.style.display = 'block'; 
+        const qtdInput = document.getElementById('vendaQuantidade');
+        if (qtdInput) {
+            qtdInput.value = 1; 
+            qtdInput.max = item.quantidade;
+        }
+    } else { 
+        if (campoQuantidade) campoQuantidade.style.display = 'none'; 
+    }
     atualizarListaClientesDatalist();
-    document.getElementById('modalVenda').classList.add('show');
-    document.getElementById('confirmarVendaBtn').onclick = () => {
-        let valorVenda = parseFloat(document.getElementById('vendaValor').value) || (item.tipo === 'veiculo' ? item.valorVenda : item.precoVenda);
-        let comprador = document.getElementById('vendaComprador').value;
-        let dataVenda = document.getElementById('vendaData').value;
-        let formaPagamento = document.getElementById('vendaFormaPagamento').value;
-        if (!comprador) { toast("⚠️ Informe o comprador!"); return; }
-        item.dadosVenda = { dataVenda, comprador, valorVenda, formaPagamento, statusAnterior: item.status, quantidadeAnterior: item.quantidade };
-        let quantidadeVendida = 1;
-        if (item.tipo !== 'veiculo') {
-            quantidadeVendida = parseInt(document.getElementById('vendaQuantidade').value);
-            if (item.quantidade >= quantidadeVendida) { item.quantidade -= quantidadeVendida; if (item.quantidade === 0) { item.vendido = true; item.status = "Vendido"; } }
-            else { toast("⚠️ Quantidade insuficiente!"); return; }
-        } else { item.vendido = true; item.status = "Vendido"; }
-        item.valorVenda = valorVenda;
-        item.dataVenda = dataVenda;
-        item.comprador = comprador;
-        let novaEntrada = { id: Date.now(), tipo: "entrada", data: dataVenda, descricao: `Venda ${item.tipo === 'veiculo' ? item.modelo + ' (' + item.placa + ')' : item.nomeItem} - ${comprador}`, valorTotal: valorVenda, valorRecebido: 0, categoria: item.tipo === 'veiculo' ? "Venda Veículo" : "Venda Equipamento", formaPagamento: formaPagamento, status: "Pendente", vencimento: dataVenda, cliente: comprador, obs: `Venda automática do estoque. Item ID: ${item.id}` };
-        movimentacoes.push(novaEntrada);
-        salvar(); 
-        renderizarItens(); 
-        atualizarDashboard(); 
-        renderEntradas(); 
-        renderExtrato(); 
-        atualizarResultados();
-        fecharModal('modalVenda');
-        toast(`💰 Venda registrada! Lançamento financeiro criado com status "Pendente".`);
-    };
+    const modal = document.getElementById('modalVenda');
+    if (modal) modal.classList.add('show');
+    
+    const confirmBtn = document.getElementById('confirmarVendaBtn');
+    if (confirmBtn) {
+        confirmBtn.onclick = () => {
+            let valorVenda = parseFloat(document.getElementById('vendaValor')?.value) || (item.tipo === 'veiculo' ? item.valorVenda : item.precoVenda);
+            let comprador = document.getElementById('vendaComprador')?.value;
+            let dataVenda = document.getElementById('vendaData')?.value;
+            let formaPagamento = document.getElementById('vendaFormaPagamento')?.value;
+            if (!comprador) { toast("⚠️ Informe o comprador!"); return; }
+            item.dadosVenda = { dataVenda, comprador, valorVenda, formaPagamento, statusAnterior: item.status, quantidadeAnterior: item.quantidade };
+            let quantidadeVendida = 1;
+            if (item.tipo !== 'veiculo') {
+                quantidadeVendida = parseInt(document.getElementById('vendaQuantidade')?.value);
+                if (item.quantidade >= quantidadeVendida) { 
+                    item.quantidade -= quantidadeVendida; 
+                    if (item.quantidade === 0) { 
+                        item.vendido = true; 
+                        item.status = "Vendido"; 
+                    } 
+                } else { 
+                    toast("⚠️ Quantidade insuficiente!"); 
+                    return; 
+                }
+            } else { 
+                item.vendido = true; 
+                item.status = "Vendido"; 
+            }
+            item.valorVenda = valorVenda;
+            item.dataVenda = dataVenda;
+            item.comprador = comprador;
+            
+            // INTEGRAÇÃO FINANCEIRA: Criar entrada automática
+            const novaEntrada = { 
+                id: Date.now(), 
+                tipo: "entrada", 
+                data: dataVenda, 
+                descricao: `Venda ${item.tipo === 'veiculo' ? item.modelo + ' (' + item.placa + ')' : item.nomeItem} - ${comprador}`, 
+                valorTotal: valorVenda, 
+                valorRecebido: valorVenda, // Venda registrada como recebida integralmente
+                categoria: item.tipo === 'veiculo' ? "Venda Veículo" : "Venda Equipamento", 
+                formaPagamento: formaPagamento, 
+                status: "Pago Total", 
+                vencimento: dataVenda, 
+                cliente: comprador, 
+                obs: `Venda automática do estoque. Item ID: ${item.id}` 
+            };
+            movimentacoes.push(novaEntrada);
+            salvar();
+            fecharModal('modalVenda');
+            toast(`💰 Venda registrada! Lançamento financeiro criado em Entradas.`);
+        };
+    }
 }
 
 function desfazerVenda(id) {
     let item = itens.find(i => i.id === id);
     if (!item || !item.dadosVenda) { toast("⚠️ Não há dados da venda"); return; }
     if (confirm(`❓ Desfazer venda de ${item.tipo === 'veiculo' ? item.modelo : item.nomeItem}?`)) {
-        if (item.tipo === 'veiculo') { item.vendido = false; item.status = item.dadosVenda.statusAnterior || "Em estoque"; }
-        else { item.quantidade = item.dadosVenda.quantidadeAnterior; item.vendido = false; item.status = item.dadosVenda.statusAnterior || "Em estoque"; }
-        let entradaVinculada = movimentacoes.find(m => m.obs && m.obs.includes(`Item ID: ${item.id}`) && m.tipo === 'entrada');
-        if (entradaVinculada) movimentacoes = movimentacoes.filter(m => m.id !== entradaVinculada.id);
-        item.dadosVenda = null; item.comprador = null; item.dataVenda = null;
-        salvar(); 
-        renderizarItens(); 
-        atualizarDashboard(); 
-        renderEntradas(); 
-        renderExtrato(); 
-        atualizarResultados();
+        if (item.tipo === 'veiculo') { 
+            item.vendido = false; 
+            item.status = item.dadosVenda.statusAnterior || "Em estoque"; 
+        } else { 
+            item.quantidade = item.dadosVenda.quantidadeAnterior; 
+            item.vendido = false; 
+            item.status = item.dadosVenda.statusAnterior || "Em estoque"; 
+        }
+        let entradaVinculada = movimentacoes.findIndex(m => m.obs && m.obs.includes(`Item ID: ${item.id}`) && m.tipo === 'entrada');
+        if (entradaVinculada !== -1) {
+            movimentacoes.splice(entradaVinculada, 1);
+        }
+        item.dadosVenda = null; 
+        item.comprador = null; 
+        item.dataVenda = null;
+        salvar();
         toast("🔄 Venda desfeita!");
     }
 }
 
-function excluirItem(id) { if(confirm("Excluir permanentemente este item?")) { itens = itens.filter(i => i.id !== id); custosAdicionais = custosAdicionais.filter(c => c.veiculoId !== id); anexosEstoque = anexosEstoque.filter(a => a.veiculoId !== id); salvar(); renderizarItens(); atualizarDashboard(); toast("🗑️ Item removido!"); } }
+function excluirItem(id) { 
+    if(confirm("Excluir permanentemente este item?")) { 
+        itens = itens.filter(i => i.id !== id); 
+        custosAdicionais = custosAdicionais.filter(c => c.veiculoId !== id); 
+        anexosEstoque = anexosEstoque.filter(a => a.veiculoId !== id); 
+        salvar(); 
+        toast("🗑️ Item removido!"); 
+    } 
+}
 
 function exportarItens() {
-    let csv = "Tipo,Nome,Fornecedor,ValorCompra,CustosAdicionais,ValorVenda,Status,Dias,Observacoes\n" + itens.map(i => { let nome = i.tipo === 'veiculo' ? `${i.modelo} (${i.placa})` : i.nomeItem; let compra = i.tipo === 'veiculo' ? i.valorCompra : i.precoCompra; let custos = i.tipo === 'veiculo' ? (i.custosAdicionaisTotal || 0) : 0; let venda = i.tipo === 'veiculo' ? i.valorVenda : i.precoVenda; let dias = diasEstoque(i.dataEntrada); return `"${i.tipo}","${nome}","${i.fornecedor || ''}",${compra},${custos},${venda},"${i.status}",${dias},"${i.obs || ''}"`; }).join("\n");
+    let csv = "Tipo,Nome,Fornecedor,ValorCompra,CustosAdicionais,ValorVenda,Status,Dias,Observacoes\n" + 
+        itens.map(i => { 
+            let nome = i.tipo === 'veiculo' ? `${i.modelo} (${i.placa})` : i.nomeItem; 
+            let compra = i.tipo === 'veiculo' ? i.valorCompra : i.precoCompra; 
+            let custos = i.tipo === 'veiculo' ? (i.custosAdicionaisTotal || 0) : 0; 
+            let venda = i.tipo === 'veiculo' ? i.valorVenda : i.precoVenda; 
+            let dias = diasEstoque(i.dataEntrada); 
+            return `"${i.tipo}","${nome}","${i.fornecedor || ''}",${compra},${custos},${venda},"${i.status}",${dias},"${i.obs || ''}"`; 
+        }).join("\n");
     let blob = new Blob(["\uFEFF" + csv], {type: "text/csv;charset=utf-8;"});
-    let link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `estoque_carvalho_${new Date().toISOString().slice(0,10)}.csv`; link.click(); URL.revokeObjectURL(link.href);
+    let link = document.createElement("a"); 
+    link.href = URL.createObjectURL(blob); 
+    link.download = `estoque_carvalho_${new Date().toISOString().slice(0,10)}.csv`; 
+    link.click(); 
+    URL.revokeObjectURL(link.href);
     toast("📊 Estoque exportado com sucesso!");
+}
+
+// ==================== PDF ESTOQUE ====================
+async function gerarPDFEstoque() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    
+    doc.setFontSize(18);
+    doc.setTextColor(26, 95, 44);
+    doc.text("CARVALHO MOTORS - RELATÓRIO DE ESTOQUE", 14, 20);
+    doc.setFontSize(10);
+    doc.setTextColor(100, 116, 139);
+    doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 28);
+    
+    const dadosTabela = itens.map(i => {
+        const nome = i.tipo === 'veiculo' ? `${i.modelo} (${i.placa})` : i.nomeItem;
+        const compra = i.tipo === 'veiculo' ? i.valorCompra : i.precoCompra;
+        const venda = i.tipo === 'veiculo' ? i.valorVenda : i.precoVenda;
+        const custos = i.tipo === 'veiculo' ? (i.custosAdicionaisTotal || 0) : 0;
+        const lucro = i.vendido ? ((venda || 0) - (compra || 0) - custos) : 0;
+        return [
+            i.tipo === 'veiculo' ? 'Veículo' : (i.tipo === 'capacete' ? 'Capacete' : 'Peça'),
+            nome,
+            `R$ ${(compra || 0).toLocaleString()}`,
+            `R$ ${custos.toLocaleString()}`,
+            `R$ ${(venda || 0).toLocaleString()}`,
+            i.status,
+            i.vendido ? 'Vendido' : (i.status === 'Em estoque' ? 'Disponível' : 'Reservado'),
+            `R$ ${lucro.toLocaleString()}`
+        ];
+    });
+    
+    doc.autoTable({
+        head: [['Tipo', 'Item/Veículo', 'Compra', 'Custos', 'Venda', 'Status', 'Condição', 'Lucro']],
+        body: dadosTabela,
+        startY: 35,
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { fillColor: [26, 95, 44], textColor: 255, fontSize: 9 },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        margin: { left: 14, right: 14 }
+    });
+    
+    const totalCompra = itens.reduce((s, i) => s + (i.tipo === 'veiculo' ? i.valorCompra : i.precoCompra || 0), 0);
+    const totalCustos = custosAdicionais.reduce((s, c) => s + c.valor, 0);
+    const totalVenda = itens.reduce((s, i) => s + (i.tipo === 'veiculo' ? i.valorVenda : i.precoVenda || 0), 0);
+    const lucroTotal = totalVenda - totalCompra - totalCustos;
+    
+    const finalY = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Total de Itens: ${itens.length}`, 14, finalY);
+    doc.text(`Total Compra: R$ ${totalCompra.toLocaleString()}`, 14, finalY + 7);
+    doc.text(`Total Custos: R$ ${totalCustos.toLocaleString()}`, 14, finalY + 14);
+    doc.text(`Total Venda Potencial: R$ ${totalVenda.toLocaleString()}`, 14, finalY + 21);
+    doc.setTextColor(lucroTotal >= 0 ? 34 : 220, lucroTotal >= 0 ? 197 : 38, lucroTotal >= 0 ? 94 : 38);
+    doc.text(`Lucro Potencial Total: R$ ${lucroTotal.toLocaleString()}`, 14, finalY + 28);
+    
+    doc.save(`estoque_carvalho_${new Date().toISOString().slice(0,10)}.pdf`);
+    toast("📄 PDF do Estoque gerado com sucesso!");
+}
+
+// ==================== PDF SAÍDAS ====================
+async function gerarPDFSaidas() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    
+    doc.setFontSize(18);
+    doc.setTextColor(26, 95, 44);
+    doc.text("CARVALHO MOTORS - RELATÓRIO DE SAÍDAS", 14, 20);
+    doc.setFontSize(10);
+    doc.setTextColor(100, 116, 139);
+    doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 28);
+    
+    const saidas = movimentacoes.filter(m => m.tipo === 'saida');
+    const dadosTabela = saidas.map(s => [
+        new Date(s.data).toLocaleDateString('pt-BR'),
+        s.descricao,
+        s.categoria,
+        s.formaPagamento,
+        s.origem || '-',
+        `R$ ${s.valorTotal.toLocaleString()}`,
+        s.status
+    ]);
+    
+    doc.autoTable({
+        head: [['Data', 'Descrição', 'Categoria', 'Forma Pgto', 'Origem', 'Valor', 'Status']],
+        body: dadosTabela,
+        startY: 35,
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { fillColor: [26, 95, 44], textColor: 255, fontSize: 9 },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        margin: { left: 14, right: 14 }
+    });
+    
+    const totalSaidas = saidas.reduce((s, m) => s + m.valorTotal, 0);
+    const finalY = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Total de Saídas: ${saidas.length} registros`, 14, finalY);
+    doc.setTextColor(220, 38, 38);
+    doc.text(`Valor Total de Saídas: R$ ${totalSaidas.toLocaleString()}`, 14, finalY + 8);
+    
+    doc.save(`saidas_carvalho_${new Date().toISOString().slice(0,10)}.pdf`);
+    toast("📄 PDF de Saídas gerado com sucesso!");
 }
 
 // ==================== PESSOAS ====================
 let filtrosPessoas = { busca: "", tipo: "" };
-function filtrarPessoas() { filtrosPessoas.busca = document.getElementById('filtroBuscaPessoas')?.value || ''; filtrosPessoas.tipo = document.getElementById('filtroTipoPessoas')?.value || ''; paginaAtual.pessoas = 1; renderizarPessoas(); }
+function filtrarPessoas() { 
+    filtrosPessoas.busca = document.getElementById('filtroBuscaPessoas')?.value || ''; 
+    filtrosPessoas.tipo = document.getElementById('filtroTipoPessoas')?.value || ''; 
+    paginaAtual.pessoas = 1; 
+    renderizarPessoas(); 
+}
 
 function renderizarPessoas() {
-    let filtrados = pessoas.filter(p => { let busca = !filtrosPessoas.busca || p.nome.toLowerCase().includes(filtrosPessoas.busca.toLowerCase()) || (p.documento && p.documento.includes(filtrosPessoas.busca)) || (p.telefone && p.telefone.includes(filtrosPessoas.busca)); let tipo = !filtrosPessoas.tipo || p.tipo === filtrosPessoas.tipo; return busca && tipo; });
+    let filtrados = pessoas.filter(p => { 
+        let busca = !filtrosPessoas.busca || 
+            p.nome.toLowerCase().includes(filtrosPessoas.busca.toLowerCase()) || 
+            (p.documento && p.documento.includes(filtrosPessoas.busca)) || 
+            (p.telefone && p.telefone.includes(filtrosPessoas.busca)); 
+        let tipo = !filtrosPessoas.tipo || p.tipo === filtrosPessoas.tipo; 
+        return busca && tipo; 
+    });
     let totalPaginas = Math.ceil(filtrados.length / 15);
     let start = (paginaAtual.pessoas - 1) * 15;
     let paginados = filtrados.slice(start, start + 15);
-    document.getElementById('pessoasBody').innerHTML = paginados.map(p => `<tr><td>${p.tipo === 'cliente' ? '<span class="badge badge-cliente"><i class="fas fa-user"></i> Cliente</span>' : '<span class="badge badge-fornecedor"><i class="fas fa-truck"></i> Fornecedor</span>'}</td><td><strong>${escapeHtml(p.nome)}</strong></td><td>${escapeHtml(p.documento || '-')}</td><td>${escapeHtml(p.telefone || '-')}</td><td>${escapeHtml(p.email || '-')}</td><td>${escapeHtml(p.endereco || '-')} ${p.cep ? 'CEP: ' + escapeHtml(p.cep) : ''}</td><td>${escapeHtml(p.obs || '-')}</td><td class="btn-group"><button class="btn-sm btn-info" onclick="abrirEditarPessoa(${p.id})"><i class="fas fa-edit"></i></button><button class="btn-sm btn-danger" onclick="excluirPessoa(${p.id})"><i class="fas fa-trash"></i></button></td></tr>`).join('');
-    document.getElementById('infoPessoas').innerHTML = `Exibindo ${filtrados.length > 0 ? start+1 : 0} a ${Math.min(start+15, filtrados.length)} de ${filtrados.length} registros`;
-    let pagHtml = `<button onclick="paginarPessoas(1)" ${paginaAtual.pessoas === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>
+    
+    const tbody = document.getElementById('pessoasBody');
+    if (tbody) {
+        tbody.innerHTML = paginados.map(p => `<tr>
+            <td>${p.tipo === 'cliente' ? '<span class="badge badge-cliente"><i class="fas fa-user"></i> Cliente</span>' : '<span class="badge badge-fornecedor"><i class="fas fa-truck"></i> Fornecedor</span>'}</td>
+            <td><strong>${escapeHtml(p.nome)}</strong></td>
+            <td>${escapeHtml(p.documento || '-')}</td>
+            <td>${escapeHtml(p.telefone || '-')}</td>
+            <td>${escapeHtml(p.email || '-')}</td>
+            <td>${escapeHtml(p.endereco || '-')} ${p.cep ? 'CEP: ' + escapeHtml(p.cep) : ''}</td>
+            <td>${escapeHtml(p.obs || '-')}</td>
+            <td class="btn-group"><button class="btn-sm btn-info" onclick="abrirEditarPessoa(${p.id})"><i class="fas fa-edit"></i></button><button class="btn-sm btn-danger" onclick="excluirPessoa(${p.id})"><i class="fas fa-trash"></i></button></td>
+        </tr>`).join('');
+    }
+    
+    const infoSpan = document.getElementById('infoPessoas');
+    if (infoSpan) infoSpan.innerHTML = `Exibindo ${filtrados.length > 0 ? start+1 : 0} a ${Math.min(start+15, filtrados.length)} de ${filtrados.length} registros`;
+    
+    const pagDiv = document.getElementById('paginacaoPessoas');
+    if (pagDiv) {
+        pagDiv.innerHTML = `<button onclick="paginarPessoas(1)" ${paginaAtual.pessoas === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>
                    <button onclick="paginarPessoas(${paginaAtual.pessoas-1})" ${paginaAtual.pessoas === 1 ? 'disabled' : ''}>Anterior</button>
                    <span>Página ${paginaAtual.pessoas} de ${totalPaginas || 1}</span>
                    <button onclick="paginarPessoas(${paginaAtual.pessoas+1})" ${paginaAtual.pessoas >= totalPaginas ? 'disabled' : ''}>Próximo</button>
                    <button onclick="paginarPessoas(${totalPaginas})" ${paginaAtual.pessoas >= totalPaginas ? 'disabled' : ''}><i class="fas fa-angle-double-right"></i></button>`;
-    document.getElementById('paginacaoPessoas').innerHTML = pagHtml;
+    }
 }
 
-function paginarPessoas(pagina) { paginaAtual.pessoas = pagina; renderizarPessoas(); }
+function paginarPessoas(pagina) { 
+    paginaAtual.pessoas = pagina; 
+    renderizarPessoas(); 
+}
 
 function adicionarPessoa() { 
-    let nome = document.getElementById('nomePessoa').value; 
+    let nome = document.getElementById('nomePessoa')?.value; 
     if(!nome) return toast("⚠️ Preencha o nome!"); 
     pessoas.push({
         id: Date.now(), 
-        tipo: document.getElementById('tipoPessoa').value, 
+        tipo: document.getElementById('tipoPessoa')?.value || 'cliente', 
         nome, 
-        documento: document.getElementById('documentoPessoa').value, 
-        telefone: document.getElementById('telefonePessoa').value, 
-        email: document.getElementById('emailPessoa').value, 
-        endereco: document.getElementById('enderecoPessoa').value,
-        cep: document.getElementById('cepPessoa').value,
-        obs: document.getElementById('obsPessoa').value
+        documento: document.getElementById('documentoPessoa')?.value || '', 
+        telefone: document.getElementById('telefonePessoa')?.value || '', 
+        email: document.getElementById('emailPessoa')?.value || '', 
+        endereco: document.getElementById('enderecoPessoa')?.value || '',
+        cep: document.getElementById('cepPessoa')?.value || '',
+        obs: document.getElementById('obsPessoa')?.value || ''
     }); 
     salvar(); 
-    renderizarPessoas(); 
-    atualizarListaClientesDatalist();
     toast("✅ Pessoa cadastrada com sucesso!"); 
-    document.getElementById('formularioPessoas').classList.remove('visible');
-    document.getElementById('toggleIconPessoas').classList.remove('rotated');
+    const formPessoas = document.getElementById('formularioPessoas');
+    const toggleIcon = document.getElementById('toggleIconPessoas');
+    if (formPessoas) formPessoas.classList.remove('visible');
+    if (toggleIcon) toggleIcon.classList.remove('rotated');
 }
 
 function abrirEditarPessoa(id) { 
     let p = pessoas.find(p => p.id === id); 
     if(!p) return; 
-    document.getElementById('editTipoPessoa').value = p.tipo; 
-    document.getElementById('editNomePessoa').value = p.nome; 
-    document.getElementById('editDocumentoPessoa').value = p.documento || ''; 
-    document.getElementById('editTelefonePessoa').value = p.telefone || ''; 
-    document.getElementById('editEmailPessoa').value = p.email || ''; 
-    document.getElementById('editEnderecoPessoa').value = p.endereco || ''; 
-    document.getElementById('editCepPessoa').value = p.cep || '';
-    document.getElementById('editObsPessoa').value = p.obs || ''; 
-    document.getElementById('modalEditarPessoa').classList.add('show'); 
-    document.getElementById('confirmarEdicaoPessoaBtn').onclick = () => { 
-        p.tipo = document.getElementById('editTipoPessoa').value; 
-        p.nome = document.getElementById('editNomePessoa').value; 
-        p.documento = document.getElementById('editDocumentoPessoa').value; 
-        p.telefone = document.getElementById('editTelefonePessoa').value; 
-        p.email = document.getElementById('editEmailPessoa').value; 
-        p.endereco = document.getElementById('editEnderecoPessoa').value; 
-        p.cep = document.getElementById('editCepPessoa').value;
-        p.obs = document.getElementById('editObsPessoa').value; 
-        salvar(); 
-        renderizarPessoas(); 
-        atualizarListaClientesDatalist();
-        fecharModal('modalEditarPessoa'); 
-        toast("✅ Pessoa atualizada com sucesso!"); 
-    }; 
+    const tipoSelect = document.getElementById('editTipoPessoa');
+    const nomeInput = document.getElementById('editNomePessoa');
+    const documentoInput = document.getElementById('editDocumentoPessoa');
+    const telefoneInput = document.getElementById('editTelefonePessoa');
+    const emailInput = document.getElementById('editEmailPessoa');
+    const enderecoInput = document.getElementById('editEnderecoPessoa');
+    const cepInput = document.getElementById('editCepPessoa');
+    const obsInput = document.getElementById('editObsPessoa');
+    
+    if (tipoSelect) tipoSelect.value = p.tipo;
+    if (nomeInput) nomeInput.value = p.nome;
+    if (documentoInput) documentoInput.value = p.documento || '';
+    if (telefoneInput) telefoneInput.value = p.telefone || '';
+    if (emailInput) emailInput.value = p.email || '';
+    if (enderecoInput) enderecoInput.value = p.endereco || '';
+    if (cepInput) cepInput.value = p.cep || '';
+    if (obsInput) obsInput.value = p.obs || '';
+    
+    const modal = document.getElementById('modalEditarPessoa');
+    if (modal) modal.classList.add('show');
+    
+    const confirmBtn = document.getElementById('confirmarEdicaoPessoaBtn');
+    if (confirmBtn) {
+        confirmBtn.onclick = () => { 
+            p.tipo = document.getElementById('editTipoPessoa')?.value || p.tipo; 
+            p.nome = document.getElementById('editNomePessoa')?.value || p.nome; 
+            p.documento = document.getElementById('editDocumentoPessoa')?.value || ''; 
+            p.telefone = document.getElementById('editTelefonePessoa')?.value || ''; 
+            p.email = document.getElementById('editEmailPessoa')?.value || ''; 
+            p.endereco = document.getElementById('editEnderecoPessoa')?.value || ''; 
+            p.cep = document.getElementById('editCepPessoa')?.value || '';
+            p.obs = document.getElementById('editObsPessoa')?.value || ''; 
+            salvar(); 
+            fecharModal('modalEditarPessoa'); 
+            toast("✅ Pessoa atualizada com sucesso!"); 
+        };
+    }
 }
 
 function excluirPessoa(id) { 
@@ -1012,18 +1716,17 @@ function excluirPessoa(id) {
         if (movimentacoes.some(m => m.cliente === p.nome)) temDependencia = true;
     }
     let msg = `⚠️ Tem certeza que deseja excluir ${p.nome}?`;
-    if (temDependencia) msg += `\n\nATENÇÃO: Existem registros (itens de estoque ou movimentações) vinculados a esta pessoa. A exclusão poderá causar inconsistências. Deseja continuar?`;
+    if (temDependencia) msg += `\n\nATENÇÃO: Existem registros vinculados a esta pessoa. Deseja continuar?`;
     if (confirm(msg)) { 
         pessoas = pessoas.filter(p => p.id !== id); 
         salvar(); 
-        renderizarPessoas(); 
-        atualizarListaClientesDatalist();
         toast("🗑️ Pessoa removida!"); 
     } 
 }
 
 function exportarPessoas() { 
-    let csv = "Tipo,Nome,Documento,Telefone,Email,Endereco,CEP,Observacoes\n" + pessoas.map(p => `"${p.tipo}","${p.nome}","${p.documento || ''}","${p.telefone || ''}","${p.email || ''}","${p.endereco || ''}","${p.cep || ''}","${p.obs || ''}"`).join("\n"); 
+    let csv = "Tipo,Nome,Documento,Telefone,Email,Endereco,CEP,Observacoes\n" + 
+        pessoas.map(p => `"${p.tipo}","${p.nome}","${p.documento || ''}","${p.telefone || ''}","${p.email || ''}","${p.endereco || ''}","${p.cep || ''}","${p.obs || ''}"`).join("\n"); 
     let blob = new Blob(["\uFEFF" + csv], {type: "text/csv;charset=utf-8;"});
     let link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -1042,22 +1745,26 @@ function atualizarListaClientesDatalist() {
 
 // ==================== FINANCEIRO ====================
 function registrarEntrada() { 
-    if(!document.getElementById('entradaDesc').value) return toast("⚠️ Preencha a descrição"); 
-    let valorTotal = parseFloat(document.getElementById('entradaValor').value) || 0; 
-    let valorRecebido = parseFloat(document.getElementById('entradaRecebido').value) || 0; 
-    let status = document.getElementById('entradaStatus').value; 
+    if(!document.getElementById('entradaDesc')?.value) return toast("⚠️ Preencha a descrição"); 
+    let valorTotal = parseFloat(document.getElementById('entradaValor')?.value) || 0; 
+    let valorRecebido = parseFloat(document.getElementById('entradaRecebido')?.value) || 0; 
+    let status = document.getElementById('entradaStatus')?.value || 'Pendente'; 
     if(status === 'Pago Total') valorRecebido = valorTotal; 
     movimentacoes.push({
-        id: Date.now(), tipo:"entrada", data: document.getElementById('entradaData').value, 
-        descricao: document.getElementById('entradaDesc').value, valorTotal, valorRecebido, 
-        categoria: document.getElementById('entradaCategoria').value, 
-        formaPagamento: document.getElementById('entradaFormaPagamento').value, status, 
-        vencimento: document.getElementById('entradaVencimiento').value, 
-        cliente: document.getElementById('entradaCliente').value, obs: document.getElementById('entradaObs').value
+        id: Date.now(), 
+        tipo:"entrada", 
+        data: document.getElementById('entradaData')?.value || new Date().toISOString().slice(0,10), 
+        descricao: document.getElementById('entradaDesc')?.value, 
+        valorTotal, 
+        valorRecebido, 
+        categoria: document.getElementById('entradaCategoria')?.value, 
+        formaPagamento: document.getElementById('entradaFormaPagamento')?.value, 
+        status, 
+        vencimento: document.getElementById('entradaVencimiento')?.value, 
+        cliente: document.getElementById('entradaCliente')?.value, 
+        obs: document.getElementById('entradaObs')?.value
     }); 
     salvar(); 
-    renderEntradas(); 
-    atualizarDashboard(); 
     toast("✅ Entrada registrada com sucesso!"); 
 }
 
@@ -1074,7 +1781,10 @@ function renderEntradas() {
     let totalPaginas = Math.ceil(entradas.length / 15);
     let start = (paginaAtual.entradas - 1) * 15; 
     let paginados = entradas.slice(start, start + 15); 
-    document.getElementById('entradasBody').innerHTML = paginados.map(m => `
+    
+    const tbody = document.getElementById('entradasBody');
+    if (tbody) {
+        tbody.innerHTML = paginados.map(m => `
         <tr>
             <td>${new Date(m.data).toLocaleDateString()}</td>
             <td>${escapeHtml(m.descricao)}</td>
@@ -1089,81 +1799,99 @@ function renderEntradas() {
                 <button class="btn-sm btn-warning" onclick="editarEntrada(${m.id})"><i class="fas fa-edit"></i></button>
                 <button class="btn-sm btn-danger" onclick="excluirEntrada(${m.id})"><i class="fas fa-trash"></i></button>
                 ${m.status !== 'Pago Total' ? `<button class="btn-sm btn-success" onclick="receberPagamento(${m.id})">💰</button>` : ''}
-            </td>
-        </tr>
-    `).join(''); 
-    document.getElementById('infoEntradas').innerHTML = `Exibindo ${start+1} a ${Math.min(start+15, entradas.length)} de ${entradas.length}`; 
-    let pagHtml = `<button onclick="paginarEntradas(1)" ${paginaAtual.entradas === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>
+              </td>
+        </tr>`).join('');
+    }
+    
+    const infoSpan = document.getElementById('infoEntradas');
+    if (infoSpan) infoSpan.innerHTML = `Exibindo ${start+1} a ${Math.min(start+15, entradas.length)} de ${entradas.length}`; 
+    
+    const pagDiv = document.getElementById('paginacaoEntradas');
+    if (pagDiv) {
+        pagDiv.innerHTML = `<button onclick="paginarEntradas(1)" ${paginaAtual.entradas === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>
                    <button onclick="paginarEntradas(${paginaAtual.entradas-1})" ${paginaAtual.entradas === 1 ? 'disabled' : ''}>Anterior</button>
                    <span>Página ${paginaAtual.entradas} de ${totalPaginas || 1}</span>
                    <button onclick="paginarEntradas(${paginaAtual.entradas+1})" ${paginaAtual.entradas >= totalPaginas ? 'disabled' : ''}>Próximo</button>
                    <button onclick="paginarEntradas(${totalPaginas})" ${paginaAtual.entradas >= totalPaginas ? 'disabled' : ''}><i class="fas fa-angle-double-right"></i></button>`;
-    document.getElementById('paginacaoEntradas').innerHTML = pagHtml;
+    }
 }
 
-function paginarEntradas(pagina) { paginaAtual.entradas = pagina; renderEntradas(); }
-function filtrarEntradas() { paginaAtual.entradas = 1; renderEntradas(); }
+function paginarEntradas(pagina) { 
+    paginaAtual.entradas = pagina; 
+    renderEntradas(); 
+}
+
+function filtrarEntradas() { 
+    paginaAtual.entradas = 1; 
+    renderEntradas(); 
+}
 
 function editarEntrada(id) { 
     let item = movimentacoes.find(m => m.id === id); 
-    document.getElementById('editarEntradaForm').innerHTML = `
-        <div class="form-group"><label>Data</label><input type="date" id="editData" value="${item.data}"></div>
-        <div class="form-group"><label>Descrição</label><input type="text" id="editDesc" value="${escapeHtml(item.descricao)}"></div>
-        <div class="form-group"><label>Valor Total</label><input type="number" id="editValorTotal" value="${item.valorTotal}"></div>
-        <div class="form-group"><label>Status</label>
-            <select id="editStatus">
-                <option ${item.status==='Pago Total'?'selected':''}>Pago Total</option>
-                <option ${item.status==='Pago Parcial'?'selected':''}>Pago Parcial</option>
-                <option ${item.status==='Pendente'?'selected':''}>Pendente</option>
-            </select>
-        </div>
-    `; 
-    document.getElementById('modalEditarEntrada').classList.add('show'); 
-    document.getElementById('confirmarEditarEntradaBtn').onclick = () => { 
-        item.data = document.getElementById('editData').value; 
-        item.descricao = document.getElementById('editDesc').value; 
-        item.valorTotal = parseFloat(document.getElementById('editValorTotal').value) || 0; 
-        item.status = document.getElementById('editStatus').value; 
-        if (item.status === 'Pago Total') item.valorRecebido = item.valorTotal; 
-        salvar(); 
-        renderEntradas(); 
-        renderExtrato(); 
-        atualizarResultados(); 
-        atualizarDashboard(); 
-        fecharModal('modalEditarEntrada'); 
-        toast("✅ Entrada editada com sucesso!"); 
-    }; 
+    if (!item) return;
+    entradaEditando = item;
+    
+    const formDiv = document.getElementById('editarEntradaForm');
+    if (formDiv) {
+        formDiv.innerHTML = `
+            <div class="form-group"><label>Data</label><input type="date" id="editEntradaData" value="${item.data}"></div>
+            <div class="form-group"><label>Descrição</label><input type="text" id="editEntradaDesc" value="${escapeHtml(item.descricao)}"></div>
+            <div class="form-group"><label>Valor Total</label><input type="number" id="editEntradaValorTotal" value="${item.valorTotal}"></div>
+            <div class="form-group"><label>Valor Recebido</label><input type="number" id="editEntradaValorRecebido" value="${item.valorRecebido || 0}"></div>
+            <div class="form-group"><label>Status</label>
+                <select id="editEntradaStatus">
+                    <option ${item.status==='Pago Total'?'selected':''}>Pago Total</option>
+                    <option ${item.status==='Pago Parcial'?'selected':''}>Pago Parcial</option>
+                    <option ${item.status==='Pendente'?'selected':''}>Pendente</option>
+                </select>
+            </div>
+        `;
+    }
+    
+    const modal = document.getElementById('modalEditarEntrada');
+    if (modal) modal.classList.add('show');
+    
+    const confirmBtn = document.getElementById('confirmarEditarEntradaBtn');
+    if (confirmBtn) {
+        confirmBtn.onclick = () => { 
+            item.data = document.getElementById('editEntradaData')?.value || item.data; 
+            item.descricao = document.getElementById('editEntradaDesc')?.value || item.descricao; 
+            item.valorTotal = parseFloat(document.getElementById('editEntradaValorTotal')?.value) || 0; 
+            item.valorRecebido = parseFloat(document.getElementById('editEntradaValorRecebido')?.value) || 0;
+            item.status = document.getElementById('editEntradaStatus')?.value || item.status; 
+            if (item.status === 'Pago Total') item.valorRecebido = item.valorTotal; 
+            salvar(); 
+            fecharModal('modalEditarEntrada'); 
+            toast("✅ Entrada editada com sucesso!"); 
+        };
+    }
 }
 
 function excluirEntrada(id) { 
     if(confirm("❓ Excluir esta entrada permanentemente?")) { 
         movimentacoes = movimentacoes.filter(m => m.id !== id); 
         salvar(); 
-        renderEntradas(); 
-        renderExtrato(); 
-        atualizarResultados(); 
-        atualizarDashboard(); 
         toast("🗑️ Entrada excluída!"); 
     } 
 }
 
 function registrarSaida() { 
-    if(!document.getElementById('saidaDesc').value) return toast("⚠️ Preencha a descrição"); 
+    if(!document.getElementById('saidaDesc')?.value) return toast("⚠️ Preencha a descrição"); 
     movimentacoes.push({
-        id: Date.now(), tipo:"saida", data: document.getElementById('saidaData').value, 
-        descricao: document.getElementById('saidaDesc').value, 
-        valorTotal: parseFloat(document.getElementById('saidaValor').value)||0, 
-        categoria: document.getElementById('saidaCategoria').value, 
-        formaPagamento: document.getElementById('saidaFormaPagamento').value, 
-        origem: document.getElementById('saidaOrigem').value, 
-        status: document.getElementById('saidaStatus').value, 
-        vencimento: document.getElementById('saidaVencimento').value, 
-        fornecedor: document.getElementById('saidaFornecedor').value, 
-        obs: document.getElementById('saidaObs').value
+        id: Date.now(), 
+        tipo:"saida", 
+        data: document.getElementById('saidaData')?.value || new Date().toISOString().slice(0,10), 
+        descricao: document.getElementById('saidaDesc')?.value, 
+        valorTotal: parseFloat(document.getElementById('saidaValor')?.value)||0, 
+        categoria: document.getElementById('saidaCategoria')?.value, 
+        formaPagamento: document.getElementById('saidaFormaPagamento')?.value, 
+        origem: document.getElementById('saidaOrigem')?.value, 
+        status: document.getElementById('saidaStatus')?.value, 
+        vencimento: document.getElementById('saidaVencimento')?.value, 
+        fornecedor: document.getElementById('saidaFornecedor')?.value, 
+        obs: document.getElementById('saidaObs')?.value
     }); 
     salvar(); 
-    renderSaidas(); 
-    atualizarDashboard(); 
     toast("✅ Saída registrada com sucesso!"); 
 }
 
@@ -1180,7 +1908,10 @@ function renderSaidas() {
     let totalPaginas = Math.ceil(saidas.length / 15);
     let start = (paginaAtual.saidas - 1) * 15; 
     let paginados = saidas.slice(start, start + 15); 
-    document.getElementById('saidasBody').innerHTML = paginados.map(m => `
+    
+    const tbody = document.getElementById('saidasBody');
+    if (tbody) {
+        tbody.innerHTML = paginados.map(m => `
         <tr>
             <td>${new Date(m.data).toLocaleDateString()}</td>
             <td>${escapeHtml(m.descricao)}</td>
@@ -1194,95 +1925,114 @@ function renderSaidas() {
                 <button class="btn-sm btn-warning" onclick="editarSaida(${m.id})"><i class="fas fa-edit"></i></button>
                 <button class="btn-sm btn-danger" onclick="excluirSaida(${m.id})"><i class="fas fa-trash"></i></button>
                 ${m.status !== 'Pago' ? `<button class="btn-sm btn-success" onclick="pagarConta(${m.id})">💰</button>` : ''}
-             </td>
-        </tr>
-    `).join(''); 
-    document.getElementById('infoSaidas').innerHTML = `Exibindo ${start+1} a ${Math.min(start+15, saidas.length)} de ${saidas.length}`; 
-    let pagHtml = `<button onclick="paginarSaidas(1)" ${paginaAtual.saidas === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>
+              </td>
+        </tr>`).join('');
+    }
+    
+    const infoSpan = document.getElementById('infoSaidas');
+    if (infoSpan) infoSpan.innerHTML = `Exibindo ${start+1} a ${Math.min(start+15, saidas.length)} de ${saidas.length}`; 
+    
+    const pagDiv = document.getElementById('paginacaoSaidas');
+    if (pagDiv) {
+        pagDiv.innerHTML = `<button onclick="paginarSaidas(1)" ${paginaAtual.saidas === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>
                    <button onclick="paginarSaidas(${paginaAtual.saidas-1})" ${paginaAtual.saidas === 1 ? 'disabled' : ''}>Anterior</button>
                    <span>Página ${paginaAtual.saidas} de ${totalPaginas || 1}</span>
                    <button onclick="paginarSaidas(${paginaAtual.saidas+1})" ${paginaAtual.saidas >= totalPaginas ? 'disabled' : ''}>Próximo</button>
                    <button onclick="paginarSaidas(${totalPaginas})" ${paginaAtual.saidas >= totalPaginas ? 'disabled' : ''}><i class="fas fa-angle-double-right"></i></button>`;
-    document.getElementById('paginacaoSaidas').innerHTML = pagHtml;
+    }
 }
 
-function paginarSaidas(pagina) { paginaAtual.saidas = pagina; renderSaidas(); }
-function filtrarSaidas() { paginaAtual.saidas = 1; renderSaidas(); }
+function paginarSaidas(pagina) { 
+    paginaAtual.saidas = pagina; 
+    renderSaidas(); 
+}
+
+function filtrarSaidas() { 
+    paginaAtual.saidas = 1; 
+    renderSaidas(); 
+}
 
 function editarSaida(id) { 
     let item = movimentacoes.find(m => m.id === id); 
-    document.getElementById('editarSaidaForm').innerHTML = `
-        <div class="form-group"><label>Data</label><input type="date" id="editSaidaData" value="${item.data}"></div>
-        <div class="form-group"><label>Descrição</label><input type="text" id="editSaidaDesc" value="${escapeHtml(item.descricao)}"></div>
-        <div class="form-group"><label>Valor</label><input type="number" id="editSaidaValor" value="${item.valorTotal}"></div>
-        <div class="form-group"><label>Status</label>
-            <select id="editSaidaStatus">
-                <option ${item.status==='Pago'?'selected':''}>Pago</option>
-                <option ${item.status==='Pendente'?'selected':''}>Pendente</option>
-                <option ${item.status==='Vencido'?'selected':''}>Vencido</option>
-            </select>
-        </div>
-    `; 
-    document.getElementById('modalEditarSaida').classList.add('show'); 
-    document.getElementById('confirmarEditarSaidaBtn').onclick = () => { 
-        item.data = document.getElementById('editSaidaData').value; 
-        item.descricao = document.getElementById('editSaidaDesc').value; 
-        item.valorTotal = parseFloat(document.getElementById('editSaidaValor').value) || 0; 
-        item.status = document.getElementById('editSaidaStatus').value; 
-        salvar(); 
-        renderSaidas(); 
-        renderExtrato(); 
-        atualizarResultados(); 
-        atualizarDashboard(); 
-        fecharModal('modalEditarSaida'); 
-        toast("✅ Saída editada com sucesso!"); 
-    }; 
+    if (!item) return;
+    saidaEditando = item;
+    
+    const formDiv = document.getElementById('editarSaidaForm');
+    if (formDiv) {
+        formDiv.innerHTML = `
+            <div class="form-group"><label>Data</label><input type="date" id="editSaidaData" value="${item.data}"></div>
+            <div class="form-group"><label>Descrição</label><input type="text" id="editSaidaDesc" value="${escapeHtml(item.descricao)}"></div>
+            <div class="form-group"><label>Valor</label><input type="number" id="editSaidaValor" value="${item.valorTotal}"></div>
+            <div class="form-group"><label>Status</label>
+                <select id="editSaidaStatus">
+                    <option ${item.status==='Pago'?'selected':''}>Pago</option>
+                    <option ${item.status==='Pendente'?'selected':''}>Pendente</option>
+                    <option ${item.status==='Vencido'?'selected':''}>Vencido</option>
+                </select>
+            </div>
+        `;
+    }
+    
+    const modal = document.getElementById('modalEditarSaida');
+    if (modal) modal.classList.add('show');
+    
+    const confirmBtn = document.getElementById('confirmarEditarSaidaBtn');
+    if (confirmBtn) {
+        confirmBtn.onclick = () => { 
+            item.data = document.getElementById('editSaidaData')?.value || item.data; 
+            item.descricao = document.getElementById('editSaidaDesc')?.value || item.descricao; 
+            item.valorTotal = parseFloat(document.getElementById('editSaidaValor')?.value) || 0; 
+            item.status = document.getElementById('editSaidaStatus')?.value || item.status; 
+            salvar(); 
+            fecharModal('modalEditarSaida'); 
+            toast("✅ Saída editada com sucesso!"); 
+        };
+    }
 }
 
 function excluirSaida(id) { 
     if(confirm("❓ Excluir esta saída permanentemente?")) { 
         movimentacoes = movimentacoes.filter(m => m.id !== id); 
         salvar(); 
-        renderSaidas(); 
-        renderExtrato(); 
-        atualizarResultados(); 
-        atualizarDashboard(); 
         toast("🗑️ Saída excluída!"); 
     } 
 }
 
 function pagarConta(id) { 
     let item = movimentacoes.find(m => m.id === id); 
-    item.status = "Pago"; 
-    salvar(); 
-    renderSaidas(); 
-    renderExtrato(); 
-    atualizarResultados(); 
-    atualizarDashboard(); 
-    toast("✅ Conta paga com sucesso!"); 
+    if (item) {
+        item.status = "Pago"; 
+        salvar(); 
+        toast("✅ Conta paga com sucesso!"); 
+    }
 }
 
 function receberPagamento(id) { 
     pagamentoItem = movimentacoes.find(m => m.id === id); 
-    document.getElementById('pagamentoValor').value = pagamentoItem.valorTotal - (pagamentoItem.valorRecebido || 0); 
-    document.getElementById('modalPagamento').classList.add('show'); 
-    document.getElementById('confirmarPagamentoBtn').onclick = () => { 
-        let valor = parseFloat(document.getElementById('pagamentoValor').value) || 0; 
-        pagamentoItem.valorRecebido = (pagamentoItem.valorRecebido || 0) + valor; 
-        if(pagamentoItem.valorRecebido >= pagamentoItem.valorTotal) pagamentoItem.status = "Pago Total"; 
-        else pagamentoItem.status = "Pago Parcial"; 
-        salvar(); 
-        renderEntradas(); 
-        renderExtrato(); 
-        atualizarResultados(); 
-        atualizarDashboard(); 
-        fecharModal('modalPagamento'); 
-        toast("✅ Pagamento registrado com sucesso!"); 
-    }; 
+    if (!pagamentoItem) return;
+    
+    const valorInput = document.getElementById('pagamentoValor');
+    if (valorInput) valorInput.value = pagamentoItem.valorTotal - (pagamentoItem.valorRecebido || 0); 
+    
+    const modal = document.getElementById('modalPagamento');
+    if (modal) modal.classList.add('show'); 
+    
+    const confirmBtn = document.getElementById('confirmarPagamentoBtn');
+    if (confirmBtn) {
+        confirmBtn.onclick = () => { 
+            let valor = parseFloat(document.getElementById('pagamentoValor')?.value) || 0; 
+            pagamentoItem.valorRecebido = (pagamentoItem.valorRecebido || 0) + valor; 
+            if(pagamentoItem.valorRecebido >= pagamentoItem.valorTotal) pagamentoItem.status = "Pago Total"; 
+            else pagamentoItem.status = "Pago Parcial"; 
+            salvar(); 
+            fecharModal('modalPagamento'); 
+            toast("✅ Pagamento registrado com sucesso!"); 
+        };
+    }
 }
 
 function renderExtrato() { 
-    let todas = [...movimentacoes].sort((a,b) => b.id - a.id); 
+    let todas = [...movimentacoes].sort((a,b) => new Date(b.data) - new Date(a.data)); 
     let inicio = document.getElementById('filtroExtratoInicio')?.value;
     let fim = document.getElementById('filtroExtratoFim')?.value;
     let tipo = document.getElementById('filtroExtratoTipo')?.value;
@@ -1294,7 +2044,10 @@ function renderExtrato() {
     let totalPaginas = Math.ceil(todas.length / 15);
     let start = (paginaAtual.extrato - 1) * 15; 
     let paginados = todas.slice(start, start + 15); 
-    document.getElementById('extratoBody').innerHTML = paginados.map(m => `
+    
+    const tbody = document.getElementById('extratoBody');
+    if (tbody) {
+        tbody.innerHTML = paginados.map(m => `
         <tr>
             <td>${new Date(m.data).toLocaleDateString()}</td>
             <td><span class="badge ${m.tipo === 'entrada' ? 'badge-entrada' : 'badge-saida'}">${m.tipo === 'entrada' ? 'Entrada' : 'Saída'}</span></td>
@@ -1303,29 +2056,44 @@ function renderExtrato() {
             <td>${escapeHtml(m.formaPagamento)}</td>
             <td style="color:${m.tipo === 'entrada' ? 'green' : 'red'}">${m.tipo === 'entrada' ? '+' : '-'} R$ ${((m.tipo === 'entrada' ? (m.valorRecebido||m.valorTotal) : m.valorTotal)).toLocaleString()}</td>
             <td><span class="badge ${m.tipo === 'entrada' ? (m.status === 'Pago Total' ? 'badge-pago' : 'badge-pendente') : (m.status === 'Pago' ? 'badge-pago' : 'badge-pendente')}">${m.tipo === 'entrada' ? m.status : m.status}</span></td>
-        </tr>
-    `).join(''); 
-    document.getElementById('infoExtrato').innerHTML = `Exibindo ${start+1} a ${Math.min(start+15, todas.length)} de ${todas.length}`; 
-    let pagHtml = `<button onclick="paginarExtrato(1)" ${paginaAtual.extrato === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>
+        </tr>`).join('');
+    }
+    
+    const infoSpan = document.getElementById('infoExtrato');
+    if (infoSpan) infoSpan.innerHTML = `Exibindo ${start+1} a ${Math.min(start+15, todas.length)} de ${todas.length}`; 
+    
+    const pagDiv = document.getElementById('paginacaoExtrato');
+    if (pagDiv) {
+        pagDiv.innerHTML = `<button onclick="paginarExtrato(1)" ${paginaAtual.extrato === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>
                    <button onclick="paginarExtrato(${paginaAtual.extrato-1})" ${paginaAtual.extrato === 1 ? 'disabled' : ''}>Anterior</button>
                    <span>Página ${paginaAtual.extrato} de ${totalPaginas || 1}</span>
                    <button onclick="paginarExtrato(${paginaAtual.extrato+1})" ${paginaAtual.extrato >= totalPaginas ? 'disabled' : ''}>Próximo</button>
                    <button onclick="paginarExtrato(${totalPaginas})" ${paginaAtual.extrato >= totalPaginas ? 'disabled' : ''}><i class="fas fa-angle-double-right"></i></button>`;
-    document.getElementById('paginacaoExtrato').innerHTML = pagHtml;
-    let saldo = saldoInicial + movimentacoes.filter(m => m.tipo === 'entrada').reduce((s,m) => s + (m.valorRecebido || m.valorTotal), 0) - movimentacoes.filter(m => m.tipo === 'saida' && m.status === 'Pago').reduce((s,m) => s + m.valorTotal, 0); 
-    document.getElementById('saldoAtual').innerHTML = `R$ ${saldo.toLocaleString('pt-BR', {minimumFractionDigits:2})}`; 
+    }
+    
+    const saldoAtualSpan = document.getElementById('saldoAtual');
+    if (saldoAtualSpan) {
+        let saldo = saldoInicial + 
+            movimentacoes.filter(m => m.tipo === 'entrada').reduce((s,m) => s + (m.valorRecebido || m.valorTotal), 0) - 
+            movimentacoes.filter(m => m.tipo === 'saida' && m.status === 'Pago').reduce((s,m) => s + m.valorTotal, 0); 
+        saldoAtualSpan.innerHTML = `R$ ${saldo.toLocaleString('pt-BR', {minimumFractionDigits:2})}`;
+    }
 }
 
-function paginarExtrato(pagina) { paginaAtual.extrato = pagina; renderExtrato(); }
-function filtrarExtrato() { paginaAtual.extrato = 1; renderExtrato(); }
+function paginarExtrato(pagina) { 
+    paginaAtual.extrato = pagina; 
+    renderExtrato(); 
+}
+
+function filtrarExtrato() { 
+    paginaAtual.extrato = 1; 
+    renderExtrato(); 
+}
 
 function atualizarSaldoInicial() { 
-    saldoInicial = parseFloat(document.getElementById('saldoInicial').value) || 0; 
+    saldoInicial = parseFloat(document.getElementById('saldoInicialInput')?.value) || 0; 
     salvar(); 
     toast("✅ Saldo inicial atualizado!"); 
-    renderExtrato(); 
-    atualizarResultados(); 
-    atualizarDashboard(); 
 }
 
 function atualizarResultados() { 
@@ -1339,13 +2107,18 @@ function atualizarResultados() {
     let totalSaidas = movFiltradas.filter(m => m.tipo === 'saida' && m.status === 'Pago').reduce((s,m) => s + m.valorTotal, 0); 
     let lucro = totalEntradas - totalSaidas; 
     let saldoFinal = saldoInicial + totalEntradas - totalSaidas; 
-    document.getElementById('resultadosStats').innerHTML = `
-        <div class="stat-card"><h4>Total Entradas</h4><div class="valor">R$ ${totalEntradas.toLocaleString()}</div></div>
-        <div class="stat-card"><h4>Total Saídas</h4><div class="valor">R$ ${totalSaidas.toLocaleString()}</div></div>
-        <div class="stat-card"><h4>Lucro Líquido</h4><div class="valor" style="color:${lucro>=0?'green':'red'}">R$ ${lucro.toLocaleString()}</div></div>
-        <div class="stat-card"><h4>Saldo Final</h4><div class="valor">R$ ${saldoFinal.toLocaleString()}</div></div>
-    `; 
     
+    const resultadosStats = document.getElementById('resultadosStats');
+    if (resultadosStats) {
+        resultadosStats.innerHTML = `
+            <div class="stat-card"><h4>Total Entradas</h4><div class="valor">R$ ${totalEntradas.toLocaleString()}</div></div>
+            <div class="stat-card"><h4>Total Saídas</h4><div class="valor">R$ ${totalSaidas.toLocaleString()}</div></div>
+            <div class="stat-card"><h4>Lucro Líquido</h4><div class="valor" style="color:${lucro>=0?'green':'red'}">R$ ${lucro.toLocaleString()}</div></div>
+            <div class="stat-card"><h4>Saldo Final</h4><div class="valor">R$ ${saldoFinal.toLocaleString()}</div></div>
+        `;
+    }
+    
+    // Gráfico mensal
     let meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']; 
     let entradasPorMes = new Array(12).fill(0); 
     let saidasPorMes = new Array(12).fill(0); 
@@ -1354,45 +2127,66 @@ function atualizarResultados() {
         if (m.tipo === 'entrada') entradasPorMes[mes] += (m.valorRecebido || m.valorTotal); 
         else if (m.status === 'Pago') saidasPorMes[mes] += m.valorTotal; 
     }); 
-    if (graficoMensal) graficoMensal.destroy(); 
-    let ctx1 = document.getElementById('graficoMensal').getContext('2d'); 
-    graficoMensal = new Chart(ctx1, { type: 'bar', data: { labels: meses, datasets: [{ label: 'Entradas', data: entradasPorMes, backgroundColor: '#1a5f2c' }, { label: 'Saídas', data: saidasPorMes, backgroundColor: '#dc2626' }] }, options: { responsive: true, maintainAspectRatio: true } }); 
+    const ctxMensal = document.getElementById('graficoMensal');
+    if (ctxMensal) {
+        if (graficoMensal) graficoMensal.destroy(); 
+        graficoMensal = new Chart(ctxMensal.getContext('2d'), { 
+            type: 'bar', 
+            data: { labels: meses, datasets: [{ label: 'Entradas', data: entradasPorMes, backgroundColor: '#1a5f2c' }, { label: 'Saídas', data: saidasPorMes, backgroundColor: '#dc2626' }] }, 
+            options: { responsive: true, maintainAspectRatio: true } 
+        });
+    }
     
+    // Gráfico por categoria
     let categorias = {}; 
     movFiltradas.forEach(m => { 
         if (!categorias[m.categoria]) categorias[m.categoria] = 0; 
         categorias[m.categoria] += m.tipo === 'entrada' ? (m.valorRecebido || m.valorTotal) : -m.valorTotal; 
     }); 
     let categoriasOrdenadas = Object.entries(categorias).sort((a,b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 6); 
-    if (graficoCategoria) graficoCategoria.destroy(); 
-    let ctx2 = document.getElementById('graficoPorCategoria').getContext('2d'); 
-    graficoCategoria = new Chart(ctx2, { type: 'pie', data: { labels: categoriasOrdenadas.map(c => c[0]), datasets: [{ data: categoriasOrdenadas.map(c => Math.abs(c[1])), backgroundColor: ['#1a5f2c', '#dc2626', '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6'] }] }, options: { responsive: true, maintainAspectRatio: true } }); 
+    const ctxCategoria = document.getElementById('graficoPorCategoria');
+    if (ctxCategoria) {
+        if (graficoCategoria) graficoCategoria.destroy(); 
+        graficoCategoria = new Chart(ctxCategoria.getContext('2d'), { 
+            type: 'pie', 
+            data: { labels: categoriasOrdenadas.map(c => c[0]), datasets: [{ data: categoriasOrdenadas.map(c => Math.abs(c[1])), backgroundColor: ['#1a5f2c', '#dc2626', '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6'] }] }, 
+            options: { responsive: true, maintainAspectRatio: true } 
+        });
+    }
     
     let html = '<div class="table-wrapper"><table class="table"><thead><tr><th>Categoria</th><th>Resultado</th></tr></thead><tbody>'; 
-    for (let [cat, valor] of Object.entries(categorias)) html += `<tr><td>${escapeHtml(cat)}</td><td style="color:${valor>=0?'green':'red'}">R$ ${valor.toLocaleString()}</td></tr>`; 
+    for (let [cat, valor] of Object.entries(categorias)) html += `<tr><td>${escapeHtml(cat)}</td><td style="color:${valor>=0?'green':'red'}">R$ ${valor.toLocaleString()}</td></table>`; 
     html += '</tbody></table></div>'; 
-    document.getElementById('resultadoCategorias').innerHTML = html; 
+    const resultadoDiv = document.getElementById('resultadoCategorias');
+    if (resultadoDiv) resultadoDiv.innerHTML = html; 
 }
 
 function limparFiltrosResultado() { 
-    document.getElementById('filtroResultadoInicio').value = ''; 
-    document.getElementById('filtroResultadoFim').value = ''; 
+    const inicioInput = document.getElementById('filtroResultadoInicio');
+    const fimInput = document.getElementById('filtroResultadoFim');
+    if (inicioInput) inicioInput.value = ''; 
+    if (fimInput) fimInput.value = ''; 
     atualizarResultados(); 
 }
 
 // ==================== DOCUMENTOS ====================
 function limparFormularioDocumentos() { 
-    document.getElementById('docReferencia').value = ''; 
-    document.getElementById('docTipo').value = 'CRLV'; 
-    document.getElementById('docArquivo').value = ''; 
-    document.getElementById('docObs').value = ''; 
+    const refInput = document.getElementById('docReferencia');
+    const tipoSelect = document.getElementById('docTipo');
+    const fileInput = document.getElementById('docArquivo');
+    const obsInput = document.getElementById('docObs');
+    
+    if (refInput) refInput.value = ''; 
+    if (tipoSelect) tipoSelect.value = 'CRLV'; 
+    if (fileInput) fileInput.value = ''; 
+    if (obsInput) obsInput.value = ''; 
     toast("📋 Formulário limpo!"); 
 }
 
 function anexarDocumento(manterReferencia) { 
-    let referencia = document.getElementById('docReferencia').value; 
+    let referencia = document.getElementById('docReferencia')?.value; 
     if(!referencia) return toast("⚠️ Preencha a referência (placa ou nome)"); 
-    let file = document.getElementById('docArquivo').files[0]; 
+    let file = document.getElementById('docArquivo')?.files[0]; 
     if(!file) return toast("📁 Selecione um arquivo"); 
     
     if (file.size > 5 * 1024 * 1024) {
@@ -1400,22 +2194,31 @@ function anexarDocumento(manterReferencia) {
         return;
     }
     
-    let tipoVinculo = document.getElementById('docTipoVinculo').value; 
-    let tipo = document.getElementById('docTipo').value; 
-    let obs = document.getElementById('docObs').value; 
+    let tipoVinculo = document.getElementById('docTipoVinculo')?.value; 
+    let tipo = document.getElementById('docTipo')?.value; 
+    let obs = document.getElementById('docObs')?.value; 
     let reader = new FileReader(); 
     reader.onload = function(e) { 
         documentos.push({
-            id: Date.now(), data: new Date().toISOString().slice(0,10), 
-            tipoVinculo, referencia, tipo, nomeArquivo: file.name, 
-            conteudo: e.target.result, obs
+            id: Date.now(), 
+            data: new Date().toISOString().slice(0,10), 
+            tipoVinculo, 
+            referencia, 
+            tipo, 
+            nomeArquivo: file.name, 
+            conteudo: e.target.result, 
+            obs
         }); 
         salvar(); 
-        renderDocumentos(); 
         toast(`✅ Documento "${file.name}" anexado com sucesso!`); 
-        if (!manterReferencia) document.getElementById('docReferencia').value = ''; 
-        document.getElementById('docArquivo').value = ''; 
-        document.getElementById('docObs').value = ''; 
+        if (!manterReferencia) {
+            const refInput = document.getElementById('docReferencia');
+            if (refInput) refInput.value = ''; 
+        }
+        const fileInput = document.getElementById('docArquivo');
+        const obsInput = document.getElementById('docObs');
+        if (fileInput) fileInput.value = ''; 
+        if (obsInput) obsInput.value = ''; 
     }; 
     reader.readAsDataURL(file); 
 }
@@ -1437,7 +2240,6 @@ function excluirDocumento(id) {
     if(confirm("❓ Tem certeza que deseja excluir este documento permanentemente?")) { 
         documentos = documentos.filter(d => d.id !== id); 
         salvar(); 
-        renderDocumentos(); 
         toast("🗑️ Documento excluído!"); 
     } 
 }
@@ -1452,38 +2254,54 @@ function filtrarDocumentos() {
 
 function renderDocumentos() { 
     let filtrados = documentos.filter(doc => { 
-        let matchBusca = !filtrosDocs.busca || doc.referencia.toLowerCase().includes(filtrosDocs.busca.toLowerCase()) || doc.tipo.toLowerCase().includes(filtrosDocs.busca.toLowerCase()); 
+        let matchBusca = !filtrosDocs.busca || 
+            doc.referencia.toLowerCase().includes(filtrosDocs.busca.toLowerCase()) || 
+            doc.tipo.toLowerCase().includes(filtrosDocs.busca.toLowerCase());
         let matchVinculo = !filtrosDocs.vinculo || doc.tipoVinculo === filtrosDocs.vinculo; 
         return matchBusca && matchVinculo; 
     }); 
     let totalPaginas = Math.ceil(filtrados.length / 15);
     let start = (paginaAtual.docs - 1) * 15; 
     let paginados = filtrados.slice(start, start + 15); 
-    document.getElementById('documentosBody').innerHTML = paginados.map(doc => { 
-        let vinculoBadge = doc.tipoVinculo === 'veiculo' ? '<span class="badge badge-veiculo">🚗 Veículo</span>' : (doc.tipoVinculo === 'cliente' ? '<span class="badge badge-cliente">👤 Cliente</span>' : (doc.tipoVinculo === 'processo' ? '<span class="badge badge-info">📋 Processo</span>' : '<span class="badge badge-fornecedor">🏭 Fornecedor</span>')); 
-        return `<tr>
-            <td>${new Date(doc.data).toLocaleDateString()}</td>
-            <td>${vinculoBadge}</td>
-            <td><strong>${escapeHtml(doc.referencia)}</strong></td>
-            <td>${escapeHtml(doc.tipo)}</td>
-            <td>${doc.conteudo ? `<a href="${doc.conteudo}" download="${doc.nomeArquivo}" style="color:var(--verde-carvalho);"><i class="fas fa-file-pdf"></i> ${doc.nomeArquivo.length > 30 ? doc.nomeArquivo.substring(0, 27) + '...' : doc.nomeArquivo}</a>` : `<span style="color:#999;"><i class="fas fa-file"></i> ${escapeHtml(doc.nomeArquivo)}</span>`}</td>
-            <td>${escapeHtml(doc.obs || '-')}</td>
-            <td class="btn-group">
-                ${doc.conteudo ? `<button class="btn-sm btn-outline" onclick="baixarDocumento(${doc.id})" title="Baixar"><i class="fas fa-download"></i></button>` : ''}
-                <button class="btn-sm btn-danger" onclick="excluirDocumento(${doc.id})" title="Excluir"><i class="fas fa-trash"></i></button>
-             </td>
-        </tr>`; 
-    }).join(''); 
-    document.getElementById('infoDocumentos').innerHTML = `Exibindo ${start+1} a ${Math.min(start+15, filtrados.length)} de ${filtrados.length} documentos`; 
-    let pagHtml = `<button onclick="paginarDocumentos(1)" ${paginaAtual.docs === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>
+    
+    const tbody = document.getElementById('documentosBody');
+    if (tbody) {
+        tbody.innerHTML = paginados.map(doc => { 
+            let vinculoBadge = doc.tipoVinculo === 'veiculo' ? '<span class="badge badge-veiculo">🚗 Veículo</span>' : 
+                (doc.tipoVinculo === 'cliente' ? '<span class="badge badge-cliente">👤 Cliente</span>' : 
+                (doc.tipoVinculo === 'processo' ? '<span class="badge badge-info">📋 Processo</span>' : '<span class="badge badge-fornecedor">🏭 Fornecedor</span>')); 
+            return `<tr>
+                <td>${new Date(doc.data).toLocaleDateString()}</td>
+                <td>${vinculoBadge}</td>
+                <td><strong>${escapeHtml(doc.referencia)}</strong></td>
+                <td>${escapeHtml(doc.tipo)}</td>
+                <td>${doc.conteudo ? `<a href="${doc.conteudo}" download="${doc.nomeArquivo}" style="color:var(--verde-carvalho);"><i class="fas fa-file-pdf"></i> ${doc.nomeArquivo.length > 30 ? doc.nomeArquivo.substring(0, 27) + '...' : doc.nomeArquivo}</a>` : `<span style="color:#999;"><i class="fas fa-file"></i> ${escapeHtml(doc.nomeArquivo)}</span>`}</td>
+                <td>${escapeHtml(doc.obs || '-')}</td>
+                <td class="btn-group">
+                    ${doc.conteudo ? `<button class="btn-sm btn-outline" onclick="baixarDocumento(${doc.id})" title="Baixar"><i class="fas fa-download"></i></button>` : ''}
+                    <button class="btn-sm btn-danger" onclick="excluirDocumento(${doc.id})" title="Excluir"><i class="fas fa-trash"></i></button>
+                   </td>
+            </tr>`; 
+        }).join('');
+    }
+    
+    const infoSpan = document.getElementById('infoDocumentos');
+    if (infoSpan) infoSpan.innerHTML = `Exibindo ${start+1} a ${Math.min(start+15, filtrados.length)} de ${filtrados.length} documentos`; 
+    
+    const pagDiv = document.getElementById('paginacaoDocumentos');
+    if (pagDiv) {
+        pagDiv.innerHTML = `<button onclick="paginarDocumentos(1)" ${paginaAtual.docs === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button>
                    <button onclick="paginarDocumentos(${paginaAtual.docs-1})" ${paginaAtual.docs === 1 ? 'disabled' : ''}>Anterior</button>
                    <span>Página ${paginaAtual.docs} de ${totalPaginas || 1}</span>
                    <button onclick="paginarDocumentos(${paginaAtual.docs+1})" ${paginaAtual.docs >= totalPaginas ? 'disabled' : ''}>Próximo</button>
                    <button onclick="paginarDocumentos(${totalPaginas})" ${paginaAtual.docs >= totalPaginas ? 'disabled' : ''}><i class="fas fa-angle-double-right"></i></button>`;
-    document.getElementById('paginacaoDocumentos').innerHTML = pagHtml;
+    }
 }
 
-function paginarDocumentos(pagina) { paginaAtual.docs = pagina; renderDocumentos(); }
+function paginarDocumentos(pagina) { 
+    paginaAtual.docs = pagina; 
+    renderDocumentos(); 
+}
 
 function exportarDocumentos() { 
     let csv = "Data,Vinculo,Referencia,Tipo,Arquivo,Observacoes\n" + 
@@ -1507,44 +2325,43 @@ document.querySelectorAll('.sub-tab').forEach(tab => {
         tab.classList.add('active'); 
         let sub = tab.getAttribute('data-sub'); 
         document.querySelectorAll('#abaFinanceiro .sub-content').forEach(c => c.classList.remove('active')); 
-        document.getElementById(`sub-${sub}`).classList.add('active'); 
+        const subContent = document.getElementById(`sub-${sub}`);
+        if (subContent) subContent.classList.add('active'); 
         if(sub === 'resultados') atualizarResultados(); 
         if(sub === 'extrato') renderExtrato(); 
+        if(sub === 'entradas') renderEntradas();
+        if(sub === 'saidas') renderSaidas();
     }); 
 });
 
-document.getElementById('tipoItem').addEventListener('change', function() { 
-    document.getElementById('camposVeiculo').style.display = this.value === 'veiculo' ? 'block' : 'none'; 
-    document.getElementById('camposPeca').style.display = (this.value === 'capacete' || this.value === 'peca') ? 'block' : 'none'; 
-});
-
-document.getElementById('dataEntrada').value = new Date().toISOString().slice(0,10);
-document.getElementById('entradaData').value = new Date().toISOString().slice(0,10);
-document.getElementById('saidaData').value = new Date().toISOString().slice(0,10);
-document.getElementById('saldoInicial').value = saldoInicial;
-
-// Migrar fornecedores antigos se necessário
-if (fornecedoresCompletos.length === 0 && pessoas.length > 0) {
-    let fornecedoresAntigos = pessoas.filter(p => p.tipo === 'fornecedor');
-    fornecedoresAntigos.forEach(f => {
-        fornecedoresCompletos.push({
-            id: f.id,
-            nome: f.nome,
-            telefone: f.telefone || '',
-            email: f.email || '',
-            cnpj: f.documento || '',
-            endereco: f.endereco || '',
-            cep: f.cep || '',
-            dataCadastro: new Date().toISOString().slice(0,10)
-        });
+const tipoItemSelect = document.getElementById('tipoItem');
+if (tipoItemSelect) {
+    tipoItemSelect.addEventListener('change', function() { 
+        const camposVeiculo = document.getElementById('camposVeiculo');
+        const camposPeca = document.getElementById('camposPeca');
+        if (camposVeiculo) camposVeiculo.style.display = this.value === 'veiculo' ? 'block' : 'none'; 
+        if (camposPeca) camposPeca.style.display = (this.value === 'capacete' || this.value === 'peca') ? 'block' : 'none'; 
     });
-    salvar();
 }
 
+const dataEntradaInput = document.getElementById('dataEntrada');
+if (dataEntradaInput) dataEntradaInput.value = new Date().toISOString().slice(0,10);
+const entradaDataInput = document.getElementById('entradaData');
+if (entradaDataInput) entradaDataInput.value = new Date().toISOString().slice(0,10);
+const saidaDataInput = document.getElementById('saidaData');
+if (saidaDataInput) saidaDataInput.value = new Date().toISOString().slice(0,10);
+const saldoInput = document.getElementById('saldoInicialInput');
+if (saldoInput) saldoInput.value = saldoInicial;
+
+// Carregar dados e inicializar
+carregarDados();
+ultimoHash = calcularHashDados();
 atualizarSelectFornecedores();
+
+// Forçar atualização completa na primeira carga
+atualizarDashboard();
 renderizarItens();
 renderizarPessoas();
-atualizarDashboard();
 renderEntradas();
 renderSaidas();
 renderExtrato();
@@ -1553,7 +2370,10 @@ renderDocumentos();
 renderProcessos();
 atualizarListaClientesDatalist();
 
-toast("✅ Sistema Carvalho Motors 100% corrigido e funcional! Todos os botões e atualizações em tempo real ativados.");
+// Iniciar polling
+iniciarPolling();
+
+toast("✅ Sistema Carvalho Motors - Versão Estável! Sincronização, PDFs e integração Financeiro/Estoque ativados.");
 </script>
 </body>
 </html>
