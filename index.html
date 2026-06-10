@@ -267,7 +267,7 @@
         </div>
         <div id="sub-extrato" class="sub-content">
             <div class="card"><h3><i class="fas fa-dollar-sign"></i> Saldo Inicial</h3><div class="form-row"><div class="form-group"><label>Saldo Inicial (R$)</label><input type="number" id="saldoInicialInput" placeholder="0"></div><div class="form-group"><button onclick="atualizarSaldoInicial()">Atualizar Saldo Inicial</button></div></div></div>
-            <div class="card"><div class="table-wrapper"><table id="tabelaExtrato"><thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Categoria</th><th>Forma Pgto</th><th>Valor</th><th>Status</th><tr></thead><tbody id="extratoBody"></tbody></table></div><div class="pagination" id="paginacaoExtrato"></div><div class="records-info" id="infoExtrato"></div><div style="margin-top:20px; padding:16px; background:#f8fafc; border-radius:12px; text-align:center;"><h4>Saldo Atual</h4><div style="font-size:28px; font-weight:700; color:var(--verde-carvalho);" id="saldoAtual">R$ 0,00</div></div></div>
+            <div class="card"><div class="table-wrapper"><table id="tabelaExtrato"><thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Categoria</th><th>Forma Pgto</th><th>Valor</th><th>Status</th></tr></thead><tbody id="extratoBody"></tbody></table></div><div class="pagination" id="paginacaoExtrato"></div><div class="records-info" id="infoExtrato"></div><div style="margin-top:20px; padding:16px; background:#f8fafc; border-radius:12px; text-align:center;"><h4>Saldo Atual</h4><div style="font-size:28px; font-weight:700; color:var(--verde-carvalho);" id="saldoAtual">R$ 0,00</div></div></div>
         </div>
         <div id="sub-resultados" class="sub-content">
             <div class="card"><h3><i class="fas fa-filter"></i> Filtros de Período</h3><div class="filters-bar"><div class="filter-group"><label>Data Início</label><input type="date" id="filtroResultadoInicio"></div><div class="filter-group"><label>Data Fim</label><input type="date" id="filtroResultadoFim"></div><div class="filter-group"><button class="btn-outline" onclick="atualizarResultados()">Buscar</button></div><div class="filter-group"><button class="btn-outline" onclick="limparFiltrosResultado()">Limpar</button></div></div></div>
@@ -282,7 +282,7 @@
         <div class="card"><h3 onclick="toggleFormulario('formDocumentos', 'iconDocumentos')"><i class="fas fa-upload"></i> Anexar Documento <i class="fas fa-chevron-down toggle-icon" id="iconDocumentos"></i></h3><div id="formDocumentos" class="formulario-expansivel"><div class="form-row"><div class="form-group"><label>Vincular a</label><select id="docTipoVinculo"><option value="veiculo">Veículo</option><option value="cliente">Cliente</option><option value="fornecedor">Fornecedor</option><option value="processo">Processo Transferência</option></select></div><div class="form-group"><label>Referência (Placa ou Nome)</label><input type="text" id="docReferencia" placeholder="Ex: ABC1234 ou João Silva"></div><div class="form-group"><label>Tipo de Documento</label><select id="docTipo"><optgroup label="Veículo"><option value="CRLV">CRLV</option><option value="DUT">DUT</option><option value="Nota Fiscal Veículo">Nota Fiscal</option></optgroup><optgroup label="Cliente"><option value="RG">RG</option><option value="CPF">CPF</option><option value="CNH">CNH</option></optgroup><optgroup label="Fornecedor"><option value="Contrato Fornecedor">Contrato</option><option value="Nota Fiscal Fornecedor">Nota Fiscal</option></optgroup><optgroup label="Processo"><option value="PROCURAÇÃO">PROCURAÇÃO</option><option value="Comprovante de Transferência">Comprovante de Transferência</option><option value="Comunicado de Venda">Comunicado de Venda</option></optgroup></select></div><div class="form-group"><label>Arquivo</label><input type="file" id="docArquivo" accept=".pdf,.jpg,.png,.jpeg"></div></div><div class="form-row"><div class="form-group"><label>Observações</label><input type="text" id="docObs" placeholder="Observações..."></div></div><div class="botoes-acao"><button onclick="anexarDocumento(false)"><i class="fas fa-paperclip"></i> Anexar e Limpar</button><button onclick="anexarDocumento(true)" class="btn-outline"><i class="fas fa-plus-circle"></i> Anexar +1</button><button onclick="limparFormularioDocumentos()" class="btn-outline"><i class="fas fa-eraser"></i> Limpar Formulário</button></div></div></div>
         <div class="card"><h3 onclick="toggleFormulario('formularioProcesso', 'toggleIconProcesso')"><i class="fas fa-exchange-alt"></i> Acompanhamento de Transferência <i class="fas fa-chevron-down toggle-icon" id="toggleIconProcesso"></i></h3><div id="formularioProcesso" class="formulario-expansivel"><div class="form-row"><div class="form-group"><label>Placa do Veículo</label><input type="text" id="processoPlaca" placeholder="ABC1234" style="text-transform: uppercase;"></div><div class="form-group"><label>Status</label><select id="processoStatus"><option value="pendente">📌 Pendente</option><option value="aguardando_assinatura">✍️ Aguardando Assinatura</option><option value="aguardando_documento">📄 Aguardando Documento</option><option value="em_cartorio">🏛️ Em Cartório</option><option value="em_transferencia">🚗 Em Transferência</option><option value="finalizado">✅ Finalizado</option></select></div><div class="form-group"><label>Data Início</label><input type="date" id="processoDataInicio"></div></div><div class="form-row"><div class="form-group"><label>Cliente Vendedor</label><input type="text" id="processoVendedor" placeholder="Nome do vendedor"></div><div class="form-group"><label>CPF/CNPJ Vendedor</label><input type="text" id="processoVendedorDoc" placeholder="CPF/CNPJ"></div></div><div class="form-row"><div class="form-group"><label>Cliente Comprador</label><input type="text" id="processoComprador" placeholder="Nome do comprador"></div><div class="form-group"><label>CPF/CNPJ Comprador</label><input type="text" id="processoCompradorDoc" placeholder="CPF/CNPJ"></div></div><div class="form-row"><div class="form-group"><label>Telefone</label><input type="text" id="processoTelefone" placeholder="Telefone"></div><div class="form-group"><label>Endereço</label><input type="text" id="processoEndereco" placeholder="Endereço completo"></div></div><div class="form-row"><div class="form-group"><label>Observação</label><input type="text" id="processoObs" placeholder="Observações..."></div><div class="form-group"><button onclick="adicionarProcessoTransferencia()" style="margin-top: 22px;"><i class="fas fa-plus"></i> Iniciar Processo</button></div></div></div></div>
         <div class="card"><h3><i class="fas fa-filter"></i> Filtros</h3><div class="filters-bar"><div class="filter-group filtro-placa"><label>Buscar por Placa/Nome</label><input type="text" id="filtroBuscaDocs" placeholder="Ex: ABC1234 ou João Silva" onkeyup="filtrarDocumentos()"></div><div class="filter-group"><label>Vinculado a</label><select id="filtroVinculoDocs" onchange="filtrarDocumentos()"><option value="">Todos</option><option value="veiculo">Veículo</option><option value="cliente">Cliente</option><option value="fornecedor">Fornecedor</option><option value="processo">Processo</option></select></div><div class="filter-group"><button class="btn-outline btn-excel" onclick="exportarDocumentos()"><i class="fas fa-file-excel"></i> Exportar CSV</button></div></div></div>
-        <div class="card"><h3><i class="fas fa-list"></i> Lista de Documentos</h3><div class="table-wrapper"><table class="documentos-table"><thead><tr><th>Data</th><th>Vinculado a</th><th>Referência</th><th>Tipo</th><th>Arquivo</th><th>Observações</th><th>Ações</th></tr></thead><tbody id="documentosBody"></tbody></table></div><div class="pagination" id="paginacaoDocumentos"></div><div class="records-info" id="infoDocumentos"></div></div>
+        <div class="card"><h3><i class="fas fa-list"></i> Lista de Documentos</h3><div class="table-wrapper"><table class="documentos-table"><thead><tr><th>Data</th><th>Vinculado a</th><th>Referência</th><th>Tipo</th><th>Arquivo</th><th>Observações</th><th>Ações</th></td></thead><tbody id="documentosBody"></tbody></table></div><div class="pagination" id="paginacaoDocumentos"></div><div class="records-info" id="infoDocumentos"></div></div>
         <div class="card processos-card"><h3><i class="fas fa-truck"></i> Processos de Transferência Ativos</h3><div class="table-wrapper"><table class="processos-table"><thead><tr><th>Placa</th><th>Status</th><th>Vendedor</th><th>Comprador</th><th>Telefone</th><th>Data Início</th><th>Última Atualização</th><th>Observações</th><th>Ações</th></tr></thead><tbody id="processosBody"></tbody></table></div></div>
     </div>
 </div>
@@ -300,8 +300,32 @@
 
 <div class="sync-indicator" id="syncIndicator">🔄 Conectado ao Firebase</div>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+
 <script>
-    // ==================== VARIÁVEIS GLOBAIS ====================
+    // ============================================
+    // CONFIGURAÇÃO DO FIREBASE
+    // ============================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyCVNg3xlI9zwoANuGiazAkOwq3llfe54MA",
+        authDomain: "carvalho-motors.firebaseapp.com",
+        projectId: "carvalho-motors",
+        storageBucket: "carvalho-motors.firebasestorage.app",
+        messagingSenderId: "85173616497",
+        appId: "1:85173616497:web:8510b8f13149e93232c0d0",
+        measurementId: "G-M4BP1WRWH1"
+    };
+    
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+    
+    // ============================================
+    // VARIÁVEIS GLOBAIS
+    // ============================================
     let itens = [];
     let pessoas = [];
     let movimentacoes = [];
@@ -316,9 +340,9 @@
     
     let graficoMensal = null, graficoCategoria = null, graficoVendasDashboard = null, graficoTopCategorias = null;
     
-    let db = null;
-    let storage = null;
-    
+    // ============================================
+    // FUNÇÕES AUXILIARES
+    // ============================================
     function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
     
     function toast(msg) { 
@@ -361,6 +385,9 @@
     
     function diasEstoque(data) { if (!data) return 0; return Math.floor((new Date() - new Date(data)) / (1000*60*60*24)); }
     
+    // ============================================
+    // FUNÇÕES DE INTEGRAÇÃO PESSOAS -> FORNECEDORES/CLIENTES
+    // ============================================
     function atualizarSelectFornecedores() {
         const fornecedores = pessoas.filter(p => p.tipo === 'fornecedor');
         let select = document.getElementById('fornecedorSelect');
@@ -418,76 +445,65 @@
         }
     }
     
-    // ==================== FIREBASE ====================
-    async function iniciarFirebase() {
-        try {
-            const firebaseConfig = {
-                apiKey: "AIzaSyCVNg3xlI9zwoANuGiazAkOwq3llfe54MA",
-                authDomain: "carvalho-motors.firebaseapp.com",
-                projectId: "carvalho-motors",
-                storageBucket: "carvalho-motors.firebasestorage.app",
-                messagingSenderId: "85173616497",
-                appId: "1:85173616497:web:8510b8f13149e93232c0d0",
-                measurementId: "G-M4BP1WRWH1"
-            };
-            
-            const app = firebase.initializeApp(firebaseConfig);
-            db = firebase.firestore();
-            storage = firebase.storage();
-            
-            console.log("✅ Firebase inicializado!");
-            return true;
-        } catch (error) {
-            console.error("Erro ao inicializar Firebase:", error);
-            toast("❌ Erro ao conectar com Firebase. Verifique sua internet.");
-            return false;
-        }
-    }
+    // ============================================
+    // FUNÇÕES DO FIREBASE (PERSISTÊNCIA)
+    // ============================================
     
+    // CARREGAR TODOS OS DADOS DO FIREBASE
     async function carregarDadosFirestore() {
-        if (!db) return false;
         try {
+            toast("📥 Carregando dados do Firebase...");
+            
+            // Carregar estoque
             const estoqueSnap = await db.collection("estoque").orderBy("dataEntrada", "desc").get();
             itens = estoqueSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
+            // Carregar pessoas
             const pessoasSnap = await db.collection("pessoas").get();
             pessoas = pessoasSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
+            // Carregar movimentações
             const movSnap = await db.collection("movimentacoes").get();
             movimentacoes = movSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
+            // Carregar documentos
             const docsSnap = await db.collection("documentos").get();
             documentos = docsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
+            // Carregar custos adicionais
             const custosSnap = await db.collection("custosAdicionais").get();
             custosAdicionais = custosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
+            // Carregar anexos
             const anexosSnap = await db.collection("anexosEstoque").get();
             anexosEstoque = anexosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
+            // Carregar processos
             const processosSnap = await db.collection("processosTransferencia").get();
             processosTransferencia = processosSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
+            // Carregar configuração (saldo inicial)
             const configDoc = await db.collection("config").doc("geral").get();
             if (configDoc.exists) {
                 saldoInicial = configDoc.data().saldoInicial || 0;
                 document.getElementById('saldoInicialInput').value = saldoInicial;
             }
             
+            // Atualizar selects dependentes
             atualizarSelectFornecedores();
             atualizarListaClientesDatalist();
             
-            toast("✅ Dados carregados do Firebase!");
+            toast(`✅ ${itens.length} itens, ${pessoas.length} pessoas, ${movimentacoes.length} movimentações carregados!`);
             return true;
         } catch (error) {
             console.error("Erro ao carregar dados:", error);
-            toast("❌ Erro ao carregar dados. Recarregue a página.");
+            toast("❌ Erro ao carregar dados do Firebase. Verifique sua conexão.");
             return false;
         }
     }
     
+    // SALVAR TODOS OS DADOS NO FIREBASE
     async function salvarNoFirestore() {
-        if (!db) return false;
         try {
             const batch = db.batch();
             
@@ -530,7 +546,6 @@
             batch.set(configRef, { saldoInicial: saldoInicial });
             
             await batch.commit();
-            toast("✅ Dados salvos no Firebase!");
             return true;
         } catch (error) {
             console.error("Erro ao salvar:", error);
@@ -539,9 +554,9 @@
         }
     }
     
+    // LISTENERS EM TEMPO REAL
     function iniciarListenersRealtime() {
-        if (!db) return;
-        
+        // Listener para estoque
         db.collection("estoque").orderBy("dataEntrada", "desc").onSnapshot((snapshot) => {
             snapshot.docChanges().forEach(change => {
                 const item = { id: change.doc.id, ...change.doc.data() };
@@ -556,8 +571,10 @@
             const abaAtiva = document.querySelector('.tab-content.active');
             if (abaAtiva && abaAtiva.id === 'abaEstoque') renderizarItens();
             atualizarDashboard();
+            atualizarResumoEstoque();
         });
         
+        // Listener para pessoas
         db.collection("pessoas").onSnapshot((snapshot) => {
             snapshot.docChanges().forEach(change => {
                 const pessoa = { id: change.doc.id, ...change.doc.data() };
@@ -574,6 +591,7 @@
             atualizarListaClientesDatalist();
         });
         
+        // Listener para movimentações
         db.collection("movimentacoes").onSnapshot((snapshot) => {
             snapshot.docChanges().forEach(change => {
                 const mov = { id: change.doc.id, ...change.doc.data() };
@@ -592,6 +610,7 @@
             atualizarDashboard();
         });
         
+        // Listener para processos
         db.collection("processosTransferencia").onSnapshot((snapshot) => {
             processosTransferencia = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             if (document.querySelector('.tab-content.active')?.id === 'abaDocumentos') renderProcessos();
@@ -601,9 +620,51 @@
         toast("🔄 Sincronização em tempo real ativada!");
     }
     
-    // ==================== DASHBOARD ====================
-    function getCustosAdicionaisTotal(veiculoId) { return custosAdicionais.filter(c => c.veiculoId === veiculoId).reduce((sum, c) => sum + c.valor, 0); }
+    // ============================================
+    // FUNÇÕES DE CÁLCULO
+    // ============================================
+    function getCustosAdicionaisTotal(veiculoId) { 
+        return custosAdicionais.filter(c => c.veiculoId === veiculoId).reduce((sum, c) => sum + c.valor, 0); 
+    }
     
+    function atualizarResumoEstoque() {
+        let emEstoque = itens.filter(i => i.status === 'Em estoque' && !i.vendido);
+        let veiculos = emEstoque.filter(i => i.tipo === 'veiculo').length;
+        let capacetes = emEstoque.filter(i => i.tipo === 'capacete').length;
+        let pecas = emEstoque.filter(i => i.tipo === 'peca').length;
+        let totalDias = emEstoque.reduce((s,i) => s + diasEstoque(i.dataEntrada), 0);
+        let media = emEstoque.length ? Math.floor(totalDias / emEstoque.length) : 0;
+        let valorTotalCompra = itens.reduce((s,i) => s + (i.valorCompra || i.precoCompra || 0) * (i.quantidade || 1), 0);
+        let valorTotalCustos = itens.reduce((s,i) => s + (i.custosAdicionaisTotal || 0), 0);
+        let valorTotalVenda = itens.reduce((s,i) => s + (i.valorVenda || i.precoVenda || 0) * (i.quantidade || 1), 0);
+        let totalVendido = itens.filter(i => i.vendido === true).reduce((s,i) => s + (i.valorVenda || i.precoVenda || 0), 0);
+        let totalCompradoVendido = itens.filter(i => i.vendido === true).reduce((s,i) => s + (i.valorCompra || i.precoCompra || 0), 0);
+        let totalCustosVendido = itens.filter(i => i.vendido === true).reduce((s,i) => s + (i.custosAdicionaisTotal || 0), 0);
+        let lucroReal = totalVendido - totalCompradoVendido - totalCustosVendido;
+        let custoTotalRealEmEstoque = emEstoque.reduce((s,i) => s + (i.valorCompra || i.precoCompra || 0) * (i.quantidade || 1) + (i.custosAdicionaisTotal || 0), 0);
+        let valorVendaPotencial = emEstoque.reduce((s,i) => s + (i.valorVenda || i.precoVenda || 0) * (i.quantidade || 1), 0);
+        let lucroPotencial = valorVendaPotencial - custoTotalRealEmEstoque;
+        
+        const resumoDiv = document.getElementById('resumoEstoque');
+        if (resumoDiv) {
+            resumoDiv.innerHTML = `
+                <div class="resumo-card"><h4>🚗 Veículos</h4><div class="valor">${veiculos}</div></div>
+                <div class="resumo-card"><h4>🪖 Capacetes</h4><div class="valor">${capacetes}</div></div>
+                <div class="resumo-card"><h4>🔧 Peças</h4><div class="valor">${pecas}</div></div>
+                <div class="resumo-card"><h4>📊 Média dias</h4><div class="valor">${media}</div></div>
+                <div class="resumo-card"><h4>💰 Total Comprado</h4><div class="valor">R$ ${valorTotalCompra.toLocaleString()}</div></div>
+                <div class="resumo-card"><h4>⚠️ Total Custos</h4><div class="valor" style="color:#f59e0b">R$ ${valorTotalCustos.toLocaleString()}</div></div>
+                <div class="resumo-card"><h4>📈 Venda Potencial</h4><div class="valor">R$ ${valorTotalVenda.toLocaleString()}</div></div>
+                <div class="resumo-card"><h4>✅ Total Vendido</h4><div class="valor" style="color:green">R$ ${totalVendido.toLocaleString()}</div></div>
+                <div class="resumo-card"><h4>🏆 Lucro Real</h4><div class="valor" style="color:${lucroReal>=0?'green':'red'}">R$ ${lucroReal.toLocaleString()}</div></div>
+                <div class="resumo-card"><h4>🎯 Lucro Potencial</h4><div class="valor" style="color:${lucroPotencial>=0?'green':'orange'}">R$ ${lucroPotencial.toLocaleString()}</div></div>
+            `;
+        }
+    }
+    
+    // ============================================
+    // DASHBOARD
+    // ============================================
     async function atualizarDashboard() {
         const veiculosEmEstoque = itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque' && !i.vendido).length;
         const hoje = new Date();
@@ -618,7 +679,6 @@
         const contasReceber = movimentacoes.filter(m => m.tipo === 'entrada' && m.status !== 'Pago Total').reduce((s, m) => s + (m.valorTotal - (m.valorRecebido || 0)), 0);
         const estoqueBaixo = itens.filter(i => i.quantidade && i.quantidade < 5 && i.status === 'Em estoque' && !i.vendido).length;
         const processosPendentes = processosTransferencia.filter(p => p.status !== 'finalizado').length;
-        const alertasCount = (veiculosParados > 0 ? 1 : 0) + (contasReceber > 0 ? 1 : 0) + (estoqueBaixo > 0 ? 1 : 0) + (processosPendentes > 0 ? 1 : 0);
         
         const statsGrid = document.getElementById('statsGridDashboard');
         if (statsGrid) {
@@ -628,7 +688,7 @@
                 <div class="stat-card" onclick="mudarAba('financeiro')"><i class="fas fa-chart-line"></i><h2 style="color: ${lucroMes >= 0 ? 'green' : 'red'}">R$ ${lucroMes.toLocaleString()}</h2><p>Lucro do Mês</p></div>
                 <div class="stat-card" onclick="mudarAba('estoque')"><i class="fas fa-clock"></i><h2>${mediaDias}</h2><p>Média de Dias em Estoque</p></div>
                 <div class="stat-card" onclick="mudarAba('documentos')"><i class="fas fa-exchange-alt"></i><h2 style="color: ${processosPendentes > 0 ? 'orange' : 'green'}">${processosPendentes}</h2><p>Processos Pendentes</p></div>
-                <div class="stat-card" onclick="mudarAba('estoque')"><i class="fas fa-exclamation-triangle"></i><h2 style="color: ${alertasCount > 0 ? 'red' : 'green'}">${alertasCount}</h2><p>Alertas e Pendências</p></div>
+                <div class="stat-card" onclick="mudarAba('estoque')"><i class="fas fa-exclamation-triangle"></i><h2 style="color: ${(veiculosParados>0||contasReceber>0||estoqueBaixo>0) ? 'red' : 'green'}">${(veiculosParados>0?1:0)+(contasReceber>0?1:0)+(estoqueBaixo>0?1:0)}</h2><p>Alertas</p></div>
             `;
         }
         
@@ -656,16 +716,18 @@
         }
         
         let alertasHtml = '';
-        if(veiculosParados > 0) alertasHtml += `<div class="alert-item" onclick="mudarAba('estoque')"><i class="fas fa-car alert-danger"></i><div style="flex:1"><strong>${veiculosParados} veículos parados</strong><span style="font-size:12px; color:#666;"> - Há mais de 60 dias em estoque</span></div><span class="badge badge-urgente">Urgente</span></div>`;
-        if(contasReceber > 0) alertasHtml += `<div class="alert-item" onclick="mudarAba('financeiro')"><i class="fas fa-hand-holding-usd alert-warning"></i><div style="flex:1"><strong>R$ ${contasReceber.toLocaleString()} a receber</strong><span style="font-size:12px; color:#666;"> - Entradas com pagamento pendente</span></div><span class="badge badge-atencao">Pendente</span></div>`;
-        if(estoqueBaixo > 0) alertasHtml += `<div class="alert-item" onclick="mudarAba('estoque')"><i class="fas fa-tools alert-warning"></i><div style="flex:1"><strong>${estoqueBaixo} itens com estoque baixo</strong><span style="font-size:12px; color:#666;"> - Abaixo do mínimo recomendado</span></div><span class="badge badge-atencao">Atenção</span></div>`;
-        if(processosPendentes > 0) alertasHtml += `<div class="alert-item" onclick="mudarAba('documentos')"><i class="fas fa-exchange-alt alert-info"></i><div style="flex:1"><strong>${processosPendentes} processos de transferência pendentes</strong><span style="font-size:12px; color:#666;"> - Acompanhe na guia Documentos</span></div><span class="badge badge-atencao">Atenção</span></div>`;
-        if(alertasHtml === '') alertasHtml = `<div class="alert-item"><i class="fas fa-check-circle alert-success"></i><div style="flex:1"><strong>Tudo em ordem!</strong><span style="font-size:12px; color:#666;"> - Nenhuma pendência no momento</span></div></div>`;
+        if(veiculosParados > 0) alertasHtml += `<div class="alert-item" onclick="mudarAba('estoque')"><i class="fas fa-car alert-danger"></i><div style="flex:1"><strong>${veiculosParados} veículos parados</strong><span style="font-size:12px; color:#666;"> - Mais de 60 dias em estoque</span></div><span class="badge badge-urgente">Urgente</span></div>`;
+        if(contasReceber > 0) alertasHtml += `<div class="alert-item" onclick="mudarAba('financeiro')"><i class="fas fa-hand-holding-usd alert-warning"></i><div style="flex:1"><strong>R$ ${contasReceber.toLocaleString()} a receber</strong><span style="font-size:12px; color:#666;"> - Pagamentos pendentes</span></div><span class="badge badge-atencao">Pendente</span></div>`;
+        if(estoqueBaixo > 0) alertasHtml += `<div class="alert-item" onclick="mudarAba('estoque')"><i class="fas fa-tools alert-warning"></i><div style="flex:1"><strong>${estoqueBaixo} itens com estoque baixo</strong><span style="font-size:12px; color:#666;"> - Abaixo do mínimo</span></div><span class="badge badge-atencao">Atenção</span></div>`;
+        if(processosPendentes > 0) alertasHtml += `<div class="alert-item" onclick="mudarAba('documentos')"><i class="fas fa-exchange-alt alert-info"></i><div style="flex:1"><strong>${processosPendentes} processos pendentes</strong><span style="font-size:12px; color:#666;"> - Acompanhar transferências</span></div><span class="badge badge-atencao">Atenção</span></div>`;
+        if(alertasHtml === '') alertasHtml = `<div class="alert-item"><i class="fas fa-check-circle alert-success"></i><div style="flex:1"><strong>Tudo em ordem!</strong><span style="font-size:12px; color:#666;"> - Nenhuma pendência</span></div></div>`;
         const alertasList = document.getElementById('alertasList');
         if (alertasList) alertasList.innerHTML = alertasHtml;
     }
     
-    // ==================== ESTOQUE ====================
+    // ============================================
+    // FUNÇÕES DO ESTOQUE
+    // ============================================
     window.abrirModalNovoFornecedor = function() { 
         document.getElementById('novoFornecedorNome').value = '';
         document.getElementById('novoFornecedorCnpj').value = '';
@@ -708,6 +770,40 @@
         
         fecharModal('modalNovoFornecedor');
         toast(`✅ Fornecedor "${escapeHtml(nome)}" cadastrado!`);
+    }
+    
+    window.adicionarItem = async function() {
+        let tipo = document.getElementById('tipoItem')?.value;
+        let dataEntrada = document.getElementById('dataEntrada')?.value;
+        let fornecedorId = document.getElementById('fornecedorSelect')?.value;
+        let fornecedorNome = '';
+        if (fornecedorId) { 
+            let fornecedorObj = pessoas.find(p => p.id === fornecedorId && p.tipo === 'fornecedor'); 
+            fornecedorNome = fornecedorObj ? fornecedorObj.nome : ''; 
+        }
+        let status = document.getElementById('statusItem')?.value;
+        let obs = document.getElementById('obsItem')?.value;
+        if (!dataEntrada) { toast("⚠️ Preencha a data de entrada!"); return; }
+        
+        if (tipo === 'veiculo') {
+            let placa = document.getElementById('placa')?.value.toUpperCase();
+            if(!placa) { toast("⚠️ Preencha a placa!"); return; }
+            let valorCompra = parseFloat(document.getElementById('valorCompra')?.value) || 0;
+            let novoVeiculo = { id: Date.now().toString(), tipo: tipo, dataEntrada: dataEntrada, fornecedor: fornecedorNome, fornecedorId: fornecedorId || null, placa: placa, renavam: document.getElementById('renavam')?.value || '', chassi: document.getElementById('chassi')?.value || '', marca: document.getElementById('marca')?.value || '', modelo: document.getElementById('modelo')?.value || '', ano: parseInt(document.getElementById('ano')?.value) || 0, cor: document.getElementById('cor')?.value || '', km: parseInt(document.getElementById('km')?.value) || 0, valorCompra: valorCompra, valorVenda: parseFloat(document.getElementById('valorVenda')?.value) || 0, custosAdicionaisTotal: 0, status: status, obs: obs, vendido: false, dadosVenda: null };
+            itens.push(novoVeiculo);
+            toast(`✅ Veículo ${placa} cadastrado!`);
+        } else {
+            let nomeItem = document.getElementById('nomeItem')?.value;
+            if(!nomeItem) { toast("⚠️ Preencha o nome do item!"); return; }
+            let quantidade = parseInt(document.getElementById('quantidade')?.value) || 1;
+            let precoCompra = parseFloat(document.getElementById('precoCompraPeca')?.value) || 0;
+            let precoVenda = parseFloat(document.getElementById('precoVendaPeca')?.value) || 0;
+            itens.push({ id: Date.now().toString(), tipo: tipo, dataEntrada: dataEntrada, fornecedor: fornecedorNome, fornecedorId: fornecedorId || null, nomeItem: nomeItem, quantidade: quantidade, precoCompra: precoCompra, precoVenda: precoVenda, status: status, obs: obs, vendido: false, dadosVenda: null });
+            toast(`✅ ${nomeItem} cadastrado!`);
+        }
+        await salvarNoFirestore();
+        document.getElementById('formularioEstoque').classList.remove('visible');
+        document.getElementById('toggleIconEstoque').classList.remove('rotated');
     }
     
     window.abrirCustosAdicionais = function(veiculoId) {
@@ -828,239 +924,6 @@
         if (confirm("Excluir este documento?")) { anexosEstoque = anexosEstoque.filter(a => a.id !== id); await salvarNoFirestore(); carregarListaAnexos(veiculoId); toast("Documento removido!"); }
     }
     
-    window.adicionarProcessoTransferencia = async function() {
-        let placa = document.getElementById('processoPlaca')?.value.toUpperCase();
-        if (!placa) { toast("⚠️ Informe a placa!"); return; }
-        let veiculo = itens.find(i => i.placa === placa);
-        if (!veiculo) { toast("⚠️ Veículo não encontrado!"); return; }
-        if (processosTransferencia.find(p => p.placa === placa)) { toast("⚠️ Processo já existe!"); return; }
-        
-        let novoProcesso = { id: Date.now().toString(), placa: placa, status: document.getElementById('processoStatus')?.value || 'pendente', dataInicio: document.getElementById('processoDataInicio')?.value || new Date().toISOString().slice(0,10), dataAtualizacao: new Date().toISOString().slice(0,10), vendedor: document.getElementById('processoVendedor')?.value || '', vendedorDoc: document.getElementById('processoVendedorDoc')?.value || '', comprador: document.getElementById('processoComprador')?.value || '', compradorDoc: document.getElementById('processoCompradorDoc')?.value || '', telefone: document.getElementById('processoTelefone')?.value || '', endereco: document.getElementById('processoEndereco')?.value || '', observacoes: document.getElementById('processoObs')?.value ? [document.getElementById('processoObs').value] : [], documentosAnexados: [] };
-        processosTransferencia.push(novoProcesso);
-        await salvarNoFirestore();
-        document.getElementById('processoPlaca').value = '';
-        document.getElementById('processoObs').value = '';
-        document.getElementById('processoVendedor').value = '';
-        document.getElementById('processoVendedorDoc').value = '';
-        document.getElementById('processoComprador').value = '';
-        document.getElementById('processoCompradorDoc').value = '';
-        document.getElementById('processoTelefone').value = '';
-        document.getElementById('processoEndereco').value = '';
-        renderProcessos();
-        atualizarDashboard();
-        toast(`✅ Processo para placa ${placa} iniciado!`);
-    }
-    
-    function renderProcessos() {
-        let container = document.getElementById('processosBody');
-        if (!container) return;
-        if (processosTransferencia.length === 0) { container.innerHTML = '<tr><td colspan="9" style="text-align: center;">Nenhum processo cadastrado</td></tr>'; return; }
-        container.innerHTML = processosTransferencia.map(p => {
-            let statusClass = '', statusText = '';
-            switch(p.status) {
-                case 'pendente': statusClass = 'badge-pendente'; statusText = '📌 Pendente'; break;
-                case 'aguardando_assinatura': statusClass = 'badge-atencao'; statusText = '✍️ Aguardando Assinatura'; break;
-                case 'aguardando_documento': statusClass = 'badge-atencao'; statusText = '📄 Aguardando Documento'; break;
-                case 'em_cartorio': statusClass = 'badge-info'; statusText = '🏛️ Em Cartório'; break;
-                case 'em_transferencia': statusClass = 'badge-info'; statusText = '🚗 Em Transferência'; break;
-                case 'finalizado': statusClass = 'badge-finalizado'; statusText = '✅ Finalizado'; break;
-                default: statusClass = 'badge-pendente'; statusText = p.status;
-            }
-            return `<tr>
-                <td><strong>${escapeHtml(p.placa)}</strong></td>
-                <td><span class="badge ${statusClass}">${statusText}</span></td>
-                <td>${escapeHtml(p.vendedor || '-')}<br><small>${escapeHtml(p.vendedorDoc || '-')}</small></td>
-                <td>${escapeHtml(p.comprador || '-')}<br><small>${escapeHtml(p.compradorDoc || '-')}</small></td>
-                <td>${escapeHtml(p.telefone || '-')}</td>
-                <td>${p.dataInicio}</td>
-                <td>${p.dataAtualizacao}</td>
-                <td><small>${escapeHtml(p.observacoes && p.observacoes.length > 0 ? p.observacoes[p.observacoes.length-1] : '-')}</small></td>
-                <td class="btn-group"><button class="btn-sm btn-info" onclick="editarProcesso('${p.id}')"><i class="fas fa-edit"></i></button><button class="btn-sm btn-danger" onclick="excluirProcesso('${p.id}')"><i class="fas fa-trash"></i></button></td>
-            </tr>`;
-        }).join('');
-    }
-    
-    window.editarProcesso = function(id) {
-        let processo = processosTransferencia.find(p => p.id === id);
-        if (!processo) return;
-        document.getElementById('editProcessoStatus').value = processo.status;
-        document.getElementById('editProcessoObs').value = '';
-        document.getElementById('modalEditarProcesso').classList.add('show');
-        document.getElementById('confirmarEditarProcessoBtn').onclick = async () => {
-            processo.status = document.getElementById('editProcessoStatus')?.value || processo.status;
-            let novaObs = document.getElementById('editProcessoObs')?.value;
-            if (novaObs) { if (!processo.observacoes) processo.observacoes = []; processo.observacoes.push(`${new Date().toISOString().slice(0,10)}: ${novaObs}`); }
-            processo.dataAtualizacao = new Date().toISOString().slice(0,10);
-            await salvarNoFirestore();
-            renderProcessos();
-            atualizarDashboard();
-            fecharModal('modalEditarProcesso');
-            toast(`✅ Processo ${processo.placa} atualizado!`);
-        };
-    }
-    
-    window.excluirProcesso = async function(id) {
-        if (confirm("Excluir este processo?")) { processosTransferencia = processosTransferencia.filter(p => p.id !== id); await salvarNoFirestore(); renderProcessos(); atualizarDashboard(); toast("Processo removido!"); }
-    }
-    
-    function getLinhaClass(dias) { if (dias <= 30) return 'dias-0-30'; if (dias <= 60) return 'dias-31-60'; if (dias <= 90) return 'dias-61-90'; return 'dias-90-mais'; }
-    function getTipoBadge(tipo) { if (tipo === 'veiculo') return '<span class="badge badge-veiculo"><i class="fas fa-car"></i> Veículo</span>'; if (tipo === 'capacete') return '<span class="badge badge-peca"><i class="fas fa-motorcycle"></i> Capacete</span>'; return '<span class="badge badge-peca"><i class="fas fa-tools"></i> Peça</span>'; }
-    
-    function atualizarResumoEstoque() {
-        let emEstoque = itens.filter(i => i.status === 'Em estoque' && !i.vendido);
-        let veiculos = emEstoque.filter(i => i.tipo === 'veiculo').length;
-        let capacetes = emEstoque.filter(i => i.tipo === 'capacete').length;
-        let pecas = emEstoque.filter(i => i.tipo === 'peca').length;
-        let totalDias = emEstoque.reduce((s,i) => s + diasEstoque(i.dataEntrada), 0);
-        let media = emEstoque.length ? Math.floor(totalDias / emEstoque.length) : 0;
-        let valorTotalCompra = emEstoque.reduce((s,i) => s + (i.valorCompra || i.precoCompra || 0) * (i.quantidade || 1), 0);
-        let valorTotalCustos = emEstoque.reduce((s,i) => s + (i.custosAdicionaisTotal || 0), 0);
-        let valorTotalVenda = emEstoque.reduce((s,i) => s + (i.valorVenda || i.precoVenda || 0) * (i.quantidade || 1), 0);
-        let custoTotalReal = valorTotalCompra + valorTotalCustos;
-        let lucroPotencial = valorTotalVenda - custoTotalReal;
-        const resumoDiv = document.getElementById('resumoEstoque');
-        if (resumoDiv) {
-            resumoDiv.innerHTML = `<div class="resumo-card"><h4>Veículos</h4><div class="valor">${veiculos}</div></div><div class="resumo-card"><h4>Capacetes</h4><div class="valor">${capacetes}</div></div><div class="resumo-card"><h4>Peças</h4><div class="valor">${pecas}</div></div><div class="resumo-card"><h4>Média dias</h4><div class="valor">${media}</div></div><div class="resumo-card"><h4>Valor Compra</h4><div class="valor">R$ ${valorTotalCompra.toLocaleString()}</div></div><div class="resumo-card"><h4>Custos Adicionais</h4><div class="valor" style="color:#f59e0b">R$ ${valorTotalCustos.toLocaleString()}</div></div><div class="resumo-card"><h4>Custo Total</h4><div class="valor">R$ ${custoTotalReal.toLocaleString()}</div></div><div class="resumo-card"><h4>Lucro Potencial</h4><div class="valor" style="color:${lucroPotencial>=0?'green':'red'}">R$ ${lucroPotencial.toLocaleString()}</div></div>`;
-        }
-    }
-    
-    let filtrosItens = { busca: "", tipo: "", status: "" };
-    window.filtrarItens = function() { filtrosItens.busca = document.getElementById('filtroBuscaEstoque')?.value || ''; filtrosItens.tipo = document.getElementById('filtroTipoEstoque')?.value || ''; filtrosItens.status = document.getElementById('filtroStatusEstoque')?.value || ''; paginaAtual.itens = 1; renderizarItens(); }
-    
-    function renderizarItens() {
-        let filtrados = itens.filter(i => { let busca = !filtrosItens.busca || (i.placa && i.placa.toUpperCase().includes(filtrosItens.busca.toUpperCase())) || (i.modelo && i.modelo.toLowerCase().includes(filtrosItens.busca.toLowerCase())) || (i.nomeItem && i.nomeItem.toLowerCase().includes(filtrosItens.busca.toLowerCase())); let tipo = !filtrosItens.tipo || i.tipo === filtrosItens.tipo; let status = !filtrosItens.status || i.status === filtrosItens.status; return busca && tipo && status; });
-        let totalPaginas = Math.ceil(filtrados.length / 15);
-        let start = (paginaAtual.itens - 1) * 15;
-        let paginados = filtrados.slice(start, start + 15);
-        let qtdAnexos = (veiculoId) => anexosEstoque.filter(a => a.veiculoId === veiculoId).length;
-        
-        const tbody = document.getElementById('itensBody');
-        if (!tbody) return;
-        tbody.innerHTML = paginados.map(i => {
-            let dias = diasEstoque(i.dataEntrada);
-            let linhaClass = getLinhaClass(dias);
-            let valorCompra = (i.tipo === 'veiculo' ? i.valorCompra : i.precoCompra) || 0;
-            let custosAdicionaisValor = i.tipo === 'veiculo' ? (i.custosAdicionaisTotal || getCustosAdicionaisTotal(i.id)) : 0;
-            let valorVenda = (i.tipo === 'veiculo' ? i.valorVenda : i.precoVenda) || 0;
-            let custoTotalReal = valorCompra + custosAdicionaisValor;
-            let lucro = i.vendido ? ((valorVenda || 0) - custoTotalReal) : 0;
-            let detalhe = i.tipo === 'veiculo' ? `${i.marca}/${i.ano} · ${i.km}km · ${i.cor || '-'}` : `Estoque: ${i.quantidade} un · ${i.fornecedor || '-'}`;
-            let nomeExibicao = i.tipo === 'veiculo' ? `${i.modelo} (${i.placa})` : i.nomeItem;
-            let statusClass = i.vendido ? 'badge-vendido' : (i.status === 'Em estoque' ? 'badge-disponivel' : 'badge-reservado');
-            let statusTexto = i.vendido ? '💰 Vendido' : i.status;
-            let observacao = i.obs || '-';
-            let lucroColor = lucro >= 0 ? 'green' : 'red';
-            let anexosCount = i.tipo === 'veiculo' ? qtdAnexos(i.id) : 0;
-            
-            return `<tr class="${linhaClass}">
-                <td>${getTipoBadge(i.tipo)}</td>
-                <td><strong>${escapeHtml(nomeExibicao)}</strong></td>
-                <td><small>${escapeHtml(detalhe)}</small></td>
-                <td><strong>R$ ${valorCompra.toLocaleString()}</strong></td>
-                <td><span class="badge badge-atencao">R$ ${custosAdicionaisValor.toLocaleString()}</span></td>
-                <td><strong>R$ ${valorVenda.toLocaleString()}</strong></td>
-                <td><span class="badge ${statusClass}">${statusTexto}</span></td>
-                <td>${dias} dias</td>
-                <td style="color:${lucroColor}">R$ ${lucro.toLocaleString()}</td>
-                <td>${escapeHtml(observacao)}</td>
-                <td>${i.tipo === 'veiculo' ? `<button class="btn-sm btn-outline" onclick="abrirAnexosVeiculo('${i.id}')"><i class="fas fa-paperclip"></i> (${anexosCount})</button>` : '-'}</td>
-                <td class="btn-group">
-                    ${!i.vendido && i.status !== 'Vendido' ? `<button class="btn-sm btn-success" onclick="abrirVenda('${i.id}')"><i class="fas fa-tag"></i> Vender</button>` : ''}
-                    ${i.vendido ? `<button class="btn-sm btn-warning" onclick="desfazerVenda('${i.id}')"><i class="fas fa-undo"></i> Desfazer</button>` : ''}
-                    ${i.tipo === 'veiculo' ? `<button class="btn-sm btn-info" onclick="abrirCustosAdicionais('${i.id}')"><i class="fas fa-coins"></i> Custos</button>` : ''}
-                    <button class="btn-sm btn-info" onclick="abrirEdicaoCompletaItem('${i.id}')"><i class="fas fa-edit"></i> Editar</button>
-                    <button class="btn-sm btn-danger" onclick="excluirItem('${i.id}')"><i class="fas fa-trash"></i> Excluir</button>
-                 </td>
-             </tr>`;
-        }).join('');
-        
-        document.getElementById('infoItens').innerHTML = `📊 Exibindo ${filtrados.length > 0 ? start+1 : 0} a ${Math.min(start+15, filtrados.length)} de ${filtrados.length} itens`;
-        document.getElementById('paginacaoItens').innerHTML = `<button onclick="paginarItens(1)" ${paginaAtual.itens === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button><button onclick="paginarItens(${paginaAtual.itens-1})" ${paginaAtual.itens === 1 ? 'disabled' : ''}>Anterior</button><span>Página ${paginaAtual.itens} de ${totalPaginas || 1}</span><button onclick="paginarItens(${paginaAtual.itens+1})" ${paginaAtual.itens >= totalPaginas ? 'disabled' : ''}>Próximo</button><button onclick="paginarItens(${totalPaginas})" ${paginaAtual.itens >= totalPaginas ? 'disabled' : ''}><i class="fas fa-angle-double-right"></i></button>`;
-        atualizarResumoEstoque();
-    }
-    
-    window.paginarItens = function(pagina) { paginaAtual.itens = pagina; renderizarItens(); }
-    
-    window.adicionarItem = async function() {
-        let tipo = document.getElementById('tipoItem')?.value;
-        let dataEntrada = document.getElementById('dataEntrada')?.value;
-        let fornecedorId = document.getElementById('fornecedorSelect')?.value;
-        let fornecedorNome = '';
-        if (fornecedorId) { 
-            let fornecedorObj = pessoas.find(p => p.id === fornecedorId && p.tipo === 'fornecedor'); 
-            fornecedorNome = fornecedorObj ? fornecedorObj.nome : ''; 
-        }
-        let status = document.getElementById('statusItem')?.value;
-        let obs = document.getElementById('obsItem')?.value;
-        if (!dataEntrada) { toast("⚠️ Preencha a data de entrada!"); return; }
-        
-        if (tipo === 'veiculo') {
-            let placa = document.getElementById('placa')?.value.toUpperCase();
-            if(!placa) { toast("⚠️ Preencha a placa!"); return; }
-            let valorCompra = parseFloat(document.getElementById('valorCompra')?.value) || 0;
-            let novoVeiculo = { id: Date.now().toString(), tipo: tipo, dataEntrada: dataEntrada, fornecedor: fornecedorNome, fornecedorId: fornecedorId || null, placa: placa, renavam: document.getElementById('renavam')?.value || '', chassi: document.getElementById('chassi')?.value || '', marca: document.getElementById('marca')?.value || '', modelo: document.getElementById('modelo')?.value || '', ano: parseInt(document.getElementById('ano')?.value) || 0, cor: document.getElementById('cor')?.value || '', km: parseInt(document.getElementById('km')?.value) || 0, valorCompra: valorCompra, valorVenda: parseFloat(document.getElementById('valorVenda')?.value) || 0, custosAdicionaisTotal: 0, status: status, obs: obs, vendido: false, dadosVenda: null };
-            itens.push(novoVeiculo);
-            toast(`✅ Veículo ${placa} cadastrado!`);
-        } else {
-            let nomeItem = document.getElementById('nomeItem')?.value;
-            if(!nomeItem) { toast("⚠️ Preencha o nome do item!"); return; }
-            let quantidade = parseInt(document.getElementById('quantidade')?.value) || 1;
-            let precoCompra = parseFloat(document.getElementById('precoCompraPeca')?.value) || 0;
-            let precoVenda = parseFloat(document.getElementById('precoVendaPeca')?.value) || 0;
-            itens.push({ id: Date.now().toString(), tipo: tipo, dataEntrada: dataEntrada, fornecedor: fornecedorNome, fornecedorId: fornecedorId || null, nomeItem: nomeItem, quantidade: quantidade, precoCompra: precoCompra, precoVenda: precoVenda, status: status, obs: obs, vendido: false, dadosVenda: null });
-            toast(`✅ ${nomeItem} cadastrado!`);
-        }
-        await salvarNoFirestore();
-        document.getElementById('formularioEstoque').classList.remove('visible');
-        document.getElementById('toggleIconEstoque').classList.remove('rotated');
-    }
-    
-    window.abrirEdicaoCompletaItem = function(id) {
-        let item = itens.find(i => i.id === id);
-        if (!item) return;
-        let html = `<div class="form-row"><div class="form-group"><label>Data Entrada</label><input type="date" id="editDataEntrada" value="${item.dataEntrada}"></div><div class="form-group"><label>Fornecedor</label><select id="editFornecedorId">${pessoas.filter(p => p.tipo === 'fornecedor').map(f => `<option value="${f.id}" ${item.fornecedorId == f.id ? 'selected' : ''}>${escapeHtml(f.nome)}</option>`).join('')}<option value="">Nenhum</option></select></div></div>`;
-        if (item.tipo === 'veiculo') {
-            html += `<div class="form-row"><div class="form-group"><label>Placa</label><input type="text" id="editPlaca" value="${escapeHtml(item.placa || '')}"></div><div class="form-group"><label>Renavam</label><input type="text" id="editRenavam" value="${escapeHtml(item.renavam || '')}"></div><div class="form-group"><label>Chassi</label><input type="text" id="editChassi" value="${escapeHtml(item.chassi || '')}"></div></div>
-            <div class="form-row"><div class="form-group"><label>Marca</label><input type="text" id="editMarca" value="${escapeHtml(item.marca || '')}"></div><div class="form-group"><label>Modelo</label><input type="text" id="editModelo" value="${escapeHtml(item.modelo || '')}"></div><div class="form-group"><label>Ano</label><input type="number" id="editAno" value="${item.ano || ''}"></div><div class="form-group"><label>Cor</label><input type="text" id="editCor" value="${escapeHtml(item.cor || '')}"></div></div>
-            <div class="form-row"><div class="form-group"><label>Km</label><input type="number" id="editKm" value="${item.km || 0}"></div><div class="form-group"><label>Valor Compra</label><input type="number" id="editValorCompra" value="${item.valorCompra || 0}"></div><div class="form-group"><label>Valor Venda</label><input type="number" id="editValorVenda" value="${item.valorVenda || 0}"></div></div>`;
-        } else {
-            html += `<div class="form-row"><div class="form-group"><label>Nome</label><input type="text" id="editNomeItem" value="${escapeHtml(item.nomeItem || '')}"></div><div class="form-group"><label>Quantidade</label><input type="number" id="editQuantidade" value="${item.quantidade || 0}" min="0"></div><div class="form-group"><label>Preço Compra</label><input type="number" id="editPrecoCompra" value="${item.precoCompra || 0}"></div><div class="form-group"><label>Preço Venda</label><input type="number" id="editPrecoVenda" value="${item.precoVenda || 0}"></div></div>`;
-        }
-        html += `<div class="form-row"><div class="form-group"><label>Status</label><select id="editStatus"><option ${item.status === 'Em estoque' ? 'selected' : ''}>Em estoque</option><option ${item.status === 'Reservado' ? 'selected' : ''}>Reservado</option></select></div><div class="form-group"><label>Observações</label><input type="text" id="editObs" value="${escapeHtml(item.obs || '')}"></div></div>`;
-        document.getElementById('editarItemForm').innerHTML = html;
-        document.getElementById('modalEditarEstoque').classList.add('show');
-        document.getElementById('confirmarEdicaoEstoqueBtn').onclick = async () => {
-            item.dataEntrada = document.getElementById('editDataEntrada')?.value || item.dataEntrada;
-            item.fornecedorId = document.getElementById('editFornecedorId')?.value;
-            let forn = pessoas.find(p => p.id == item.fornecedorId && p.tipo === 'fornecedor');
-            item.fornecedor = forn ? forn.nome : '';
-            if (item.tipo === 'veiculo') {
-                item.placa = document.getElementById('editPlaca')?.value.toUpperCase() || item.placa;
-                item.renavam = document.getElementById('editRenavam')?.value || '';
-                item.chassi = document.getElementById('editChassi')?.value || '';
-                item.marca = document.getElementById('editMarca')?.value || '';
-                item.modelo = document.getElementById('editModelo')?.value || '';
-                item.ano = parseInt(document.getElementById('editAno')?.value) || 0;
-                item.cor = document.getElementById('editCor')?.value || '';
-                item.km = parseInt(document.getElementById('editKm')?.value) || 0;
-                item.valorCompra = parseFloat(document.getElementById('editValorCompra')?.value) || 0;
-                item.valorVenda = parseFloat(document.getElementById('editValorVenda')?.value) || 0;
-            } else {
-                item.nomeItem = document.getElementById('editNomeItem')?.value || '';
-                item.quantidade = parseInt(document.getElementById('editQuantidade')?.value) || 0;
-                item.precoCompra = parseFloat(document.getElementById('editPrecoCompra')?.value) || 0;
-                item.precoVenda = parseFloat(document.getElementById('editPrecoVenda')?.value) || 0;
-                if (item.quantidade === 0 && !item.vendido) { item.vendido = true; item.status = "Vendido"; }
-                else if (item.quantidade > 0 && item.vendido) { item.vendido = false; item.status = "Em estoque"; }
-            }
-            item.status = document.getElementById('editStatus')?.value || item.status;
-            item.obs = document.getElementById('editObs')?.value || '';
-            await salvarNoFirestore();
-            fecharModal('modalEditarEstoque');
-            toast("✏️ Item atualizado!");
-        };
-    }
-    
     window.abrirVenda = function(id) {
         let item = itens.find(i => i.id === id);
         if(!item) return;
@@ -1110,7 +973,127 @@
         }
     }
     
-    window.excluirItem = async function(id) { if(confirm("Excluir permanentemente este item?")) { itens = itens.filter(i => i.id !== id); custosAdicionais = custosAdicionais.filter(c => c.veiculoId !== id); anexosEstoque = anexosEstoque.filter(a => a.veiculoId !== id); await salvarNoFirestore(); toast("🗑️ Item removido!"); } }
+    window.excluirItem = async function(id) { 
+        if(confirm("Excluir permanentemente este item?")) { 
+            itens = itens.filter(i => i.id !== id); 
+            custosAdicionais = custosAdicionais.filter(c => c.veiculoId !== id); 
+            anexosEstoque = anexosEstoque.filter(a => a.veiculoId !== id); 
+            await salvarNoFirestore(); 
+            toast("🗑️ Item removido!"); 
+        } 
+    }
+    
+    window.abrirEdicaoCompletaItem = function(id) {
+        let item = itens.find(i => i.id === id);
+        if (!item) return;
+        let html = `<div class="form-row"><div class="form-group"><label>Data Entrada</label><input type="date" id="editDataEntrada" value="${item.dataEntrada}"></div><div class="form-group"><label>Fornecedor</label><select id="editFornecedorId">${pessoas.filter(p => p.tipo === 'fornecedor').map(f => `<option value="${f.id}" ${item.fornecedorId == f.id ? 'selected' : ''}>${escapeHtml(f.nome)}</option>`).join('')}<option value="">Nenhum</option></select></div></div>`;
+        if (item.tipo === 'veiculo') {
+            html += `<div class="form-row"><div class="form-group"><label>Placa</label><input type="text" id="editPlaca" value="${escapeHtml(item.placa || '')}"></div><div class="form-group"><label>Renavam</label><input type="text" id="editRenavam" value="${escapeHtml(item.renavam || '')}"></div><div class="form-group"><label>Chassi</label><input type="text" id="editChassi" value="${escapeHtml(item.chassi || '')}"></div></div>
+            <div class="form-row"><div class="form-group"><label>Marca</label><input type="text" id="editMarca" value="${escapeHtml(item.marca || '')}"></div><div class="form-group"><label>Modelo</label><input type="text" id="editModelo" value="${escapeHtml(item.modelo || '')}"></div><div class="form-group"><label>Ano</label><input type="number" id="editAno" value="${item.ano || ''}"></div><div class="form-group"><label>Cor</label><input type="text" id="editCor" value="${escapeHtml(item.cor || '')}"></div></div>
+            <div class="form-row"><div class="form-group"><label>Km</label><input type="number" id="editKm" value="${item.km || 0}"></div><div class="form-group"><label>Valor Compra</label><input type="number" id="editValorCompra" value="${item.valorCompra || 0}"></div><div class="form-group"><label>Valor Venda</label><input type="number" id="editValorVenda" value="${item.valorVenda || 0}"></div></div>`;
+        } else {
+            html += `<div class="form-row"><div class="form-group"><label>Nome</label><input type="text" id="editNomeItem" value="${escapeHtml(item.nomeItem || '')}"></div><div class="form-group"><label>Quantidade</label><input type="number" id="editQuantidade" value="${item.quantidade || 0}" min="0"></div><div class="form-group"><label>Preço Compra</label><input type="number" id="editPrecoCompra" value="${item.precoCompra || 0}"></div><div class="form-group"><label>Preço Venda</label><input type="number" id="editPrecoVenda" value="${item.precoVenda || 0}"></div></div>`;
+        }
+        html += `<div class="form-row"><div class="form-group"><label>Status</label><select id="editStatus"><option ${item.status === 'Em estoque' ? 'selected' : ''}>Em estoque</option><option ${item.status === 'Reservado' ? 'selected' : ''}>Reservado</option></select></div><div class="form-group"><label>Observações</label><input type="text" id="editObs" value="${escapeHtml(item.obs || '')}"></div></div>`;
+        document.getElementById('editarItemForm').innerHTML = html;
+        document.getElementById('modalEditarEstoque').classList.add('show');
+        document.getElementById('confirmarEdicaoEstoqueBtn').onclick = async () => {
+            item.dataEntrada = document.getElementById('editDataEntrada')?.value || item.dataEntrada;
+            item.fornecedorId = document.getElementById('editFornecedorId')?.value;
+            let forn = pessoas.find(p => p.id == item.fornecedorId && p.tipo === 'fornecedor');
+            item.fornecedor = forn ? forn.nome : '';
+            if (item.tipo === 'veiculo') {
+                item.placa = document.getElementById('editPlaca')?.value.toUpperCase() || item.placa;
+                item.renavam = document.getElementById('editRenavam')?.value || '';
+                item.chassi = document.getElementById('editChassi')?.value || '';
+                item.marca = document.getElementById('editMarca')?.value || '';
+                item.modelo = document.getElementById('editModelo')?.value || '';
+                item.ano = parseInt(document.getElementById('editAno')?.value) || 0;
+                item.cor = document.getElementById('editCor')?.value || '';
+                item.km = parseInt(document.getElementById('editKm')?.value) || 0;
+                item.valorCompra = parseFloat(document.getElementById('editValorCompra')?.value) || 0;
+                item.valorVenda = parseFloat(document.getElementById('editValorVenda')?.value) || 0;
+            } else {
+                item.nomeItem = document.getElementById('editNomeItem')?.value || '';
+                item.quantidade = parseInt(document.getElementById('editQuantidade')?.value) || 0;
+                item.precoCompra = parseFloat(document.getElementById('editPrecoCompra')?.value) || 0;
+                item.precoVenda = parseFloat(document.getElementById('editPrecoVenda')?.value) || 0;
+                if (item.quantidade === 0 && !item.vendido) { item.vendido = true; item.status = "Vendido"; }
+                else if (item.quantidade > 0 && item.vendido) { item.vendido = false; item.status = "Em estoque"; }
+            }
+            item.status = document.getElementById('editStatus')?.value || item.status;
+            item.obs = document.getElementById('editObs')?.value || '';
+            await salvarNoFirestore();
+            fecharModal('modalEditarEstoque');
+            toast("✏️ Item atualizado!");
+        };
+    }
+    
+    function getLinhaClass(dias) { if (dias <= 30) return 'dias-0-30'; if (dias <= 60) return 'dias-31-60'; if (dias <= 90) return 'dias-61-90'; return 'dias-90-mais'; }
+    function getTipoBadge(tipo) { if (tipo === 'veiculo') return '<span class="badge badge-veiculo"><i class="fas fa-car"></i> Veículo</span>'; if (tipo === 'capacete') return '<span class="badge badge-peca"><i class="fas fa-motorcycle"></i> Capacete</span>'; return '<span class="badge badge-peca"><i class="fas fa-tools"></i> Peça</span>'; }
+    
+    let filtrosItens = { busca: "", tipo: "", status: "" };
+    window.filtrarItens = function() { 
+        filtrosItens.busca = document.getElementById('filtroBuscaEstoque')?.value || ''; 
+        filtrosItens.tipo = document.getElementById('filtroTipoEstoque')?.value || ''; 
+        filtrosItens.status = document.getElementById('filtroStatusEstoque')?.value || ''; 
+        paginaAtual.itens = 1; 
+        renderizarItens(); 
+    }
+    
+    function renderizarItens() {
+        let filtrados = itens.filter(i => { let busca = !filtrosItens.busca || (i.placa && i.placa.toUpperCase().includes(filtrosItens.busca.toUpperCase())) || (i.modelo && i.modelo.toLowerCase().includes(filtrosItens.busca.toLowerCase())) || (i.nomeItem && i.nomeItem.toLowerCase().includes(filtrosItens.busca.toLowerCase())); let tipo = !filtrosItens.tipo || i.tipo === filtrosItens.tipo; let status = !filtrosItens.status || i.status === filtrosItens.status; return busca && tipo && status; });
+        let totalPaginas = Math.ceil(filtrados.length / 15);
+        let start = (paginaAtual.itens - 1) * 15;
+        let paginados = filtrados.slice(start, start + 15);
+        let qtdAnexos = (veiculoId) => anexosEstoque.filter(a => a.veiculoId === veiculoId).length;
+        
+        const tbody = document.getElementById('itensBody');
+        if (!tbody) return;
+        tbody.innerHTML = paginados.map(i => {
+            let dias = diasEstoque(i.dataEntrada);
+            let linhaClass = getLinhaClass(dias);
+            let valorCompra = (i.tipo === 'veiculo' ? i.valorCompra : i.precoCompra) || 0;
+            let custosAdicionaisValor = i.tipo === 'veiculo' ? (i.custosAdicionaisTotal || getCustosAdicionaisTotal(i.id)) : 0;
+            let valorVenda = (i.tipo === 'veiculo' ? i.valorVenda : i.precoVenda) || 0;
+            let custoTotalReal = valorCompra + custosAdicionaisValor;
+            let lucro = i.vendido ? ((valorVenda || 0) - custoTotalReal) : 0;
+            let detalhe = i.tipo === 'veiculo' ? `${i.marca}/${i.ano} · ${i.km}km · ${i.cor || '-'}` : `Estoque: ${i.quantidade} un · ${i.fornecedor || '-'}`;
+            let nomeExibicao = i.tipo === 'veiculo' ? `${i.modelo} (${i.placa})` : i.nomeItem;
+            let statusClass = i.vendido ? 'badge-vendido' : (i.status === 'Em estoque' ? 'badge-disponivel' : 'badge-reservado');
+            let statusTexto = i.vendido ? '💰 Vendido' : i.status;
+            let observacao = i.obs || '-';
+            let lucroColor = lucro >= 0 ? 'green' : 'red';
+            let anexosCount = i.tipo === 'veiculo' ? qtdAnexos(i.id) : 0;
+            
+            return `<tr class="${linhaClass}">
+                <td>${getTipoBadge(i.tipo)}</td>
+                <td><strong>${escapeHtml(nomeExibicao)}</strong></td>
+                <td><small>${escapeHtml(detalhe)}</small></td>
+                <td><strong>R$ ${valorCompra.toLocaleString()}</strong></td>
+                <td><span class="badge badge-atencao">R$ ${custosAdicionaisValor.toLocaleString()}</span></td>
+                <td><strong>R$ ${valorVenda.toLocaleString()}</strong></td>
+                <td><span class="badge ${statusClass}">${statusTexto}</span></td>
+                <td>${dias} dias</td>
+                <td style="color:${lucroColor}">R$ ${lucro.toLocaleString()}</td>
+                <td>${escapeHtml(observacao)}</td>
+                <td>${i.tipo === 'veiculo' ? `<button class="btn-sm btn-outline" onclick="abrirAnexosVeiculo('${i.id}')"><i class="fas fa-paperclip"></i> (${anexosCount})</button>` : '-'}</td>
+                <td class="btn-group">
+                    ${!i.vendido && i.status !== 'Vendido' ? `<button class="btn-sm btn-success" onclick="abrirVenda('${i.id}')"><i class="fas fa-tag"></i> Vender</button>` : ''}
+                    ${i.vendido ? `<button class="btn-sm btn-warning" onclick="desfazerVenda('${i.id}')"><i class="fas fa-undo"></i> Desfazer</button>` : ''}
+                    ${i.tipo === 'veiculo' ? `<button class="btn-sm btn-info" onclick="abrirCustosAdicionais('${i.id}')"><i class="fas fa-coins"></i> Custos</button>` : ''}
+                    <button class="btn-sm btn-info" onclick="abrirEdicaoCompletaItem('${i.id}')"><i class="fas fa-edit"></i> Editar</button>
+                    <button class="btn-sm btn-danger" onclick="excluirItem('${i.id}')"><i class="fas fa-trash"></i> Excluir</button>
+                  </td>
+              </tr>`;
+        }).join('');
+        
+        document.getElementById('infoItens').innerHTML = `📊 Exibindo ${filtrados.length > 0 ? start+1 : 0} a ${Math.min(start+15, filtrados.length)} de ${filtrados.length} itens`;
+        document.getElementById('paginacaoItens').innerHTML = `<button onclick="paginarItens(1)" ${paginaAtual.itens === 1 ? 'disabled' : ''}><i class="fas fa-angle-double-left"></i></button><button onclick="paginarItens(${paginaAtual.itens-1})" ${paginaAtual.itens === 1 ? 'disabled' : ''}>Anterior</button><span>Página ${paginaAtual.itens} de ${totalPaginas || 1}</span><button onclick="paginarItens(${paginaAtual.itens+1})" ${paginaAtual.itens >= totalPaginas ? 'disabled' : ''}>Próximo</button><button onclick="paginarItens(${totalPaginas})" ${paginaAtual.itens >= totalPaginas ? 'disabled' : ''}><i class="fas fa-angle-double-right"></i></button>`;
+        atualizarResumoEstoque();
+    }
+    
+    window.paginarItens = function(pagina) { paginaAtual.itens = pagina; renderizarItens(); }
     
     window.gerarPDFEstoque = async function() {
         const { jsPDF } = window.jspdf;
@@ -1141,7 +1124,9 @@
         toast("📄 PDF gerado!");
     }
     
-    // ==================== PESSOAS ====================
+    // ============================================
+    // FUNÇÕES DE PESSOAS
+    // ============================================
     let filtrosPessoas = { busca: "", tipo: "" };
     window.filtrarPessoas = function() { filtrosPessoas.busca = document.getElementById('filtroBuscaPessoas')?.value || ''; filtrosPessoas.tipo = document.getElementById('filtroTipoPessoas')?.value || ''; paginaAtual.pessoas = 1; renderizarPessoas(); }
     
@@ -1222,7 +1207,9 @@
         toast("📊 Pessoas exportadas!"); 
     }
     
-    // ==================== FINANCEIRO ====================
+    // ============================================
+    // FUNÇÕES DO FINANCEIRO
+    // ============================================
     window.registrarEntrada = async function() { 
         if(!document.getElementById('entradaDesc')?.value) return toast("⚠️ Preencha a descrição"); 
         let valorTotal = parseFloat(document.getElementById('entradaValor')?.value) || 0; 
@@ -1474,7 +1461,9 @@
     
     window.limparFiltrosResultado = function() { document.getElementById('filtroResultadoInicio').value = ''; document.getElementById('filtroResultadoFim').value = ''; atualizarResultados(); }
     
-    // ==================== DOCUMENTOS ====================
+    // ============================================
+    // FUNÇÕES DE DOCUMENTOS
+    // ============================================
     window.limparFormularioDocumentos = function() { document.getElementById('docReferencia').value = ''; document.getElementById('docTipo').value = 'CRLV'; document.getElementById('docArquivo').value = ''; document.getElementById('docObs').value = ''; toast("📋 Formulário limpo!"); }
     
     window.anexarDocumento = async function(manterReferencia) { 
@@ -1565,7 +1554,84 @@
         toast("📊 Documentos exportados!"); 
     }
     
-    // ==================== INICIALIZAÇÃO ====================
+    window.adicionarProcessoTransferencia = async function() {
+        let placa = document.getElementById('processoPlaca')?.value.toUpperCase();
+        if (!placa) { toast("⚠️ Informe a placa!"); return; }
+        let veiculo = itens.find(i => i.placa === placa);
+        if (!veiculo) { toast("⚠️ Veículo não encontrado!"); return; }
+        if (processosTransferencia.find(p => p.placa === placa)) { toast("⚠️ Processo já existe!"); return; }
+        
+        let novoProcesso = { id: Date.now().toString(), placa: placa, status: document.getElementById('processoStatus')?.value || 'pendente', dataInicio: document.getElementById('processoDataInicio')?.value || new Date().toISOString().slice(0,10), dataAtualizacao: new Date().toISOString().slice(0,10), vendedor: document.getElementById('processoVendedor')?.value || '', vendedorDoc: document.getElementById('processoVendedorDoc')?.value || '', comprador: document.getElementById('processoComprador')?.value || '', compradorDoc: document.getElementById('processoCompradorDoc')?.value || '', telefone: document.getElementById('processoTelefone')?.value || '', endereco: document.getElementById('processoEndereco')?.value || '', observacoes: document.getElementById('processoObs')?.value ? [document.getElementById('processoObs').value] : [], documentosAnexados: [] };
+        processosTransferencia.push(novoProcesso);
+        await salvarNoFirestore();
+        document.getElementById('processoPlaca').value = '';
+        document.getElementById('processoObs').value = '';
+        document.getElementById('processoVendedor').value = '';
+        document.getElementById('processoVendedorDoc').value = '';
+        document.getElementById('processoComprador').value = '';
+        document.getElementById('processoCompradorDoc').value = '';
+        document.getElementById('processoTelefone').value = '';
+        document.getElementById('processoEndereco').value = '';
+        renderProcessos();
+        atualizarDashboard();
+        toast(`✅ Processo para placa ${placa} iniciado!`);
+    }
+    
+    function renderProcessos() {
+        let container = document.getElementById('processosBody');
+        if (!container) return;
+        if (processosTransferencia.length === 0) { container.innerHTML = '<table><td colspan="9" style="text-align: center;">Nenhum processo cadastrado</td></tr>'; return; }
+        container.innerHTML = processosTransferencia.map(p => {
+            let statusClass = '', statusText = '';
+            switch(p.status) {
+                case 'pendente': statusClass = 'badge-pendente'; statusText = '📌 Pendente'; break;
+                case 'aguardando_assinatura': statusClass = 'badge-atencao'; statusText = '✍️ Aguardando Assinatura'; break;
+                case 'aguardando_documento': statusClass = 'badge-atencao'; statusText = '📄 Aguardando Documento'; break;
+                case 'em_cartorio': statusClass = 'badge-info'; statusText = '🏛️ Em Cartório'; break;
+                case 'em_transferencia': statusClass = 'badge-info'; statusText = '🚗 Em Transferência'; break;
+                case 'finalizado': statusClass = 'badge-finalizado'; statusText = '✅ Finalizado'; break;
+                default: statusClass = 'badge-pendente'; statusText = p.status;
+            }
+            return `<tr class="${p.status === 'finalizado' ? 'status-finalizado' : (p.status === 'pendente' ? 'status-pendente' : 'status-andamento')}">
+                <td><strong>${escapeHtml(p.placa)}</strong></td>
+                <td><span class="badge ${statusClass}">${statusText}</span></td>
+                <td>${escapeHtml(p.vendedor || '-')}<br><small>${escapeHtml(p.vendedorDoc || '-')}</small></td>
+                <td>${escapeHtml(p.comprador || '-')}<br><small>${escapeHtml(p.compradorDoc || '-')}</small></td>
+                <td>${escapeHtml(p.telefone || '-')}</td>
+                <td>${p.dataInicio}</td>
+                <td>${p.dataAtualizacao}</td>
+                <td><small>${escapeHtml(p.observacoes && p.observacoes.length > 0 ? p.observacoes[p.observacoes.length-1] : '-')}</small></td>
+                <td class="btn-group"><button class="btn-sm btn-info" onclick="editarProcesso('${p.id}')"><i class="fas fa-edit"></i></button><button class="btn-sm btn-danger" onclick="excluirProcesso('${p.id}')"><i class="fas fa-trash"></i></button></td>
+            </tr>`;
+        }).join('');
+    }
+    
+    window.editarProcesso = function(id) {
+        let processo = processosTransferencia.find(p => p.id === id);
+        if (!processo) return;
+        document.getElementById('editProcessoStatus').value = processo.status;
+        document.getElementById('editProcessoObs').value = '';
+        document.getElementById('modalEditarProcesso').classList.add('show');
+        document.getElementById('confirmarEditarProcessoBtn').onclick = async () => {
+            processo.status = document.getElementById('editProcessoStatus')?.value || processo.status;
+            let novaObs = document.getElementById('editProcessoObs')?.value;
+            if (novaObs) { if (!processo.observacoes) processo.observacoes = []; processo.observacoes.push(`${new Date().toISOString().slice(0,10)}: ${novaObs}`); }
+            processo.dataAtualizacao = new Date().toISOString().slice(0,10);
+            await salvarNoFirestore();
+            renderProcessos();
+            atualizarDashboard();
+            fecharModal('modalEditarProcesso');
+            toast(`✅ Processo ${processo.placa} atualizado!`);
+        };
+    }
+    
+    window.excluirProcesso = async function(id) {
+        if (confirm("Excluir este processo?")) { processosTransferencia = processosTransferencia.filter(p => p.id !== id); await salvarNoFirestore(); renderProcessos(); atualizarDashboard(); toast("Processo removido!"); }
+    }
+    
+    // ============================================
+    // INICIALIZAÇÃO
+    // ============================================
     document.querySelectorAll('.sub-tab').forEach(tab => { tab.addEventListener('click', () => { document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); let sub = tab.getAttribute('data-sub'); document.querySelectorAll('#abaFinanceiro .sub-content').forEach(c => c.classList.remove('active')); document.getElementById(`sub-${sub}`).classList.add('active'); if(sub === 'resultados') atualizarResultados(); if(sub === 'extrato') renderExtrato(); if(sub === 'entradas') renderEntradas(); if(sub === 'saidas') renderSaidas(); }); });
     
     document.getElementById('tipoItem')?.addEventListener('change', function() { document.getElementById('camposVeiculo').style.display = this.value === 'veiculo' ? 'block' : 'none'; document.getElementById('camposPeca').style.display = (this.value === 'capacete' || this.value === 'peca') ? 'block' : 'none'; });
@@ -1574,35 +1640,21 @@
     document.getElementById('entradaData').value = new Date().toISOString().slice(0,10);
     document.getElementById('saidaData').value = new Date().toISOString().slice(0,10);
     
-    // Carregar Firebase e iniciar
-    const firebaseScript = document.createElement('script');
-    firebaseScript.src = "https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js";
-    firebaseScript.onload = () => {
-        const firestoreScript = document.createElement('script');
-        firestoreScript.src = "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js";
-        firestoreScript.onload = async () => {
-            const storageScript = document.createElement('script');
-            storageScript.src = "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js";
-            storageScript.onload = async () => {
-                await iniciarFirebase();
-                await carregarDadosFirestore();
-                iniciarListenersRealtime();
-                atualizarDashboard();
-                renderizarItens();
-                renderizarPessoas();
-                renderEntradas();
-                renderSaidas();
-                renderExtrato();
-                atualizarResultados();
-                renderDocumentos();
-                renderProcessos();
-                toast("✅ Sistema pronto! Firebase conectado.");
-            };
-            document.head.appendChild(storageScript);
-        };
-        document.head.appendChild(firestoreScript);
-    };
-    document.head.appendChild(firebaseScript);
+    // Inicializar o sistema
+    (async function init() {
+        await carregarDadosFirestore();
+        iniciarListenersRealtime();
+        atualizarDashboard();
+        renderizarItens();
+        renderizarPessoas();
+        renderEntradas();
+        renderSaidas();
+        renderExtrato();
+        atualizarResultados();
+        renderDocumentos();
+        renderProcessos();
+        toast("✅ Sistema 100% funcional! Dados persistindo no Firebase.");
+    })();
     
     window.mudarAba = mudarAba;
     window.toggleFormulario = toggleFormulario;
