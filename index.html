@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Carvalho Motors - Sistema Integrado v4.1</title>
+    <title>Carvalho Motors - Sistema Integrado v5.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -306,7 +306,7 @@
             <h3><i class="fas fa-filter"></i> Filtros</h3>
             <div class="filters-bar"><div class="filter-group"><label>Buscar</label><input type="text" id="filtroBuscaPessoas" placeholder="Nome, documento ou telefone..." onkeyup="filtrarPessoas()"></div><div class="filter-group"><label>Tipo</label><select id="filtroTipoPessoas" onchange="filtrarPessoas()"><option value="">Todos</option><option value="cliente">Apenas Clientes</option><option value="fornecedor">Apenas Fornecedores</option></select></div></div>
         </div>
-        <div class="card"><h3>Lista de Pessoas</h3><div class="table-wrapper"><table id="tabelaPessoas"><thead><tr><th>Tipo</th><th>Nome</th><th>Documento</th><th>Telefone</th><th>Email</th><th>Endereço</th><th>Observações</th><th>Ações</th></tr></thead><tbody id="pessoasBody"></tbody></table></div><div class="pagination" id="paginacaoPessoas"></div><div class="records-info" id="infoPessoas"></div></div>
+        <div class="card"><h3>Lista de Pessoas</h3><div class="table-wrapper"><table id="tabelaPessoas"><thead><tr><th>Tipo</th><th>Nome</th><th>Documento</th><th>Telefone</th><th>Email</th><th>Endereço</th><th>Observações</th><th>Ações</th></td></thead><tbody id="pessoasBody"></tbody></table></div><div class="pagination" id="paginacaoPessoas"></div><div class="records-info" id="infoPessoas"></div></div>
     </div>
 
     <div id="abaFinanceiro" class="tab-content">
@@ -324,7 +324,7 @@
                 </div>
             </div>
             <div class="card"><h3 onclick="toggleFormulario('formEntradas', 'iconEntradas')"><i class="fas fa-plus-circle"></i> Registrar Entrada <i class="fas fa-chevron-down toggle-icon" id="iconEntradas"></i></h3><div id="formEntradas" class="formulario-expansivel"><div class="form-row"><div class="form-group"><label>Data</label><input type="date" id="entradaData" max="9999-12-31"></div><div class="form-group"><label>Descrição</label><input type="text" id="entradaDesc" placeholder="Ex: Venda Golf GTI"></div><div class="form-group"><label>Categoria</label><select id="entradaCategoria"><option value="Venda Veículo">Venda Veículo</option><option value="Venda Equipamento">Venda Equipamento</option><option value="Serviço">Serviço</option><option value="Aporte">Aporte</option><option value="Outras Entradas">Outras Entradas</option></select></div><div class="form-group"><label>Forma Pagamento</label><select id="entradaFormaPagamento"><option value="Espécie">Espécie</option><option value="Cartão">Cartão</option><option value="Pix">Pix</option><option value="Transferência">Transferência</option></select></div></div><div class="form-row"><div class="form-group"><label>Valor Total</label><input type="number" id="entradaValor" placeholder="0"></div><div class="form-group"><label>Valor Recebido</label><input type="number" id="entradaRecebido" placeholder="0"></div><div class="form-group"><label>Vencimento</label><input type="date" id="entradaVencimiento" max="9999-12-31"></div><div class="form-group"><label>Status</label><select id="entradaStatus"><option value="Pago Total">Pago Total</option><option value="Pago Parcial">Pago Parcial</option><option value="Pendente">Pendente</option></select></div></div><div class="form-row"><div class="form-group"><label>Cliente</label><input type="text" id="entradaCliente" placeholder="Nome do cliente"></div><div class="form-group"><label>Observações</label><input type="text" id="entradaObs" placeholder="Observações..."></div></div><button onclick="registrarEntrada()">Registrar Entrada</button></div></div>
-            <div class="card"><div class="table-wrapper"><table id="tabelaEntradas"><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Forma Pgto</th><th>Valor Total</th><th>Recebido</th><th>Pendente</th><th>Status</th><th>Vencimento</th><th>Ações</th></td></thead><tbody id="entradasBody"></tbody></table></div><div class="pagination" id="paginacaoEntradas"></div><div class="records-info" id="infoEntradas"></div></div>
+            <div class="card"><div class="table-wrapper"><table id="tabelaEntradas"><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Forma Pgto</th><th>Valor Total</th><th>Recebido</th><th>Pendente</th><th>Status</th><th>Vencimento</th><th>Ações</th></tr></thead><tbody id="entradasBody"></tbody></table></div><div class="pagination" id="paginacaoEntradas"></div><div class="records-info" id="infoEntradas"></div></div>
         </div>
         
         <div id="sub-saidas" class="sub-content">
@@ -362,7 +362,7 @@
 
 <div id="modalCustosAdicionais" class="modal"><div class="modal-content" style="max-width: 800px;"><div class="modal-header"><h3><i class="fas fa-dollar-sign"></i> Custos Adicionais do Veículo: <span id="veiculoPlacaCustos"></span></h3><button onclick="fecharModal('modalCustosAdicionais')">✕</button></div><div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 8px;"><div class="form-row"><div class="form-group"><label>Tipo de Custo</label><select id="novoCustoTipo"><option value="mecanica">🔧 Mecânica</option><option value="funilaria">🎨 Funilaria</option><option value="documentacao">📄 Documentação</option><option value="transporte">🚚 Transporte</option><option value="lavagem">🧼 Lavagem/Detalhamento</option><option value="combustivel">⛽ Combustível</option><option value="comissao">👔 Comissão</option><option value="vistoria">🔍 Vistoria</option><option value="despachante">📋 Despachante</option><option value="pecas">⚙️ Peças</option><option value="outro">📌 Outro</option></select></div><div class="form-group"><label>Valor (R$)</label><input type="number" id="novoCustoValor" step="0.01"></div><div class="form-group"><label>Data</label><input type="date" id="novoCustoData" max="9999-12-31"></div></div><div class="form-row"><div class="form-group"><label>Fornecedor/Serviço</label><input type="text" id="novoCustoFornecedor" placeholder="Opcional"></div><div class="form-group"><label>Observação</label><textarea id="novoCustoObs" placeholder="Ex: Nota fiscal 123" rows="2"></textarea></div><div><button onclick="adicionarCustoAdicional()" style="margin-top: 22px;"><i class="fas fa-plus"></i> Adicionar</button></div></div></div><div id="listaCustosAdicionais" style="max-height: 300px; overflow-y: auto;"></div><div style="margin-top: 16px; padding: 12px; background: #e8f5e9; border-radius: 8px; display: flex; justify-content: space-between;"><strong><i class="fas fa-calculator"></i> TOTAL DE CUSTOS ADICIONAIS:</strong><strong style="font-size: 20px;" id="totalCustosAdicionais">R$ 0,00</strong></div><div style="margin-top: 16px; text-align: right;"><button onclick="fecharModal('modalCustosAdicionais')" class="btn-outline">Fechar</button></div></div></div>
 
-<div id="modalAnexosVeiculo" class="modal"><div class="modal-content" style="max-width: 800px;"><div class="modal-header"><h3><i class="fas fa-paperclip"></i> Documentos do Veículo: <span id="veiculoPlacaAnexo"></span></h3><button onclick="fecharModal('modalAnexosVeiculo')">✕</button></div><div style="margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 12px;"><h4 style="margin-bottom: 12px; color: var(--verde-carvalho);"><i class="fas fa-upload"></i> Adicionar Novo Documento</h4><div class="form-row"><div class="form-group"><label>Tipo do Documento</label><select id="tipoAnexo"><option value="consulta_veicular">📋 Consulta Veicular</option><option value="laudo">📄 Laudo</option><option value="historico">📜 Histórico</option><option value="nota_fiscal">🧾 Nota Fiscal</option><option value="outro">📁 Outro</option></select></div><div class="form-group"><label>Arquivo (PDF/Imagem)</label><input type="file" id="arquivoAnexo" accept=".pdf,.jpg,.png,.jpeg"></div><div class="form-group"><label>Observação</label><textarea id="obsAnexo" rows="2" placeholder="Descrição do documento..."></textarea></div><div><button onclick="uploadAnexoVeiculo()" style="margin-top: 22px; background: var(--info);"><i class="fas fa-plus-circle"></i> Adicionar</button></div></div></div><div><h4 style="margin-bottom: 12px; color: var(--verde-carvalho);"><i class="fas fa-folder-open"></i> Documentos Anexados</h4><div id="listaAnexosVeiculo" style="max-height: 350px; overflow-y: auto;"></div></div><div style="margin-top: 16px; text-align: right;"><button onclick="fecharModal('modalAnexosVeiculo')" class="btn-outline">Fechar</button></div></div></div>
+<div id="modalAnexosVeiculo" class="modal"><div class="modal-content" style="max-width: 800px;"><div class="modal-header"><h3><i class="fas fa-paperclip"></i> Documentos do Veículo: <span id="veiculoPlacaAnexo"></span></h3><button onclick="fecharModal('modalAnexosVeiculo')">✕</button></div><div style="margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 12px;"><h4 style="margin-bottom: 12px; color: var(--verde-carvalho);"><i class="fas fa-upload"></i> Adicionar Novo Documento</h4><div class="form-row"><div class="form-group"><label>Tipo do Documento</label><select id="tipoAnexo"><option value="consulta_veicular">📋 Consulta Veicular</option><option value="laudo">📄 Laudo</option><option value="historico">📜 Histórico</option><option value="nota_fiscal">🧾 Nota Fiscal</option><option value="outro">📁 Outro</option></select></div><div class="form-group"><label>Arquivo (PDF/Imagem)</label><input type="file" id="arquivoAnexo" accept=".pdf,.jpg,.png,.jpeg" multiple></div><div class="form-group"><label>Observação</label><textarea id="obsAnexo" rows="2" placeholder="Descrição do documento..."></textarea></div><div><button onclick="uploadAnexoVeiculo()" style="margin-top: 22px; background: var(--info);"><i class="fas fa-plus-circle"></i> Adicionar</button></div></div></div><div><h4 style="margin-bottom: 12px; color: var(--verde-carvalho);"><i class="fas fa-folder-open"></i> Documentos Anexados</h4><div id="listaAnexosVeiculo" style="max-height: 350px; overflow-y: auto;"></div></div><div style="margin-top: 16px; text-align: right;"><button onclick="fecharModal('modalAnexosVeiculo')" class="btn-outline">Fechar</button></div></div></div>
 
 <div id="modalEditarEstoque" class="modal"><div class="modal-content" style="max-width: 850px;"><div class="modal-header"><h3>Editar Item</h3><button onclick="fecharModal('modalEditarEstoque')">✕</button></div><div id="editarItemForm"></div><div style="display:flex; gap:10px; margin-top:20px;"><button onclick="fecharModal('modalEditarEstoque')" class="btn-outline">Cancelar</button><button id="confirmarEdicaoEstoqueBtn" style="background:var(--verde-carvalho)">Salvar</button></div></div></div>
 
@@ -956,7 +956,7 @@
         }
     }
     
-    // ==================== ANEXOS ====================
+    // ==================== ANEXOS (MÚLTIPLOS ARQUIVOS) ====================
     window.abrirAnexosVeiculo = function(veiculoId) {
         let veiculo = itens.find(i => i.id === veiculoId);
         if (!veiculo) { toast("❌ Veículo não encontrado!", true); return; }
@@ -994,30 +994,46 @@
         `).join('');
     }
     
+    // SUPORTE A MÚLTIPLOS ARQUIVOS
     window.uploadAnexoVeiculo = async function() {
         if (!veiculoAtualAnexos) { toast("❌ Nenhum veículo selecionado!", true); return; }
-        let file = document.getElementById('arquivoAnexo')?.files[0];
-        if (!file) { toast("📁 Selecione um arquivo!", true); return; }
-        if (file.size > 5 * 1024 * 1024) { toast("❌ Máximo 5MB", true); return; }
+        let files = document.getElementById('arquivoAnexo')?.files;
+        if (!files || files.length === 0) { toast("📁 Selecione pelo menos um arquivo!", true); return; }
         
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            const tipoSelect = document.getElementById('tipoAnexo');
-            const tipoTexto = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex]?.text || 'Documento' : 'Documento';
-            const obs = document.getElementById('obsAnexo')?.value || '';
-            const novoAnexo = { 
-                id: Date.now().toString(), veiculoId: veiculoAtualAnexos.id, 
-                placa: veiculoAtualAnexos.placa || veiculoAtualAnexos.nomeItem, 
-                nomeArquivo: file.name, tipo: tipoTexto, arquivo: e.target.result, 
-                tamanho: file.size, dataUpload: new Date().toISOString().slice(0,10), observacao: obs 
-            };
-            await db.collection("anexosEstoque").doc(novoAnexo.id).set(novoAnexo);
-            document.getElementById('arquivoAnexo').value = '';
-            document.getElementById('obsAnexo').value = '';
-            toast(`✅ "${file.name}" anexado!`);
-            carregarListaAnexos(veiculoAtualAnexos.id);
-        };
-        reader.readAsDataURL(file);
+        for (let file of files) {
+            if (file.size > 5 * 1024 * 1024) { 
+                toast(`❌ Arquivo ${file.name} excede 5MB`, true); 
+                continue;
+            }
+            
+            const reader = new FileReader();
+            await new Promise((resolve) => {
+                reader.onload = async function(e) {
+                    const tipoSelect = document.getElementById('tipoAnexo');
+                    const tipoTexto = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex]?.text || 'Documento' : 'Documento';
+                    const obs = document.getElementById('obsAnexo')?.value || '';
+                    const novoAnexo = { 
+                        id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+                        veiculoId: veiculoAtualAnexos.id, 
+                        placa: veiculoAtualAnexos.placa || veiculoAtualAnexos.nomeItem, 
+                        nomeArquivo: file.name, 
+                        tipo: tipoTexto, 
+                        arquivo: e.target.result, 
+                        tamanho: file.size, 
+                        dataUpload: new Date().toISOString().slice(0,10), 
+                        observacao: obs 
+                    };
+                    await db.collection("anexosEstoque").doc(novoAnexo.id).set(novoAnexo);
+                    resolve();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        document.getElementById('arquivoAnexo').value = '';
+        document.getElementById('obsAnexo').value = '';
+        toast(`✅ ${files.length} arquivo(s) anexado(s) com sucesso!`);
+        carregarListaAnexos(veiculoAtualAnexos.id);
     }
     
     window.baixarAnexo = function(id) {
@@ -1148,7 +1164,6 @@
             let observacao = i.obs || '-';
             let lucroColor = lucro >= 0 ? 'green' : 'red';
             let anexosCount = anexosEstoque.filter(a => a.veiculoId === i.id).length;
-            // CORREÇÃO: Removido o "?" da descrição
             let nomeDisplay = i.tipo === 'veiculo' ? `${i.modelo || ''} (${i.placa || ''})` : (i.nomeItem || '');
             return `<tr class="${linhaClass}">
                 <td>${getTipoBadge(i.tipo)}</td>
@@ -1166,6 +1181,7 @@
                     ${!i.vendido ? `<button class="btn-sm btn-success" onclick="abrirVenda('${i.id}')"><i class="fas fa-tag"></i> Vender</button>` : ''}
                     ${i.tipo === 'veiculo' ? `<button class="btn-sm btn-info" onclick="abrirCustosAdicionais('${i.id}')"><i class="fas fa-coins"></i> Custos</button>` : ''}
                     <button class="btn-sm btn-warning" onclick="abrirEdicaoCompletaItem('${i.id}')"><i class="fas fa-edit"></i> Editar</button>
+                    ${i.vendido ? `<button class="btn-sm btn-warning" onclick="desfazerVenda('${i.id}')" title="Desfazer Venda" style="background:#f59e0b;"><i class="fas fa-undo-alt"></i> Desfazer</button>` : ''}
                     <button class="btn-sm btn-danger" onclick="excluirItem('${i.id}')"><i class="fas fa-trash"></i> Excluir</button>
                 </td>
             </tr>`;
@@ -1176,7 +1192,67 @@
     
     window.paginarItens = function(pagina) { paginaAtual.itens = pagina; renderizarItens(); }
     
-    // ==================== VENDA - CORRIGIDA SEM UNDEFINED ====================
+    // ==================== DESFAZER VENDA ====================
+    window.desfazerVenda = async function(id) {
+        let item = itens.find(i => i.id === id);
+        if (!item) { toast("❌ Item não encontrado!", true); return; }
+        if (!item.vendido) { toast("⚠️ Este item não está vendido!", true); return; }
+        
+        if (!confirm(`❓ Desfazer a venda do item ${item.tipo === 'veiculo' ? item.modelo + ' ' + item.placa : item.nomeItem}?\n\nIsso irá:\n- Restaurar o item para disponível\n- Remover o lançamento financeiro\n- Atualizar o extrato`)) return;
+        
+        try {
+            // 1. Encontrar a entrada financeira relacionada a esta venda
+            const entradaRelacionada = movimentacoes.find(m => m.tipo === 'entrada' && m.itemId === item.id);
+            
+            // 2. Restaurar o item no estoque
+            if (item.tipo !== 'veiculo') {
+                // Para peças, restaurar a quantidade original
+                let quantidadeOriginal = item.dadosVenda?.quantidadeAnterior || item.quantidade + (item.dadosVenda?.quantidadeVendida || 1);
+                await db.collection("estoque").doc(item.id).update({
+                    vendido: false,
+                    status: "Em estoque",
+                    quantidade: quantidadeOriginal,
+                    dadosVenda: null,
+                    comprador: null,
+                    dataVenda: null,
+                    valorVenda: item.valorVenda
+                });
+            } else {
+                // Para veículos
+                await db.collection("estoque").doc(item.id).update({
+                    vendido: false,
+                    status: "Em estoque",
+                    dadosVenda: null,
+                    comprador: null,
+                    dataVenda: null,
+                    valorVenda: item.valorVenda
+                });
+            }
+            
+            // 3. Remover a entrada financeira se existir
+            if (entradaRelacionada) {
+                await db.collection("movimentacoes").doc(entradaRelacionada.id).delete();
+                toast(`✅ Entrada financeira removida!`);
+            }
+            
+            // 4. Atualizar todas as telas
+            setTimeout(() => {
+                renderizarItens();
+                renderEntradas();
+                renderSaidas();
+                renderExtrato();
+                atualizarDashboard();
+            }, 500);
+            
+            toast(`✅ Venda desfeita com sucesso! Item restaurado ao estoque.`);
+            
+        } catch (error) {
+            console.error("Erro ao desfazer venda:", error);
+            toast(`❌ Erro ao desfazer venda: ${error.message}`, true);
+        }
+    }
+    
+    // ==================== VENDA ====================
     window.abrirVenda = function(id) {
         let item = itens.find(i => i.id === id);
         if(!item) { toast("❌ Item não encontrado!", true); return; }
@@ -1244,7 +1320,6 @@
             }
             
             try {
-                // CORREÇÃO CRÍTICA: NUNCA enviar undefined para o Firestore
                 let dadosVenda = { 
                     dataVenda: dataVenda || null,
                     comprador: comprador || null,
@@ -1255,7 +1330,6 @@
                     quantidadeVendida: qtdVendida || 1
                 };
                 
-                // ATUALIZA ESTOQUE
                 if (item.tipo !== 'veiculo') {
                     item.quantidade -= qtdVendida;
                     if (item.quantidade === 0) { 
@@ -1282,7 +1356,6 @@
                     });
                 }
                 
-                // CRIA ENTRADA FINANCEIRA
                 const entradaId = Date.now().toString();
                 const novaEntrada = { 
                     id: entradaId,
@@ -1306,7 +1379,6 @@
                 
                 toast(`✅ VENDA REALIZADA COM SUCESSO!\n\n📦 Item: ${item.tipo === 'veiculo' ? (item.modelo || 'Veículo') + ' ' + (item.placa || '') : (item.nomeItem || 'Item')}\n👤 Cliente: ${comprador || 'Cliente'}\n💰 Valor: R$ ${valorVenda.toLocaleString()}\n📊 Status: PENDENTE\n\n👉 Acesse FINANCEIRO > ENTRADAS para confirmar o recebimento.`);
                 
-                // FORÇA ATUALIZAÇÃO DAS TELAS
                 setTimeout(() => {
                     renderizarItens();
                     renderEntradas();
@@ -1490,7 +1562,7 @@
             <td>${escapeHtml(p.endereco || '-')} ${p.cep ? 'CEP: ' + escapeHtml(p.cep) : ''}</td>
             <td>${escapeHtml(p.obs || '-')}</td>
             <td class="btn-group"><button class="btn-sm btn-info" onclick="abrirEditarPessoa('${p.id}')"><i class="fas fa-edit"></i> Editar</button><button class="btn-sm btn-danger" onclick="excluirPessoa('${p.id}')"><i class="fas fa-trash"></i> Excluir</button></td>
-        </table>`).join('');
+        </tr>`).join('');
         document.getElementById('infoPessoas').innerHTML = `Exibindo ${filtrados.length > 0 ? start+1 : 0} a ${Math.min(start+15, filtrados.length)} de ${filtrados.length} registros`;
         document.getElementById('paginacaoPessoas').innerHTML = `<button onclick="paginarPessoas(1)" ${paginaAtual.pessoas === 1 ? 'disabled' : ''}>«</button><button onclick="paginarPessoas(${paginaAtual.pessoas-1})" ${paginaAtual.pessoas === 1 ? 'disabled' : ''}>Anterior</button><span>Página ${paginaAtual.pessoas} de ${totalPaginas || 1}</span><button onclick="paginarPessoas(${paginaAtual.pessoas+1})" ${paginaAtual.pessoas >= totalPaginas ? 'disabled' : ''}>Próximo</button><button onclick="paginarPessoas(${totalPaginas})" ${paginaAtual.pessoas >= totalPaginas ? 'disabled' : ''}>»</button>`;
     }
@@ -1563,7 +1635,7 @@
         if (inicio) entradas = entradas.filter(m => m.data >= inicio); if (fim) entradas = entradas.filter(m => m.data <= fim); if (statusFiltro) entradas = entradas.filter(m => m.status === statusFiltro); 
         let totalPaginas = Math.ceil(entradas.length / 15); let start = (paginaAtual.entradas - 1) * 15; let paginados = entradas.slice(start, start + 15); 
         const tbody = document.getElementById('entradasBody'); if (!tbody) return;
-        if (paginados.length === 0) { tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:40px;">💰 Nenhuma entrada registrada</td>'; document.getElementById('infoEntradas').innerHTML = 'Nenhuma entrada encontrada'; document.getElementById('paginacaoEntradas').innerHTML = ''; return; }
+        if (paginados.length === 0) { tbody.innerHTML = '<td><td colspan="10" style="text-align:center; padding:40px;">💰 Nenhuma entrada registrada</td>'; document.getElementById('infoEntradas').innerHTML = 'Nenhuma entrada encontrada'; document.getElementById('paginacaoEntradas').innerHTML = ''; return; }
         tbody.innerHTML = paginados.map(m => `<tr>
             <td>${new Date(m.data).toLocaleDateString()}</td>
             <td>${escapeHtml(m.descricao)}</td>
@@ -1604,7 +1676,7 @@
     
     window.excluirEntrada = async function(id) { if(confirm("Excluir esta entrada?")) { await db.collection("movimentacoes").doc(id).delete(); toast("🗑️ Entrada excluída!"); renderEntradas(); renderExtrato(); } }
     
-    // ==================== FINANCEIRO SAIDAS (ORDENADAS CORRETAMENTE) ====================
+    // ==================== FINANCEIRO SAIDAS (ORDENADAS) ====================
     window.registrarSaida = async function() { 
         if(!document.getElementById('saidaDesc')?.value) return toast("⚠️ Preencha a descrição", true); 
         let data = document.getElementById('saidaData')?.value || new Date().toISOString().slice(0,10);
@@ -1627,12 +1699,11 @@
         let inicio = document.getElementById('filtroSaidaInicio')?.value; let fim = document.getElementById('filtroSaidaFim')?.value; let statusFiltro = document.getElementById('filtroSaidaStatus')?.value; 
         if (inicio) saidas = saidas.filter(m => m.data >= inicio); if (fim) saidas = saidas.filter(m => m.data <= fim); if (statusFiltro) saidas = saidas.filter(m => m.status === statusFiltro); 
         
-        // CORREÇÃO: Ordenar por data (mais recente primeiro)
         saidas.sort((a, b) => new Date(b.data) - new Date(a.data));
         
         let totalPaginas = Math.ceil(saidas.length / 15); let start = (paginaAtual.saidas - 1) * 15; let paginados = saidas.slice(start, start + 15); 
         const tbody = document.getElementById('saidasBody'); if (!tbody) return;
-        if (paginados.length === 0) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:40px;">💸 Nenhuma saída registrada</td>'; document.getElementById('infoSaidas').innerHTML = 'Nenhuma saída encontrada'; document.getElementById('paginacaoSaidas').innerHTML = ''; return; }
+        if (paginados.length === 0) { tbody.innerHTML = '<table><td colspan="9" style="text-align:center; padding:40px;">💸 Nenhuma saída registrada</td>'; document.getElementById('infoSaidas').innerHTML = 'Nenhuma saída encontrada'; document.getElementById('paginacaoSaidas').innerHTML = ''; return; }
         tbody.innerHTML = paginados.map(m => `<tr>
             <td>${new Date(m.data).toLocaleDateString()}</td>
             <td>${escapeHtml(m.descricao)}</td>
@@ -1691,12 +1762,14 @@
         if (!tbody) return;
         
         if (paginados.length === 0) { 
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:40px;">📋 Nenhuma movimentação registrada</td></tr>'; 
+            tbody.innerHTML = '</tr><td colspan="7" style="text-align:center; padding:40px;">📋 Nenhuma movimentação registrada</td></tr>'; 
         } else { 
             tbody.innerHTML = paginados.map(m => `<tr>
                 <td>${new Date(m.data).toLocaleDateString()}</td>
                 <td><span class="badge ${m.tipo === 'entrada' ? 'badge-entrada' : 'badge-saida'}">${m.tipo === 'entrada' ? 'Entrada' : 'Saída'}</span></td>
-                <td>${escapeHtml(m.descricao)}</td><td>${escapeHtml(m.categoria || '-')}</td><td>${escapeHtml(m.formaPagamento || '-')}</td>
+                <td>${escapeHtml(m.descricao)}</td>
+                <td>${escapeHtml(m.categoria || '-')}</td>
+                <td>${escapeHtml(m.formaPagamento || '-')}</td>
                 <td style="color:${m.tipo === 'entrada' ? 'green' : 'red'}">${m.tipo === 'entrada' ? '+' : '-'} R$ ${((m.tipo === 'entrada' ? (m.valorRecebido||m.valorTotal) : m.valorTotal)).toLocaleString()}</td>
                 <td><span class="badge ${m.tipo === 'entrada' ? (m.status === 'Pago Total' ? 'badge-pago' : 'badge-pendente') : (m.status === 'Pago' ? 'badge-pago' : 'badge-pendente')}">${m.tipo === 'entrada' ? m.status : m.status}</span></td>
             </tr>`).join(''); 
@@ -1763,13 +1836,16 @@
         let filtrados = documentos.filter(doc => { let matchBusca = !filtrosAtivos.documentos.busca || doc.referencia.toLowerCase().includes(filtrosAtivos.documentos.busca.toLowerCase()) || doc.tipo.toLowerCase().includes(filtrosAtivos.documentos.busca.toLowerCase()); let matchVinculo = !filtrosAtivos.documentos.vinculo || doc.tipoVinculo === filtrosAtivos.documentos.vinculo; return matchBusca && matchVinculo; }); 
         let totalPaginas = Math.ceil(filtrados.length / 15); let start = (paginaAtual.docs - 1) * 15; let paginados = filtrados.slice(start, start + 15); 
         const tbody = document.getElementById('documentosBody'); if (!tbody) return;
-        if (paginados.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:40px;">📄 Nenhum documento anexado</td></tr>'; document.getElementById('infoDocumentos').innerHTML = 'Nenhum documento encontrado'; document.getElementById('paginacaoDocumentos').innerHTML = ''; return; }
+        if (paginados.length === 0) { tbody.innerHTML = '<td><td colspan="7" style="text-align:center; padding:40px;">📄 Nenhum documento anexado<tr>'; document.getElementById('infoDocumentos').innerHTML = 'Nenhum documento encontrado'; document.getElementById('paginacaoDocumentos').innerHTML = ''; return; }
         tbody.innerHTML = paginados.map(doc => { let vinculoBadge = doc.tipoVinculo === 'veiculo' ? '<span class="badge badge-veiculo">🚗 Veículo</span>' : (doc.tipoVinculo === 'cliente' ? '<span class="badge badge-cliente">👤 Cliente</span>' : (doc.tipoVinculo === 'processo' ? '<span class="badge badge-info">📋 Processo</span>' : '<span class="badge badge-fornecedor">🏭 Fornecedor</span>')); return `<tr>
-            <td>${new Date(doc.data).toLocaleDateString()}<td>${vinculoBadge}<td><strong>${escapeHtml(doc.referencia)}</strong></td><td>${escapeHtml(doc.tipo)}</td>
-            <td>${doc.conteudo ? `<a href="${doc.conteudo}" download="${doc.nomeArquivo}" style="color:var(--verde-carvalho);"><i class="fas fa-file-pdf"></i> ${doc.nomeArquivo.length > 30 ? doc.nomeArquivo.substring(0, 27) + '...' : doc.nomeArquivo}</a>` : `<span style="color:#999;"><i class="fas fa-file"></i> ${escapeHtml(doc.nomeArquivo)}</span>`} </td>
+            <td>${new Date(doc.data).toLocaleDateString()}</td>
+            <td>${vinculoBadge}</td>
+            <td><strong>${escapeHtml(doc.referencia)}</strong></td>
+            <td>${escapeHtml(doc.tipo)}</td>
+            <td>${doc.conteudo ? `<a href="${doc.conteudo}" download="${doc.nomeArquivo}" style="color:var(--verde-carvalho);"><i class="fas fa-file-pdf"></i> ${doc.nomeArquivo.length > 30 ? doc.nomeArquivo.substring(0, 27) + '...' : doc.nomeArquivo}</a>` : `<span style="color:#999;"><i class="fas fa-file"></i> ${escapeHtml(doc.nomeArquivo)}</span>`}</td>
             <td>${escapeHtml(doc.obs || '-')}</td>
             <td class="btn-group">${doc.conteudo ? `<button class="btn-sm btn-outline" onclick="baixarDocumento('${doc.id}')" title="Baixar"><i class="fas fa-download"></i></button>` : ''}<button class="btn-sm btn-danger" onclick="excluirDocumento('${doc.id}')" title="Excluir"><i class="fas fa-trash"></i></button></td>
-        <tr>`; }).join('');
+        </tr>`; }).join('');
         document.getElementById('infoDocumentos').innerHTML = `Exibindo ${start+1} a ${Math.min(start+15, filtrados.length)} de ${filtrados.length} documentos`; 
         document.getElementById('paginacaoDocumentos').innerHTML = `<button onclick="paginarDocumentos(1)" ${paginaAtual.docs === 1 ? 'disabled' : ''}>«</button><button onclick="paginarDocumentos(${paginaAtual.docs-1})" ${paginaAtual.docs === 1 ? 'disabled' : ''}>Anterior</button><span>Página ${paginaAtual.docs} de ${totalPaginas || 1}</span><button onclick="paginarDocumentos(${paginaAtual.docs+1})" ${paginaAtual.docs >= totalPaginas ? 'disabled' : ''}>Próximo</button><button onclick="paginarDocumentos(${totalPaginas})" ${paginaAtual.docs >= totalPaginas ? 'disabled' : ''}>»</button>`;
     }
@@ -1802,7 +1878,7 @@
         renderExtrato();
         renderDocumentos();
         renderProcessos();
-        toast("✅ SISTEMA COMPLETO E FUNCIONAL! Todas as correções aplicadas.");
+        toast("✅ SISTEMA COMPLETO E FUNCIONAL! Todos os ajustes aplicados.");
     }
     
     window.verificarLogin = function() {
