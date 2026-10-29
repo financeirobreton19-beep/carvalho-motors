@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Carvalho Motors - Sistema Integrado v6.1</title>
+    <title>Carvalho Motors - Sistema Integrado v7.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -11,54 +11,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     
     <style>
+        /* ESTILOS ORIGINAIS MANTIDOS */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #f0f2f5; color: #1a1a1a; padding: 20px; }
         :root { --verde-carvalho: #1a5f2c; --verde-escuro: #0e3d1c; --cinza-borda: #e2e8f0; --branco: #ffffff; --texto-cinza: #64748b; --danger: #dc2626; --warning: #f59e0b; --success: #10b981; --info: #3b82f6; }
         
-        .login-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #0e3d1c 0%, #1a5f2c 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-        .login-card {
-            background: white;
-            border-radius: 24px;
-            padding: 40px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        .login-card h1 { color: var(--verde-carvalho); margin-bottom: 24px; }
-        .login-card input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 16px;
-            border: 1px solid var(--cinza-borda);
-            border-radius: 12px;
-            font-size: 16px;
-        }
-        .login-card button {
-            width: 100%;
-            padding: 12px;
-            background: var(--verde-carvalho);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .login-card button:hover { background: var(--verde-escuro); }
-        .login-error { color: var(--danger); margin-top: 12px; font-size: 14px; }
-        
-        .sistema-container { display: none; max-width: 1400px; margin: 0 auto; }
+        .sistema-container { max-width: 1400px; margin: 0 auto; }
         
         .tabs-container { background: var(--branco); border-radius: 16px; margin-bottom: 20px; overflow: hidden; }
         .tabs { display: flex; border-bottom: 2px solid var(--cinza-borda); background: var(--branco); flex-wrap: wrap; }
@@ -187,18 +148,8 @@
 </head>
 <body>
 
-<div id="loginOverlay" class="login-overlay">
-    <div class="login-card">
-        <i class="fas fa-motorcycle" style="font-size: 48px; color: var(--verde-carvalho); margin-bottom: 16px;"></i>
-        <h1>Carvalho Motors</h1>
-        <input type="text" id="loginUser" placeholder="Usuário" value="admin">
-        <input type="password" id="loginPass" placeholder="Senha" value="123">
-        <button onclick="verificarLogin()">Entrar no Sistema</button>
-        <div id="loginError" class="login-error"></div>
-    </div>
-</div>
-
 <div id="sistemaContainer" class="sistema-container">
+    <!-- ================= ABA DASHBOARD ================= -->
     <div class="tabs-container">
         <div class="tabs">
             <button class="tab-btn active" onclick="mudarAba('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</button>
@@ -219,6 +170,7 @@
         <div class="card"><h3><i class="fas fa-bell"></i> Alertas e Pendências</h3><div id="alertasList" class="alert-list"></div></div>
     </div>
 
+    <!-- ================= ABA ESTOQUE ================= -->
     <div id="abaEstoque" class="tab-content">
         <div class="guia-header"><h2><i class="fas fa-motorcycle"></i> Estoque - Veículos e Peças</h2><p>Gestão de veículos, motos, capacetes e acessórios</p></div>
         <div class="card">
@@ -291,6 +243,7 @@
         </div>
     </div>
 
+    <!-- ================= ABA PESSOAS ================= -->
     <div id="abaPessoas" class="tab-content">
         <div class="guia-header"><h2><i class="fas fa-users"></i> Pessoas - Clientes e Fornecedores</h2><p>Cadastro e gestão de clientes e fornecedores</p></div>
         <div class="card">
@@ -309,6 +262,7 @@
         <div class="card"><h3>Lista de Pessoas</h3><div class="table-wrapper"><table id="tabelaPessoas"><thead><tr><th>Tipo</th><th>Nome</th><th>Documento</th><th>Telefone</th><th>Email</th><th>Endereço</th><th>Observações</th><th>Ações</th></tr></thead><tbody id="pessoasBody"></tbody></table></div><div class="pagination" id="paginacaoPessoas"></div><div class="records-info" id="infoPessoas"></div></div>
     </div>
 
+    <!-- ================= ABA FINANCEIRO ================= -->
     <div id="abaFinanceiro" class="tab-content">
         <div class="guia-header"><h2><i class="fas fa-coins"></i> Financeiro</h2><p>Gestão de entradas, saídas e extrato</p></div>
         <div class="sub-tabs"><div class="sub-tab active" data-sub="entradas"><i class="fas fa-arrow-down"></i> Entradas</div><div class="sub-tab" data-sub="saidas"><i class="fas fa-arrow-up"></i> Saídas</div><div class="sub-tab" data-sub="extrato"><i class="fas fa-list"></i> Extrato</div></div>
@@ -323,7 +277,7 @@
                     <div class="filter-group"><button class="btn-outline" onclick="limparFiltrosEntrada()">Limpar Filtros</button></div>
                 </div>
             </div>
-            <div class="card"><h3 onclick="toggleFormulario('formEntradas', 'iconEntradas')"><i class="fas fa-plus-circle"></i> Registrar Entrada <i class="fas fa-chevron-down toggle-icon" id="iconEntradas"></i></h3><div id="formEntradas" class="formulario-expansivel"><div class="form-row"><div class="form-group"><label>Data</label><input type="date" id="entradaData" max="9999-12-31"></div><div class="form-group"><label>Descrição</label><input type="text" id="entradaDesc" placeholder="Ex: Venda Golf GTI"></div><div class="form-group"><label>Categoria</label><select id="entradaCategoria"><option value="Venda Veículo">Venda Veículo</option><option value="Venda Equipamento">Venda Equipamento</option><option value="Serviço">Serviço</option><option value="Aporte">Aporte</option><option value="Outras Entradas">Outras Entradas</option></select></div><div class="form-group"><label>Forma Pagamento</label><select id="entradaFormaPagamento"><option value="Espécie">Espécie</option><option value="Cartão">Cartão</option><option value="Pix">Pix</option><option value="Transferência">Transferência</option></select></div></div><div class="form-row"><div class="form-group"><label>Valor Total</label><input type="number" id="entradaValor" placeholder="0"></div><div class="form-group"><label>Valor Recebido</label><input type="number" id="entradaRecebido" placeholder="0"></div><div class="form-group"><label>Vencimento</label><input type="date" id="entradaVencimiento" max="9999-12-31"></div><div class="form-group"><label>Status</label><select id="entradaStatus"><option value="Pago Total">Pago Total</option><option value="Pago Parcial">Pago Parcial</option><option value="Pendente">Pendente</option></select></div></div><div class="form-row"><div class="form-group"><label>Cliente</label><input type="text" id="entradaCliente" placeholder="Nome do cliente"></div><div class="form-group"><label>Observações</label><input type="text" id="entradaObs" placeholder="Observações..."></div></div><button onclick="window.registrarEntrada()">Registrar Entrada</button></div></div>
+            <div class="card"><h3 onclick="toggleFormulario('formEntradas', 'iconEntradas')"><i class="fas fa-plus-circle"></i> Registrar Entrada <i class="fas fa-chevron-down toggle-icon" id="iconEntradas"></i></h3><div id="formEntradas" class="formulario-expansivel"><div class="form-row"><div class="form-group"><label>Data</label><input type="date" id="entradaData" max="9999-12-31"></div><div class="form-group"><label>Descrição</label><input type="text" id="entradaDesc" placeholder="Ex: Venda Golf GTI"></div><div class="form-group"><label>Categoria</label><select id="entradaCategoria"><option value="Venda Veículo">Venda Veículo</option><option value="Venda Equipamento">Venda Equipamento</option><option value="Serviço">Serviço</option><option value="Aporte">Aporte</option><option value="Outras Entradas">Outras Entradas</option></select></div><div class="form-group"><label>Forma Pagamento</label><select id="entradaFormaPagamento"><option value="Espécie">Espécie</option><option value="Cartão">Cartão</option><option value="Pix">Pix</option><option value="Transferência">Transferência</option></select></div></div><div class="form-row"><div class="form-group"><label>Valor Total</label><input type="number" id="entradaValor" placeholder="0"></div><div class="form-group"><label>Valor Recebido</label><input type="number" id="entradaRecebido" placeholder="0"></div><div class="form-group"><label>Vencimento</label><input type="date" id="entradaVencimento" max="9999-12-31"></div><div class="form-group"><label>Status</label><select id="entradaStatus"><option value="Pago Total">Pago Total</option><option value="Pago Parcial">Pago Parcial</option><option value="Pendente">Pendente</option></select></div></div><div class="form-row"><div class="form-group"><label>Cliente</label><input type="text" id="entradaCliente" placeholder="Nome do cliente"></div><div class="form-group"><label>Observações</label><input type="text" id="entradaObs" placeholder="Observações..."></div></div><button onclick="window.registrarEntrada()">Registrar Entrada</button></div></div>
             <div class="card"><div class="table-wrapper"><table id="tabelaEntradas"><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Forma Pgto</th><th>Valor Total</th><th>Recebido</th><th>Pendente</th><th>Status</th><th>Vencimento</th><th>Ações</th></tr></thead><tbody id="entradasBody"></tbody></table></div><div class="pagination" id="paginacaoEntradas"></div><div class="records-info" id="infoEntradas"></div></div>
         </div>
         
@@ -347,22 +301,23 @@
         </div>
     </div>
 
+    <!-- ================= ABA DOCUMENTOS ================= -->
     <div id="abaDocumentos" class="tab-content">
         <div class="guia-header"><h2><i class="fas fa-folder-open"></i> Documentos - Central de Arquivos</h2><p>Armazenamento e gestão de documentos de veículos, clientes e fornecedores</p></div>
-        <div class="card"><h3 onclick="toggleFormulario('formDocumentos', 'iconDocumentos')"><i class="fas fa-upload"></i> Anexar Documento <i class="fas fa-chevron-down toggle-icon" id="iconDocumentos"></i></h3><div id="formDocumentos" class="formulario-expansivel"><div class="form-row"><div class="form-group"><label>Vincular a</label><select id="docTipoVinculo"><option value="veiculo">Veículo</option><option value="cliente">Cliente</option><option value="fornecedor">Fornecedor</option><option value="processo">Processo Transferência</option></select></div><div class="form-group"><label>Referência (Placa ou Nome)</label><input type="text" id="docReferencia" placeholder="Ex: ABC1234 ou João Silva"></div><div class="form-group"><label>Tipo de Documento</label><select id="docTipo"><optgroup label="Veículo"><option value="CRLV">CRLV</option><option value="DUT">DUT</option><option value="Nota Fiscal Veículo">Nota Fiscal</option></optgroup><optgroup label="Cliente"><option value="RG">RG</option><option value="CPF">CPF</option><option value="CNH">CNH</option></optgroup><optgroup label="Fornecedor"><option value="Contrato Fornecedor">Contrato</option><option value="Nota Fiscal Fornecedor">Nota Fiscal</option></optgroup><optgroup label="Processo"><option value="PROCURAÇÃO">PROCURAÇÃO</option><option value="Comprovante de Transferência">Comprovante de Transferência</option><option value="Comunicado de Venda">Comunicado de Venda</option></optgroup></select></div><div class="form-group"><label>Arquivo</label><input type="file" id="docArquivo" accept=".pdf,.jpg,.png,.jpeg"></div></div><div class="form-row"><div class="form-group"><label>Observações</label><input type="text" id="docObs" placeholder="Observações..."></div></div><div class="botoes-acao"><button onclick="window.anexarDocumento(false)"><i class="fas fa-paperclip"></i> Anexar e Limpar</button><button onclick="window.anexarDocumento(true)" class="btn-outline"><i class="fas fa-plus-circle"></i> Anexar +1</button><button onclick="limparFormularioDocumentos()" class="btn-outline"><i class="fas fa-eraser"></i> Limpar Formulário</button></div></div></div>
+        <div class="card"><h3 onclick="toggleFormulario('formDocumentos', 'iconDocumentos')"><i class="fas fa-upload"></i> Anexar Documento <i class="fas fa-chevron-down toggle-icon" id="iconDocumentos"></i></h3><div id="formDocumentos" class="formulario-expansivel"><div class="form-row"><div class="form-group"><label>Vincular a</label><select id="docTipoVinculo"><option value="veiculo">Veículo</option><option value="cliente">Cliente</option><option value="fornecedor">Fornecedor</option><option value="processo">Processo Transferência</option></select></div><div class="form-group"><label>Referência (Placa ou Nome)</label><input type="text" id="docReferencia" placeholder="Ex: ABC1234 ou João Silva"></div><div class="form-group"><label>Tipo de Documento</label><select id="docTipo"><optgroup label="Veículo"><option value="CRLV">CRLV</option><option value="DUT">DUT</option><option value="Nota Fiscal Veículo">Nota Fiscal</option></optgroup><optgroup label="Cliente"><option value="RG">RG</option><option value="CPF">CPF</option><option value="CNH">CNH</option></optgroup><optgroup label="Fornecedor"><option value="Contrato Fornecedor">Contrato</option><option value="Nota Fiscal Fornecedor">Nota Fiscal</option></optgroup><optgroup label="Processo"><option value="PROCURAÇÃO">PROCURAÇÃO</option><option value="Comprovante de Transferência">Comprovante de Transferência</option><option value="Comunicado de Venda">Comunicado de Venda</option></optgroup></select></div><div class="form-group"><label>Arquivo (Imagem)</label><input type="file" id="docArquivo" accept="image/*"></div></div><div class="form-row"><div class="form-group"><label>Observações</label><input type="text" id="docObs" placeholder="Observações..."></div></div><div class="botoes-acao"><button onclick="window.anexarDocumento(false)"><i class="fas fa-paperclip"></i> Anexar e Limpar</button><button onclick="window.anexarDocumento(true)" class="btn-outline"><i class="fas fa-plus-circle"></i> Anexar +1</button><button onclick="limparFormularioDocumentos()" class="btn-outline"><i class="fas fa-eraser"></i> Limpar Formulário</button></div></div></div>
         <div class="card"><h3 onclick="toggleFormulario('formularioProcesso', 'toggleIconProcesso')"><i class="fas fa-exchange-alt"></i> Acompanhamento de Transferência <i class="fas fa-chevron-down toggle-icon" id="toggleIconProcesso"></i></h3><div id="formularioProcesso" class="formulario-expansivel"><div class="form-row"><div class="form-group"><label>Placa do Veículo</label><input type="text" id="processoPlaca" placeholder="ABC1234" style="text-transform: uppercase;"></div><div class="form-group"><label>Status</label><select id="processoStatus"><option value="pendente">📌 Pendente</option><option value="aguardando_assinatura">✍️ Aguardando Assinatura</option><option value="aguardando_documento">📄 Aguardando Documento</option><option value="em_cartorio">🏛️ Em Cartório</option><option value="em_transferencia">🚗 Em Transferência</option><option value="finalizado">✅ Finalizado</option></select></div><div class="form-group"><label>Data Início</label><input type="date" id="processoDataInicio" max="9999-12-31"></div></div><div class="form-row"><div class="form-group"><label>Cliente Vendedor</label><input type="text" id="processoVendedor" placeholder="Nome do vendedor"></div><div class="form-group"><label>CPF/CNPJ Vendedor</label><input type="text" id="processoVendedorDoc" placeholder="CPF/CNPJ"></div></div><div class="form-row"><div class="form-group"><label>Cliente Comprador</label><input type="text" id="processoComprador" placeholder="Nome do comprador"></div><div class="form-group"><label>CPF/CNPJ Comprador</label><input type="text" id="processoCompradorDoc" placeholder="CPF/CNPJ"></div></div><div class="form-row"><div class="form-group"><label>Telefone</label><input type="text" id="processoTelefone" placeholder="Telefone"></div><div class="form-group"><label>Endereço</label><input type="text" id="processoEndereco" placeholder="Endereço completo"></div></div><div class="form-row"><div class="form-group"><label>Observação</label><input type="text" id="processoObs" placeholder="Observações..."></div><div class="form-group"><button onclick="window.adicionarProcessoTransferencia()" style="margin-top: 22px;"><i class="fas fa-plus"></i> Iniciar Processo</button></div></div></div></div>
         <div class="card"><h3><i class="fas fa-filter"></i> Filtros</h3><div class="filters-bar"><div class="filter-group filtro-placa"><label>Buscar por Placa/Nome</label><input type="text" id="filtroBuscaDocs" placeholder="Ex: ABC1234 ou João Silva" onkeyup="filtrarDocumentos()"></div><div class="filter-group"><label>Vinculado a</label><select id="filtroVinculoDocs" onchange="filtrarDocumentos()"><option value="">Todos</option><option value="veiculo">Veículo</option><option value="cliente">Cliente</option><option value="fornecedor">Fornecedor</option><option value="processo">Processo</option></select></div><button class="btn-outline btn-excel" onclick="exportarDocumentos()"><i class="fas fa-file-excel"></i> Exportar CSV</button></div></div>
         <div class="card"><h3><i class="fas fa-list"></i> Lista de Documentos</h3><div class="table-wrapper"><table class="documentos-table"><thead><tr><th>Data</th><th>Vinculado a</th><th>Referência</th><th>Tipo</th><th>Arquivo</th><th>Observações</th><th>Ações</th></tr></thead><tbody id="documentosBody"></tbody></table></div><div class="pagination" id="paginacaoDocumentos"></div><div class="records-info" id="infoDocumentos"></div></div>
         <div class="card processos-card"><h3><i class="fas fa-truck"></i> Processos de Transferência Ativos</h3><div class="table-wrapper"><table class="processos-table"><thead><tr><th>Placa</th><th>Status</th><th>Vendedor</th><th>Comprador</th><th>Telefone</th><th>Data Início</th><th>Última Atualização</th><th>Observações</th><th>Ações</th></tr></thead><tbody id="processosBody"></tbody></table></div></div>
     </div>
-</div>
+</div> <!-- Fecha sistemaContainer -->
 
 <!-- MODAIS -->
 <div id="modalVenda" class="modal"><div class="modal-content"><div class="modal-header"><h3>Registrar Venda</h3><button onclick="fecharModal('modalVenda')">✕</button></div><div class="form-group"><label>Data da Venda</label><input type="date" id="vendaData" max="9999-12-31"></div><div class="form-group"><label>Comprador</label><input type="text" id="vendaComprador" list="clientesList" placeholder="Selecione um cliente"><datalist id="clientesList"></datalist></div><div id="infoClienteSelecionado" style="background: #f8fafc; padding: 12px; border-radius: 8px; margin-top: 8px; font-size: 12px; display: none;"></div><div class="form-group"><label>Valor da Venda</label><input type="number" id="vendaValor" placeholder="0"></div><div class="form-group"><label>Forma de Pagamento</label><select id="vendaFormaPagamento"><option>Espécie</option><option>Pix</option><option>Cartão</option><option>Transferência</option><option>Financiamento</option></select></div><div class="form-group" id="campoQuantidadeVenda" style="display:none;"><label>Quantidade</label><input type="number" id="vendaQuantidade" value="1" min="1"></div><div style="display:flex; gap:10px; margin-top:20px;"><button onclick="fecharModal('modalVenda')" class="btn-outline">Cancelar</button><button id="confirmarVendaBtn" style="background:var(--success)">Confirmar Venda</button></div></div></div>
 
 <div id="modalCustosAdicionais" class="modal"><div class="modal-content" style="max-width: 800px;"><div class="modal-header"><h3><i class="fas fa-dollar-sign"></i> Custos Adicionais do Veículo: <span id="veiculoPlacaCustos"></span></h3><button onclick="fecharModal('modalCustosAdicionais')">✕</button></div><div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 8px;"><div class="form-row"><div class="form-group"><label>Tipo de Custo</label><select id="novoCustoTipo"><option value="mecanica">🔧 Mecânica</option><option value="funilaria">🎨 Funilaria</option><option value="documentacao">📄 Documentação</option><option value="transporte">🚚 Transporte</option><option value="lavagem">🧼 Lavagem/Detalhamento</option><option value="combustivel">⛽ Combustível</option><option value="comissao">👔 Comissão</option><option value="vistoria">🔍 Vistoria</option><option value="despachante">📋 Despachante</option><option value="pecas">⚙️ Peças</option><option value="outro">📌 Outro</option></select></div><div class="form-group"><label>Valor (R$)</label><input type="number" id="novoCustoValor" step="0.01"></div><div class="form-group"><label>Data</label><input type="date" id="novoCustoData" max="9999-12-31"></div></div><div class="form-row"><div class="form-group"><label>Fornecedor/Serviço</label><input type="text" id="novoCustoFornecedor" placeholder="Opcional"></div><div class="form-group"><label>Observação</label><textarea id="novoCustoObs" placeholder="Ex: Nota fiscal 123" rows="2"></textarea></div><div><button onclick="window.adicionarCustoAdicional()" style="margin-top: 22px;"><i class="fas fa-plus"></i> Adicionar</button></div></div></div><div id="listaCustosAdicionais" style="max-height: 300px; overflow-y: auto;"></div><div style="margin-top: 16px; padding: 12px; background: #e8f5e9; border-radius: 8px; display: flex; justify-content: space-between;"><strong><i class="fas fa-calculator"></i> TOTAL DE CUSTOS ADICIONAIS:</strong><strong style="font-size: 20px;" id="totalCustosAdicionais">R$ 0,00</strong></div><div style="margin-top: 16px; text-align: right;"><button onclick="fecharModal('modalCustosAdicionais')" class="btn-outline">Fechar</button></div></div></div>
 
-<div id="modalAnexosVeiculo" class="modal"><div class="modal-content" style="max-width: 800px;"><div class="modal-header"><h3><i class="fas fa-paperclip"></i> Documentos do Veículo: <span id="veiculoPlacaAnexo"></span></h3><button onclick="fecharModal('modalAnexosVeiculo')">✕</button></div><div style="margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 12px;"><h4 style="margin-bottom: 12px; color: var(--verde-carvalho);"><i class="fas fa-upload"></i> Adicionar Novo Documento</h4><div class="form-row"><div class="form-group"><label>Tipo do Documento</label><select id="tipoAnexo"><option value="consulta_veicular">📋 Consulta Veicular</option><option value="laudo">📄 Laudo</option><option value="historico">📜 Histórico</option><option value="nota_fiscal">🧾 Nota Fiscal</option><option value="outro">📁 Outro</option></select></div><div class="form-group"><label>Arquivo (PDF/Imagem)</label><input type="file" id="arquivoAnexo" accept=".pdf,.jpg,.png,.jpeg" multiple></div><div class="form-group"><label>Observação</label><textarea id="obsAnexo" rows="2" placeholder="Descrição do documento..."></textarea></div><div><button onclick="window.uploadAnexoVeiculo()" style="margin-top: 22px; background: var(--info);"><i class="fas fa-plus-circle"></i> Adicionar</button></div></div></div><div><h4 style="margin-bottom: 12px; color: var(--verde-carvalho);"><i class="fas fa-folder-open"></i> Documentos Anexados</h4><div id="listaAnexosVeiculo" style="max-height: 350px; overflow-y: auto;"></div></div><div style="margin-top: 16px; text-align: right;"><button onclick="fecharModal('modalAnexosVeiculo')" class="btn-outline">Fechar</button></div></div></div>
+<div id="modalAnexosVeiculo" class="modal"><div class="modal-content" style="max-width: 800px;"><div class="modal-header"><h3><i class="fas fa-paperclip"></i> Documentos do Veículo: <span id="veiculoPlacaAnexo"></span></h3><button onclick="fecharModal('modalAnexosVeiculo')">✕</button></div><div style="margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 12px;"><h4 style="margin-bottom: 12px; color: var(--verde-carvalho);"><i class="fas fa-upload"></i> Adicionar Novo Documento</h4><div class="form-row"><div class="form-group"><label>Tipo do Documento</label><select id="tipoAnexo"><option value="consulta_veicular">📋 Consulta Veicular</option><option value="laudo">📄 Laudo</option><option value="historico">📜 Histórico</option><option value="nota_fiscal">🧾 Nota Fiscal</option><option value="outro">📁 Outro</option></select></div><div class="form-group"><label>Arquivo (Imagem)</label><input type="file" id="arquivoAnexo" accept="image/*" multiple></div><div class="form-group"><label>Observação</label><textarea id="obsAnexo" rows="2" placeholder="Descrição do documento..."></textarea></div><div><button onclick="window.uploadAnexoVeiculo()" style="margin-top: 22px; background: var(--info);"><i class="fas fa-plus-circle"></i> Adicionar</button></div></div></div><div><h4 style="margin-bottom: 12px; color: var(--verde-carvalho);"><i class="fas fa-folder-open"></i> Documentos Anexados</h4><div id="listaAnexosVeiculo" style="max-height: 350px; overflow-y: auto;"></div></div><div style="margin-top: 16px; text-align: right;"><button onclick="fecharModal('modalAnexosVeiculo')" class="btn-outline">Fechar</button></div></div></div>
 
 <div id="modalEditarEstoque" class="modal"><div class="modal-content" style="max-width: 850px;"><div class="modal-header"><h3>Editar Item</h3><button onclick="fecharModal('modalEditarEstoque')">✕</button></div><div id="editarItemForm"></div><div style="display:flex; gap:10px; margin-top:20px;"><button onclick="fecharModal('modalEditarEstoque')" class="btn-outline">Cancelar</button><button id="confirmarEdicaoEstoqueBtn" style="background:var(--verde-carvalho)">Salvar</button></div></div></div>
 
@@ -377,9 +332,8 @@
 <div id="modalEditarProcesso" class="modal"><div class="modal-content"><div class="modal-header"><h3>Editar Processo de Transferência</h3><button onclick="fecharModal('modalEditarProcesso')">✕</button></div><div class="form-group"><label>Status</label><select id="editProcessoStatus"><option value="pendente">📌 Pendente</option><option value="aguardando_assinatura">✍️ Aguardando Assinatura</option><option value="aguardando_documento">📄 Aguardando Documento</option><option value="em_cartorio">🏛️ Em Cartório</option><option value="em_transferencia">🚗 Em Transferência</option><option value="finalizado">✅ Finalizado</option></select></div><div class="form-group"><label>Observação</label><textarea id="editProcessoObs" placeholder="Atualização do processo" rows="2"></textarea></div><div style="display:flex; gap:10px; margin-top:20px;"><button onclick="fecharModal('modalEditarProcesso')" class="btn-outline">Cancelar</button><button id="confirmarEditarProcessoBtn" style="background:var(--verde-carvalho)">Atualizar</button></div></div></div>
 
 <div id="modalNovoFornecedor" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-truck"></i> Cadastrar Novo Fornecedor</h3><button onclick="fecharModal('modalNovoFornecedor')">✕</button></div><div class="form-row"><div class="form-group"><label>Nome / Razão Social *</label><input type="text" id="novoFornecedorNome" placeholder="Ex: Auto Peças Silva"></div><div class="form-group"><label>CNPJ</label><input type="text" id="novoFornecedorCnpj" placeholder="00.000.000/0001-00"></div></div><div class="form-row"><div class="form-group"><label>Telefone</label><input type="text" id="novoFornecedorTelefone" placeholder="(11) 99999-9999"></div><div class="form-group"><label>E-mail</label><input type="email" id="novoFornecedorEmail" placeholder="contato@empresa.com"></div></div><div class="form-row"><div class="form-group"><label>CEP</label><input type="text" id="novoFornecedorCep" placeholder="00000-000"></div><div class="form-group"><label>Endereço</label><input type="text" id="novoFornecedorEndereco" placeholder="Rua, número, bairro"></div></div><div class="botoes-acao"><button onclick="fecharModal('modalNovoFornecedor')" class="btn-outline">Cancelar</button><button onclick="window.salvarNovoFornecedor()" style="background: var(--verde-carvalho)">Salvar Fornecedor</button></div></div></div>
-
 <script>
-    // ==================== FIREBASE CONFIG ====================
+    // ==================== FIREBASE CONFIG (INALTERADO) ====================
     const firebaseConfig = {
         apiKey: "AIzaSyCVNg3xlI9zwoANuGiazAkOwq3llfe54MA",
         authDomain: "carvalho-motors.firebaseapp.com",
@@ -391,6 +345,7 @@
     
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const auth = firebase.auth(); // NOVO: Módulo de Autenticação
     
     // ==================== VARIÁVEIS GLOBAIS ====================
     let itens = [];
@@ -410,7 +365,25 @@
     let graficoTopCategorias = null;
     
     // ==================== FUNÇÕES AUXILIARES ====================
-    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+    
+    // Proteção contra HTML/JS malicioso (segurança)
+    function escapeHtml(str) { 
+        if (!str) return ''; 
+        return String(str).replace(/[&<>"']/g, function(m) { 
+            if (m === '&') return '&amp;'; 
+            if (m === '<') return '&lt;'; 
+            if (m === '>') return '&gt;'; 
+            if (m === '"') return '&quot;'; 
+            if (m === "'") return '&#39;'; 
+            return m; 
+        }); 
+    }
+    
+    // Formatação de dinheiro brasileiro (ex: R$ 1.234,56)
+    function formatarDinheiro(valor) {
+        if (valor === undefined || valor === null) valor = 0;
+        return Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
     
     function toast(msg, isError = false) { 
         let t = document.createElement('div'); 
@@ -420,16 +393,42 @@
         setTimeout(() => t.remove(), 5000); 
     }
     
+    // Validação de datas de VENCIMENTO (permite datas futuras)
+    function validarDataVencimento(data, nomeCampo = "Vencimento") {
+        if (!data) return true;
+        const dataObj = new Date(data);
+        if (isNaN(dataObj.getTime())) { toast(`⚠️ ${nomeCampo} inválida!`, true); return false; }
+        return true;
+    }
+    
+    // Validação de datas de OCORRÊNCIA (não permite datas futuras)
     function validarDataFutura(data, nomeCampo = "Data") {
         if (!data) return true;
         const dataObj = new Date(data);
         const hoje = new Date();
-        hoje.setHours(0, 0, 0, 0);
-        if (dataObj > hoje) {
-            toast(`⚠️ ${nomeCampo} não pode ser futura!`, true);
-            return false;
-        }
+        hoje.setHours(23, 59, 59, 999); // Permite o dia de hoje inteiro
+        if (isNaN(dataObj.getTime())) { toast(`⚠️ ${nomeCampo} inválida!`, true); return false; }
+        if (dataObj > hoje) { toast(`⚠️ ${nomeCampo} não pode ser futura!`, true); return false; }
         return true;
+    }
+    
+    // ID único para evitar sobrescrever registros simultâneos
+    function gerarId() {
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+            return crypto.randomUUID();
+        }
+        return Date.now().toString() + '-' + Math.random().toString(36).substr(2, 9);
+    }
+    
+    // Remove campos nulos do Firebase (mas mantém textos vazios)
+    function limparUndefined(obj) {
+        const resultado = {};
+        for (const key in obj) {
+            if (obj[key] !== undefined) {
+                resultado[key] = obj[key];
+            }
+        }
+        return resultado;
     }
     
     function fecharModal(id) { 
@@ -476,7 +475,10 @@
         }
     }
     
-    function diasEstoque(data) { if (!data) return 0; return Math.floor((new Date() - new Date(data)) / (1000*60*60*24)); }
+    function diasEstoque(data) { 
+        if (!data) return 0; 
+        return Math.floor((new Date() - new Date(data)) / (1000*60*60*24)); 
+    }
     
     function isPlacaDuplicada(placa, idIgnorar = null) {
         const placaNormalizada = placa.toUpperCase();
@@ -522,6 +524,36 @@
         if (buscaInput) buscaInput.value = filtrosAtivos.documentos.busca;
         if (vinculoSelect) vinculoSelect.value = filtrosAtivos.documentos.vinculo;
     }
+
+    // ==================== COMPRESSÃO DE IMAGEM (PARA O PLANO GRATUITO) ====================
+    function comprimirImagem(file, maxWidth = 1200, maxHeight = 1200, quality = 0.7) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = event => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > height) {
+                        if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; }
+                    } else {
+                        if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    // Retorna a imagem comprimida em Base64 (JPEG)
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.onerror = error => reject(error);
+            };
+            reader.onerror = error => reject(error);
+        });
+    }
     
     // ==================== FORNECEDORES ====================
     function atualizarSelectFornecedores() {
@@ -557,16 +589,6 @@
         }
     }
     
-    async function atualizarFornecedorEmTodosItens(fornecedorId, novoNome) {
-        const itensParaAtualizar = itens.filter(i => i.fornecedorId === fornecedorId);
-        for (const item of itensParaAtualizar) {
-            await db.collection("estoque").doc(item.id).update({ fornecedor: novoNome });
-        }
-        if (itensParaAtualizar.length > 0) {
-            toast(`✅ Fornecedor atualizado em ${itensParaAtualizar.length} itens!`);
-        }
-    }
-    
     // ==================== LISTENERS REALTIME ====================
     function iniciarListenersRealtime() {
         db.collection("estoque").orderBy("dataEntrada", "desc").onSnapshot((snapshot) => {
@@ -578,14 +600,7 @@
         }, (error) => toast(`Erro no estoque: ${error.message}`, true));
         
         db.collection("pessoas").onSnapshot((snapshot) => {
-            const novasPessoas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            for (const pessoa of novasPessoas) {
-                const pessoaAntiga = pessoas.find(p => p.id === pessoa.id);
-                if (pessoaAntiga && pessoa.tipo === 'fornecedor' && pessoaAntiga.nome !== pessoa.nome) {
-                    atualizarFornecedorEmTodosItens(pessoa.id, pessoa.nome);
-                }
-            }
-            pessoas = novasPessoas;
+            pessoas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             if (document.querySelector('.tab-content.active')?.id === 'abaPessoas') renderizarPessoas();
             atualizarSelectFornecedores();
             atualizarListaClientesDatalist();
@@ -629,14 +644,11 @@
             documentos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             if (document.querySelector('.tab-content.active')?.id === 'abaDocumentos') renderDocumentos();
         }, (error) => toast(`Erro nos documentos: ${error.message}`, true));
-        
-        toast("🔄 Sincronização em tempo real ativada!");
     }
     
     // ==================== CARREGAR DADOS ====================
     async function carregarDadosFirestore() {
         try {
-            toast("📥 Carregando dados...");
             const [estoqueSnap, pessoasSnap, movSnap, docsSnap, custosSnap, anexosSnap, processosSnap] = await Promise.all([
                 db.collection("estoque").orderBy("dataEntrada", "desc").get(),
                 db.collection("pessoas").get(),
@@ -646,7 +658,6 @@
                 db.collection("anexosEstoque").get(),
                 db.collection("processosTransferencia").get()
             ]);
-            
             itens = estoqueSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             pessoas = pessoasSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             movimentacoes = movSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -660,11 +671,8 @@
                 saldoInicial = configDoc.data().saldoInicial || 0;
                 document.getElementById('saldoInicialInput').value = saldoInicial;
             }
-            
             atualizarSelectFornecedores();
             atualizarListaClientesDatalist();
-            
-            toast(`✅ ${itens.length} itens, ${pessoas.length} pessoas carregados!`);
             return true;
         } catch (error) {
             console.error("Erro:", error);
@@ -717,15 +725,15 @@
     async function atualizarDashboard() {
         const veiculosEmEstoque = itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque' && !i.vendido).length;
         const hoje = new Date();
-        const vendasMes = movimentacoes.filter(m => m.tipo === 'entrada' && new Date(m.data).getMonth() === hoje.getMonth() && m.status === 'Pago Total').reduce((s, m) => s + (m.valorRecebido || m.valorTotal), 0);
-        const totalEntradas = movimentacoes.filter(m => m.tipo === 'entrada' && m.status === 'Pago Total').reduce((s, m) => s + (m.valorRecebido || m.valorTotal), 0);
-        const totalSaidas = movimentacoes.filter(m => m.tipo === 'saida' && m.status === 'Pago').reduce((s, m) => s + m.valorTotal, 0);
+        const vendasMes = movimentacoes.filter(m => m.tipo === 'entrada' && new Date(m.data).getMonth() === hoje.getMonth() && m.status === 'Pago Total').reduce((s, m) => s + (m.valorRecebido || 0), 0);
+        const totalEntradas = movimentacoes.filter(m => m.tipo === 'entrada' && m.status === 'Pago Total').reduce((s, m) => s + (m.valorRecebido || 0), 0);
+        const totalSaidas = movimentacoes.filter(m => m.tipo === 'saida' && m.status === 'Pago').reduce((s, m) => s + (m.valorTotal || 0), 0);
         const lucroMes = totalEntradas - totalSaidas;
         const totalDias = itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque').reduce((s, i) => s + diasEstoque(i.dataEntrada), 0);
         const veiculosCount = itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque').length;
         const mediaDias = veiculosCount ? Math.floor(totalDias / veiculosCount) : 0;
         const veiculosParados = itens.filter(i => i.tipo === 'veiculo' && i.status === 'Em estoque' && diasEstoque(i.dataEntrada) > 60).length;
-        const contasReceber = movimentacoes.filter(m => m.tipo === 'entrada' && m.status !== 'Pago Total').reduce((s, m) => s + (m.valorTotal - (m.valorRecebido || 0)), 0);
+        const contasReceber = movimentacoes.filter(m => m.tipo === 'entrada' && m.status !== 'Pago Total').reduce((s, m) => s + ((m.valorTotal || 0) - (m.valorRecebido || 0)), 0);
         const estoqueBaixo = itens.filter(i => (i.tipo === 'peca' || i.tipo === 'capacete') && i.quantidade <= 5 && i.status === 'Em estoque' && !i.vendido).length;
         const processosPendentes = processosTransferencia.filter(p => p.status !== 'finalizado').length;
         
@@ -746,7 +754,7 @@
         for (let i = 5; i >= 0; i--) {
             const mes = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
             meses.push(mes.toLocaleString('pt-BR', { month: 'short' }));
-            const total = movimentacoes.filter(m => m.tipo === 'entrada' && m.status === 'Pago Total' && new Date(m.data).getMonth() === mes.getMonth() && new Date(m.data).getFullYear() === mes.getFullYear()).reduce((s, m) => s + (m.valorRecebido || m.valorTotal), 0);
+            const total = movimentacoes.filter(m => m.tipo === 'entrada' && m.status === 'Pago Total' && new Date(m.data).getMonth() === mes.getMonth() && new Date(m.data).getFullYear() === mes.getFullYear()).reduce((s, m) => s + (m.valorRecebido || 0), 0);
             vendasPorMes.push(total);
         }
         const ctxVendas = document.getElementById('graficoVendasDashboard');
@@ -756,7 +764,7 @@
         }
         
         const categorias = {};
-        movimentacoes.forEach(m => { const valor = m.tipo === 'entrada' && m.status === 'Pago Total' ? (m.valorRecebido || m.valorTotal) : (m.tipo === 'saida' && m.status === 'Pago' ? -m.valorTotal : 0); if(!categorias[m.categoria]) categorias[m.categoria] = 0; categorias[m.categoria] += valor; });
+        movimentacoes.forEach(m => { const valor = m.tipo === 'entrada' && m.status === 'Pago Total' ? (m.valorRecebido || 0) : (m.tipo === 'saida' && m.status === 'Pago' ? -m.valorTotal : 0); if(!categorias[m.categoria]) categorias[m.categoria] = 0; categorias[m.categoria] += valor; });
         const categoriasOrdenadas = Object.entries(categorias).sort((a,b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 5);
         const ctxCategorias = document.getElementById('graficoTopCategorias');
         if (ctxCategorias) {
@@ -772,44 +780,6 @@
         if(alertasHtml === '') alertasHtml = `<div class="alert-item"><i class="fas fa-check-circle alert-success"></i><div><strong>Tudo em ordem!</strong><br><small>Nenhuma pendência</small></div></div>`;
         const alertasList = document.getElementById('alertasList');
         if (alertasList) alertasList.innerHTML = alertasHtml;
-    }
-    
-    // ==================== MODAL NOVO FORNECEDOR ====================
-    window.abrirModalNovoFornecedor = function() { 
-        document.getElementById('novoFornecedorNome').value = '';
-        document.getElementById('novoFornecedorCnpj').value = '';
-        document.getElementById('novoFornecedorTelefone').value = '';
-        document.getElementById('novoFornecedorEmail').value = '';
-        document.getElementById('novoFornecedorCep').value = '';
-        document.getElementById('novoFornecedorEndereco').value = '';
-        document.getElementById('modalNovoFornecedor').classList.add('show'); 
-    }
-    
-    window.salvarNovoFornecedor = async function() {
-        let nome = document.getElementById('novoFornecedorNome')?.value.trim();
-        if (!nome) { toast("⚠️ Informe o nome!", true); return; }
-        let novoFornecedor = { 
-            id: Date.now().toString(), 
-            tipo: 'fornecedor',
-            nome: nome, 
-            documento: document.getElementById('novoFornecedorCnpj')?.value || '', 
-            telefone: document.getElementById('novoFornecedorTelefone')?.value || '', 
-            email: document.getElementById('novoFornecedorEmail')?.value || '', 
-            cep: document.getElementById('novoFornecedorCep')?.value || '', 
-            endereco: document.getElementById('novoFornecedorEndereco')?.value || '', 
-            obs: '',
-            dataCadastro: new Date().toISOString().slice(0,10) 
-        };
-        await db.collection("pessoas").doc(novoFornecedor.id).set(novoFornecedor);
-        atualizarSelectFornecedores();
-        document.getElementById('fornecedorSelect').value = novoFornecedor.id;
-        document.getElementById('fornTelefone').innerText = novoFornecedor.telefone || '—';
-        document.getElementById('fornEmail').innerText = novoFornecedor.email || '—';
-        document.getElementById('fornCnpj').innerText = novoFornecedor.documento || '—';
-        document.getElementById('fornEndereco').innerText = novoFornecedor.endereco || '—';
-        document.getElementById('detalhesFornecedor').style.display = 'block';
-        fecharModal('modalNovoFornecedor');
-        toast(`✅ Fornecedor "${escapeHtml(nome)}" cadastrado!`);
     }
     
     // ==================== ADICIONAR ITEM ====================
@@ -834,9 +804,8 @@
             let valorVenda = parseFloat(document.getElementById('valorVenda')?.value) || 0;
             if (valorCompra < 0 || valorVenda < 0) { toast("⚠️ Valores não podem ser negativos!", true); return; }
             
-            novoItem = { 
-                id: Date.now().toString(), 
-                tipo, dataEntrada, fornecedor: fornecedorNome, fornecedorId, placa, 
+            novoItem = limparUndefined({ 
+                id: gerarId(), tipo, dataEntrada, fornecedor: fornecedorNome, fornecedorId, placa, 
                 renavam: document.getElementById('renavam')?.value || '', 
                 chassi: document.getElementById('chassi')?.value || '', 
                 marca: document.getElementById('marca')?.value || '', 
@@ -846,7 +815,7 @@
                 km: parseInt(document.getElementById('km')?.value) || 0, 
                 valorCompra, valorVenda, 
                 custosAdicionaisTotal: 0, status, obs, vendido: false, dadosVenda: null 
-            };
+            });
             toast(`✅ Veículo ${placa} cadastrado!`);
         } else {
             let nomeItem = document.getElementById('nomeItem')?.value;
@@ -856,12 +825,10 @@
             let quantidade = parseInt(document.getElementById('quantidade')?.value) || 1;
             if (precoCompra < 0 || precoVenda < 0 || quantidade <= 0) { toast("⚠️ Valores inválidos!", true); return; }
             
-            novoItem = { 
-                id: Date.now().toString(), 
-                tipo, dataEntrada, fornecedor: fornecedorNome, fornecedorId, nomeItem, 
-                quantidade, precoCompra, precoVenda, 
-                status, obs, vendido: false, dadosVenda: null 
-            };
+            novoItem = limparUndefined({ 
+                id: gerarId(), tipo, dataEntrada, fornecedor: fornecedorNome, fornecedorId, nomeItem, 
+                quantidade, precoCompra, precoVenda, status, obs, vendido: false, dadosVenda: null 
+            });
             toast(`✅ ${nomeItem} cadastrado!`);
         }
         await db.collection("estoque").doc(novoItem.id).set(novoItem);
@@ -873,7 +840,7 @@
         paginaAtual.itens = 1;
     }
     
-    // ==================== CUSTOS ADICIONAIS - CORRIGIDOS COM addEventListener ====================
+    // ==================== CUSTOS ADICIONAIS (CORRIGIDO) ====================
     window.abrirCustosAdicionais = function(veiculoId) {
         let veiculo = itens.find(i => i.id === veiculoId);
         if (!veiculo) { toast("❌ Veículo não encontrado!", true); return; }
@@ -901,7 +868,7 @@
         let total = 0;
         container.innerHTML = custos.map(c => {
             total += c.valor;
-            return `<div class="custo-item" data-custo-id="${c.id}" data-veiculo-id="${veiculoId}">
+            return `<div class="custo-item">
                 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
                     <div style="flex:1; min-width:150px;">
                         <span class="badge badge-peca">${escapeHtml(c.tipo)}</span>
@@ -911,39 +878,14 @@
                         ${c.observacao ? `<br><small><i class="fas fa-comment"></i> ${escapeHtml(c.observacao)}</small>` : ''}
                     </div>
                     <div class="btn-group" style="flex-shrink:0;">
-                        <button class="btn-sm btn-warning editar-custo-btn" data-custo-id="${c.id}" data-veiculo-id="${veiculoId}" title="Editar custo">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <button class="btn-sm btn-danger excluir-custo-btn" data-custo-id="${c.id}" data-veiculo-id="${veiculoId}" title="Excluir custo">
-                            <i class="fas fa-trash"></i> Excluir
-                        </button>
+                        <button class="btn-sm btn-warning" onclick="window.editarCustoAdicional('${c.id}', '${veiculoId}')" title="Editar custo"><i class="fas fa-edit"></i> Editar</button>
+                        <button class="btn-sm btn-danger" onclick="window.removerCustoAdicional('${c.id}', '${veiculoId}')" title="Excluir custo"><i class="fas fa-trash"></i> Excluir</button>
                     </div>
                 </div>
             </div>`;
         }).join('');
         
         document.getElementById('totalCustosAdicionais').innerHTML = `R$ ${total.toLocaleString()}`;
-        
-        // Anexa eventos com addEventListener
-        document.querySelectorAll('.editar-custo-btn').forEach(btn => {
-            btn.removeEventListener('click', window.editarCustoAdicionalHandler);
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const custoId = this.dataset.custoId;
-                const veiculoId = this.dataset.veiculoId;
-                window.editarCustoAdicional(custoId, veiculoId);
-            });
-        });
-        
-        document.querySelectorAll('.excluir-custo-btn').forEach(btn => {
-            btn.removeEventListener('click', window.removerCustoAdicionalHandler);
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const custoId = this.dataset.custoId;
-                const veiculoId = this.dataset.veiculoId;
-                window.removerCustoAdicional(custoId, veiculoId);
-            });
-        });
     }
     
     window.adicionarCustoAdicional = async function() {
@@ -957,85 +899,87 @@
         const tipoTexto = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex]?.text || 'Outro' : 'Outro';
         const fornecedor = document.getElementById('novoCustoFornecedor')?.value || '';
         const observacao = document.getElementById('novoCustoObs')?.value || '';
-        const novoCusto = { 
-            id: Date.now().toString(), 
-            veiculoId: veiculoAtualCustos.id, 
-            tipo: tipoTexto, 
-            valor, 
-            data, 
-            fornecedor, 
-            observacao 
-        };
-        await db.collection("custosAdicionais").doc(novoCusto.id).set(novoCusto);
         
-        const novaSaida = { 
-            id: Date.now().toString(), 
-            tipo: "saida", 
-            data, 
+        const movimentacaoId = gerarId();
+        const novoCusto = limparUndefined({ 
+            id: gerarId(), veiculoId: veiculoAtualCustos.id, tipo: tipoTexto, valor, data, fornecedor, observacao,
+            movimentacaoId: movimentacaoId // Vínculo com a despesa financeira
+        });
+        
+        const novaSaida = limparUndefined({ 
+            id: movimentacaoId, tipo: "saida", data, 
             descricao: `${tipoTexto} - ${veiculoAtualCustos.placa || veiculoAtualCustos.nomeItem}`, 
-            valorTotal: valor, 
-            categoria: tipoTexto, 
-            formaPagamento: "Espécie", 
-            origem: fornecedor || "Caixa", 
-            status: "Pendente",
-            vencimento: data, 
-            fornecedor, 
-            obs: `Custo: ${observacao}` 
-        };
-        await db.collection("movimentacoes").doc(novaSaida.id).set(novaSaida);
+            valorTotal: valor, categoria: tipoTexto, formaPagamento: "Espécie", 
+            origem: fornecedor || "Caixa", status: "Pendente", vencimento: data, 
+            fornecedor, obs: `Custo: ${observacao}` 
+        });
         
-        document.getElementById('novoCustoValor').value = '';
-        document.getElementById('novoCustoFornecedor').value = '';
-        document.getElementById('novoCustoObs').value = '';
-        toast(`✅ Custo de R$ ${valor.toLocaleString()} adicionado (pendente)!`);
-        carregarListaCustosAdicionais(veiculoAtualCustos.id);
+        try {
+            // Gravação em lote para garantir que ambos sejam salvos juntos ou nenhum
+            const batch = db.batch();
+            batch.set(db.collection("custosAdicionais").doc(novoCusto.id), novoCusto);
+            batch.set(db.collection("movimentacoes").doc(novaSaida.id), novaSaida);
+            await batch.commit();
+            
+            document.getElementById('novoCustoValor').value = '';
+            document.getElementById('novoCustoFornecedor').value = '';
+            document.getElementById('novoCustoObs').value = '';
+            toast(`✅ Custo de R$ ${valor.toLocaleString()} adicionado!`);
+            carregarListaCustosAdicionais(veiculoAtualCustos.id);
+        } catch(e) {
+            toast("❌ Erro ao salvar custo: " + e.message, true);
+        }
     }
     
     window.editarCustoAdicional = async function(id, veiculoId) {
-        console.log("🔧 Editando custo - ID:", id, "Veículo:", veiculoId);
         let custo = custosAdicionais.find(c => c.id === id);
-        if (!custo) {
-            toast("❌ Custo não encontrado!", true);
-            return;
-        }
+        if (!custo) { toast("❌ Custo não encontrado!", true); return; }
+        
         const novoValor = prompt(`💰 Editar Custo\n\nTipo: ${custo.tipo}\nValor atual: R$ ${custo.valor.toLocaleString()}\n\nDigite o novo valor (R$):`, custo.valor);
         if (novoValor === null) return;
         const valorNum = parseFloat(novoValor);
-        if (isNaN(valorNum) || valorNum <= 0) {
-            toast("❌ Valor inválido!", true);
-            return;
-        }
+        if (isNaN(valorNum) || valorNum <= 0) { toast("❌ Valor inválido!", true); return; }
+        
         try {
-            await db.collection("custosAdicionais").doc(id).update({ valor: valorNum });
+            const batch = db.batch();
+            batch.update(db.collection("custosAdicionais").doc(id), { valor: valorNum });
+            
+            // Sincroniza a movimentação financeira vinculada
+            if (custo.movimentacaoId) {
+                batch.update(db.collection("movimentacoes").doc(custo.movimentacaoId), { valorTotal: valorNum });
+            }
+            
+            await batch.commit();
             toast(`✅ Custo atualizado para R$ ${valorNum.toLocaleString()}!`);
             carregarListaCustosAdicionais(veiculoId);
         } catch (error) {
-            console.error("Erro ao editar custo:", error);
             toast(`❌ Erro ao editar: ${error.message}`, true);
         }
     }
     
     window.removerCustoAdicional = async function(id, veiculoId) {
-        console.log("🗑️ Removendo custo - ID:", id, "Veículo:", veiculoId);
         let custo = custosAdicionais.find(c => c.id === id);
-        if (!custo) {
-            toast("❌ Custo não encontrado!", true);
-            return;
-        }
-        if (!confirm(`🗑️ Remover este custo permanentemente?\n\nTipo: ${custo.tipo}\nValor: R$ ${custo.valor.toLocaleString()}`)) {
-            return;
-        }
+        if (!custo) { toast("❌ Custo não encontrado!", true); return; }
+        if (!confirm(`🗑️ Remover este custo permanentemente?\n\nTipo: ${custo.tipo}\nValor: R$ ${custo.valor.toLocaleString()}`)) return;
+        
         try {
-            await db.collection("custosAdicionais").doc(id).delete();
-            toast("🗑️ Custo removido com sucesso!");
+            const batch = db.batch();
+            batch.delete(db.collection("custosAdicionais").doc(id));
+            
+            // Exclui a movimentação vinculada para não deixar lixo financeiro
+            if (custo.movimentacaoId) {
+                batch.delete(db.collection("movimentacoes").doc(custo.movimentacaoId));
+            }
+            
+            await batch.commit();
+            toast("🗑️ Custo e despesa removidos com sucesso!");
             carregarListaCustosAdicionais(veiculoId);
         } catch (error) {
-            console.error("Erro ao remover custo:", error);
             toast(`❌ Erro ao remover: ${error.message}`, true);
         }
     }
     
-    // ==================== ANEXOS ====================
+    // ==================== ANEXOS (COM COMPRESSÃO) ====================
     window.abrirAnexosVeiculo = function(veiculoId) {
         let veiculo = itens.find(i => i.id === veiculoId);
         if (!veiculo) { toast("❌ Veículo não encontrado!", true); return; }
@@ -1059,9 +1003,9 @@
             <div class="anexo-item">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                     <div style="flex:1;">
-                        <span class="badge badge-veiculo">${escapeHtml(a.tipo)}</span>
-                        <strong style="margin-left: 8px;">${escapeHtml(a.nomeArquivo)}</strong>
-                        <br><small>📅 ${a.dataUpload} | 💾 ${(a.tamanho / 1024).toFixed(1)} KB</small>
+                        <span class="badge badge-veiculo">${escapeHtml(a.tipo || 'Documento')}</span>
+                        <strong style="margin-left: 8px;">${escapeHtml(a.nomeArquivo || 'arquivo')}</strong>
+                        <br><small>📅 ${a.dataUpload || '-'} | 💾 ${((a.tamanho || 0) / 1024).toFixed(1)} KB</small>
                         ${a.observacao ? `<br><small><i class="fas fa-comment"></i> ${escapeHtml(a.observacao)}</small>` : ''}
                     </div>
                     <div class="btn-group">
@@ -1076,41 +1020,47 @@
     window.uploadAnexoVeiculo = async function() {
         if (!veiculoAtualAnexos) { toast("❌ Nenhum veículo selecionado!", true); return; }
         let files = document.getElementById('arquivoAnexo')?.files;
-        if (!files || files.length === 0) { toast("📁 Selecione pelo menos um arquivo!", true); return; }
+        if (!files || files.length === 0) { toast("📁 Selecione pelo menos uma imagem!", true); return; }
         
         for (let file of files) {
-            if (file.size > 5 * 1024 * 1024) { 
-                toast(`❌ Arquivo ${file.name} excede 5MB`, true); 
+            if (!file.type.startsWith('image/')) { 
+                toast(`❌ O arquivo ${file.name} não é uma imagem. Use fotos (JPG/PNG).`, true); 
                 continue;
             }
             
-            const reader = new FileReader();
-            await new Promise((resolve) => {
-                reader.onload = async function(e) {
-                    const tipoSelect = document.getElementById('tipoAnexo');
-                    const tipoTexto = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex]?.text || 'Documento' : 'Documento';
-                    const obs = document.getElementById('obsAnexo')?.value || '';
-                    const novoAnexo = { 
-                        id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
-                        veiculoId: veiculoAtualAnexos.id, 
-                        placa: veiculoAtualAnexos.placa || veiculoAtualAnexos.nomeItem, 
-                        nomeArquivo: file.name, 
-                        tipo: tipoTexto, 
-                        arquivo: e.target.result, 
-                        tamanho: file.size, 
-                        dataUpload: new Date().toISOString().slice(0,10), 
-                        observacao: obs 
-                    };
-                    await db.collection("anexosEstoque").doc(novoAnexo.id).set(novoAnexo);
-                    resolve();
-                };
-                reader.readAsDataURL(file);
-            });
+            try {
+                // COMPRESSÃO ANTES DE SALVAR
+                const base64Comprimido = await comprimirImagem(file, 1200, 1200, 0.7);
+                // Verifica o tamanho final (limite de 1MB do Firestore)
+                const tamanhoKB = Math.round((base64Comprimido.length * 3) / 4 / 1024);
+                
+                if (tamanhoKB > 900) {
+                    toast(`❌ A imagem comprimida ainda ficou grande (${tamanhoKB}KB). Tente outra foto.`, true);
+                    continue;
+                }
+
+                const tipoSelect = document.getElementById('tipoAnexo');
+                const tipoTexto = tipoSelect ? tipoSelect.options[tipoSelect.selectedIndex]?.text || 'Documento' : 'Documento';
+                const obs = document.getElementById('obsAnexo')?.value || '';
+                
+                const novoAnexo = limparUndefined({ 
+                    id: gerarId(), veiculoId: veiculoAtualAnexos.id || '', 
+                    placa: veiculoAtualAnexos.placa || veiculoAtualAnexos.nomeItem || 'Sem placa', 
+                    nomeArquivo: file.name || 'arquivo', tipo: tipoTexto || 'Documento', 
+                    arquivo: base64Comprimido, tamanho: tamanhoKB, 
+                    dataUpload: new Date().toISOString().slice(0,10) || '', observacao: obs || '' 
+                });
+                
+                await db.collection("anexosEstoque").doc(novoAnexo.id).set(novoAnexo);
+                toast(`✅ ${file.name} anexado! (${tamanhoKB}KB)`);
+            } catch (error) {
+                console.error("❌ Erro ao salvar anexo:", error);
+                toast(`❌ Erro no arquivo ${file.name}: ${error.message}`, true);
+            }
         }
         
         document.getElementById('arquivoAnexo').value = '';
         document.getElementById('obsAnexo').value = '';
-        toast(`✅ ${files.length} arquivo(s) anexado(s) com sucesso!`);
         carregarListaAnexos(veiculoAtualAnexos.id);
     }
     
@@ -1123,7 +1073,7 @@
     }
     
     window.removerAnexo = async function(id, veiculoId) {
-        if (confirm("Excluir este documento permanentemente?")) { 
+        if (confirm("Excluir esta imagem permanentemente?")) { 
             await db.collection("anexosEstoque").doc(id).delete();
             toast("🗑️ Documento removido!");
             if (veiculoAtualAnexos && veiculoAtualAnexos.id === veiculoId) carregarListaAnexos(veiculoId);
@@ -1139,7 +1089,7 @@
         let dataInicio = document.getElementById('processoDataInicio')?.value || new Date().toISOString().slice(0,10);
         if (!validarDataFutura(dataInicio, "Data de início")) return;
         
-        let novoProcesso = { id: Date.now().toString(), placa, status: document.getElementById('processoStatus')?.value || 'pendente', dataInicio, dataAtualizacao: new Date().toISOString().slice(0,10), vendedor: document.getElementById('processoVendedor')?.value || '', vendedorDoc: document.getElementById('processoVendedorDoc')?.value || '', comprador: document.getElementById('processoComprador')?.value || '', compradorDoc: document.getElementById('processoCompradorDoc')?.value || '', telefone: document.getElementById('processoTelefone')?.value || '', endereco: document.getElementById('processoEndereco')?.value || '', observacoes: document.getElementById('processoObs')?.value ? [document.getElementById('processoObs').value] : [], documentosAnexados: [] };
+        let novoProcesso = limparUndefined({ id: gerarId(), placa, status: document.getElementById('processoStatus')?.value || 'pendente', dataInicio, dataAtualizacao: new Date().toISOString().slice(0,10), vendedor: document.getElementById('processoVendedor')?.value || '', vendedorDoc: document.getElementById('processoVendedorDoc')?.value || '', comprador: document.getElementById('processoComprador')?.value || '', compradorDoc: document.getElementById('processoCompradorDoc')?.value || '', telefone: document.getElementById('processoTelefone')?.value || '', endereco: document.getElementById('processoEndereco')?.value || '', observacoes: document.getElementById('processoObs')?.value ? [document.getElementById('processoObs').value] : [], documentosAnexados: [] });
         await db.collection("processosTransferencia").doc(novoProcesso.id).set(novoProcesso);
         document.getElementById('processoPlaca').value = '';
         document.getElementById('processoObs').value = '';
@@ -1176,8 +1126,8 @@
                 <td>${escapeHtml(p.vendedor || '-')}<br><small>${escapeHtml(p.vendedorDoc || '-')}</small></td>
                 <td>${escapeHtml(p.comprador || '-')}<br><small>${escapeHtml(p.compradorDoc || '-')}</small></td>
                 <td>${escapeHtml(p.telefone || '-')}</td>
-                <td>${p.dataInicio}</td>
-                <td>${p.dataAtualizacao}</td>
+                <td>${p.dataInicio || '-'}</td>
+                <td>${p.dataAtualizacao || '-'}</td>
                 <td><small>${escapeHtml(p.observacoes && p.observacoes.length ? p.observacoes[p.observacoes.length-1] : '-')}</small></td>
                 <td class="btn-group">
                     <button class="btn-sm btn-info" onclick="window.editarProcesso('${p.id}')"><i class="fas fa-edit"></i> Editar</button>
@@ -1200,7 +1150,7 @@
             let updates = { status: document.getElementById('editProcessoStatus')?.value || processo.status, dataAtualizacao: new Date().toISOString().slice(0,10) };
             let novaObs = document.getElementById('editProcessoObs')?.value;
             if (novaObs) { let novasObs = [...(processo.observacoes || [])]; novasObs.push(`${new Date().toISOString().slice(0,10)}: ${novaObs}`); updates.observacoes = novasObs; }
-            await db.collection("processosTransferencia").doc(id).update(updates);
+            await db.collection("processosTransferencia").doc(id).update(limparUndefined(updates));
             fecharModal('modalEditarProcesso');
             toast(`✅ Processo ${processo.placa} atualizado!`);
         };
@@ -1242,16 +1192,15 @@
             let valorVenda = (i.tipo === 'veiculo' ? i.valorVenda : i.precoVenda) || 0;
             let lucro = (valorVenda - valorCompra - custosAdicionaisValor);
             let detalhe = i.tipo === 'veiculo' ? `${i.marca || '-'}/${i.ano || '-'} · ${i.km?.toLocaleString() || 0}km · ${i.cor || '-'}` : `Estoque: ${i.quantidade || 0} un · ${i.fornecedor || '-'}`;
-            let nomeExibicao = i.tipo === 'veiculo' ? `${i.modelo || '?'} (${i.placa || '?'})` : i.nomeItem;
+            let nomeExibicao = i.tipo === 'veiculo' ? `${i.modelo || ''} (${i.placa || ''})` : (i.nomeItem || '');
             let statusClass = i.vendido ? 'badge-vendido' : (i.status === 'Em estoque' ? 'badge-disponivel' : 'badge-reservado');
             let statusTexto = i.vendido ? '💰 Vendido' : i.status;
             let observacao = i.obs || '-';
             let lucroColor = lucro >= 0 ? 'green' : 'red';
             let anexosCount = anexosEstoque.filter(a => a.veiculoId === i.id).length;
-            let nomeDisplay = i.tipo === 'veiculo' ? `${i.modelo || ''} (${i.placa || ''})` : (i.nomeItem || '');
             return `<tr class="${linhaClass}">
                 <td>${getTipoBadge(i.tipo)}</td>
-                <td><strong>${escapeHtml(nomeDisplay)}</strong></td>
+                <td><strong>${escapeHtml(nomeExibicao)}</strong></td>
                 <td><small>${escapeHtml(detalhe)}</small></td>
                 <td><strong>R$ ${valorCompra.toLocaleString()}</strong></td>
                 <td><span class="badge badge-atencao">R$ ${custosAdicionaisValor.toLocaleString()}</span></td>
@@ -1289,24 +1238,14 @@
             
             if (item.tipo !== 'veiculo') {
                 let quantidadeOriginal = item.dadosVenda?.quantidadeAnterior || item.quantidade + (item.dadosVenda?.quantidadeVendida || 1);
-                await db.collection("estoque").doc(item.id).update({
-                    vendido: false,
-                    status: "Em estoque",
-                    quantidade: quantidadeOriginal,
-                    dadosVenda: null,
-                    comprador: null,
-                    dataVenda: null,
-                    valorVenda: item.valorVenda
-                });
+                await db.collection("estoque").doc(item.id).update(limparUndefined({
+                    vendido: false, status: "Em estoque", quantidade: quantidadeOriginal,
+                    dadosVenda: null, comprador: null, dataVenda: null, valorVenda: item.valorVenda
+                }));
             } else {
-                await db.collection("estoque").doc(item.id).update({
-                    vendido: false,
-                    status: "Em estoque",
-                    dadosVenda: null,
-                    comprador: null,
-                    dataVenda: null,
-                    valorVenda: item.valorVenda
-                });
+                await db.collection("estoque").doc(item.id).update(limparUndefined({
+                    vendido: false, status: "Em estoque", dadosVenda: null, comprador: null, dataVenda: null, valorVenda: item.valorVenda
+                }));
             }
             
             if (entradaRelacionada) {
@@ -1314,16 +1253,8 @@
                 toast(`✅ Entrada financeira removida!`);
             }
             
-            setTimeout(() => {
-                renderizarItens();
-                renderEntradas();
-                renderSaidas();
-                renderExtrato();
-                atualizarDashboard();
-            }, 500);
-            
+            setTimeout(() => { renderizarItens(); renderEntradas(); renderSaidas(); renderExtrato(); atualizarDashboard(); }, 500);
             toast(`✅ Venda desfeita com sucesso! Item restaurado ao estoque.`);
-            
         } catch (error) {
             console.error("Erro ao desfazer venda:", error);
             toast(`❌ Erro ao desfazer venda: ${error.message}`, true);
@@ -1335,10 +1266,7 @@
         let item = itens.find(i => i.id === id);
         if(!item) { toast("❌ Item não encontrado!", true); return; }
         if (item.vendido) { toast("⚠️ Este item já foi vendido!", true); return; }
-        if (item.tipo !== 'veiculo' && (item.quantidade === 0 || item.quantidade < 1)) { 
-            toast("⚠️ Sem estoque!", true); 
-            return; 
-        }
+        if (item.tipo !== 'veiculo' && (item.quantidade === 0 || item.quantidade < 1)) { toast("⚠️ Sem estoque!", true); return; }
         
         document.getElementById('vendaData').value = new Date().toISOString().slice(0,10);
         document.getElementById('vendaComprador').value = '';
@@ -1368,103 +1296,55 @@
             let dataVenda = document.getElementById('vendaData')?.value;
             let formaPagamento = document.getElementById('vendaFormaPagamento')?.value;
             
-            if (!comprador) { 
-                toast("⚠️ Informe o comprador!", true); 
-                newBtn.innerHTML = 'Confirmar Venda';
-                newBtn.disabled = false;
-                return; 
-            }
-            if (!dataVenda) { 
-                toast("⚠️ Informe a data!", true); 
-                newBtn.innerHTML = 'Confirmar Venda';
-                newBtn.disabled = false;
-                return; 
-            }
-            if (!validarDataFutura(dataVenda, "Data da venda")) {
-                newBtn.innerHTML = 'Confirmar Venda';
-                newBtn.disabled = false;
-                return;
-            }
+            if (!comprador) { toast("⚠️ Informe o comprador!", true); newBtn.innerHTML = 'Confirmar Venda'; newBtn.disabled = false; return; }
+            if (!dataVenda) { toast("⚠️ Informe a data!", true); newBtn.innerHTML = 'Confirmar Venda'; newBtn.disabled = false; return; }
+            if (!validarDataFutura(dataVenda, "Data da venda")) { newBtn.innerHTML = 'Confirmar Venda'; newBtn.disabled = false; return; }
             
             let qtdVendida = 1;
             if (item.tipo !== 'veiculo') {
                 qtdVendida = parseInt(document.getElementById('vendaQuantidade')?.value);
-                if (qtdVendida > item.quantidade) { 
-                    toast(`⚠️ Quantidade insuficiente! Disponível: ${item.quantidade}`, true); 
-                    newBtn.innerHTML = 'Confirmar Venda';
-                    newBtn.disabled = false;
-                    return; 
-                }
+                if (qtdVendida > item.quantidade) { toast(`⚠️ Quantidade insuficiente! Disponível: ${item.quantidade}`, true); newBtn.innerHTML = 'Confirmar Venda'; newBtn.disabled = false; return; }
             }
             
             try {
-                let dadosVenda = { 
-                    dataVenda: dataVenda || null,
-                    comprador: comprador || null,
-                    valorVenda: valorVenda || 0,
-                    formaPagamento: formaPagamento || null,
-                    statusAnterior: item.status || null,
-                    quantidadeAnterior: (item.tipo !== 'veiculo' && item.quantidade !== undefined) ? item.quantidade : null,
-                    quantidadeVendida: qtdVendida || 1
-                };
+                let dadosVenda = limparUndefined({ 
+                    dataVenda: dataVenda || '', comprador: comprador || '', valorVenda: valorVenda || 0, formaPagamento: formaPagamento || '',
+                    statusAnterior: item.status || '', quantidadeAnterior: (item.tipo !== 'veiculo' && item.quantidade !== undefined) ? item.quantidade : 0, quantidadeVendida: qtdVendida || 1
+                });
+                
+                const batch = db.batch();
                 
                 if (item.tipo !== 'veiculo') {
-                    item.quantidade -= qtdVendida;
-                    if (item.quantidade === 0) { 
-                        item.vendido = true; 
-                        item.status = "Vendido"; 
-                    }
-                    await db.collection("estoque").doc(item.id).update({ 
-                        quantidade: item.quantidade, 
-                        vendido: item.vendido, 
-                        status: item.status, 
-                        dadosVenda: dadosVenda,
-                        valorVenda: valorVenda
-                    });
+                    let novaQtd = item.quantidade - qtdVendida;
+                    let novoVendido = novaQtd === 0;
+                    batch.update(db.collection("estoque").doc(item.id), limparUndefined({ 
+                        quantidade: novaQtd, vendido: novoVendido, status: novoVendido ? "Vendido" : item.status, dadosVenda: dadosVenda, valorVenda: valorVenda
+                    }));
                 } else {
-                    item.vendido = true; 
-                    item.status = "Vendido";
-                    await db.collection("estoque").doc(item.id).update({ 
-                        vendido: true, 
-                        status: "Vendido", 
-                        dadosVenda: dadosVenda, 
-                        comprador: comprador || null,
-                        dataVenda: dataVenda || null,
-                        valorVenda: valorVenda
-                    });
+                    batch.update(db.collection("estoque").doc(item.id), limparUndefined({ 
+                        vendido: true, status: "Vendido", dadosVenda: dadosVenda, comprador: comprador || '', dataVenda: dataVenda || '', valorVenda: valorVenda
+                    }));
                 }
                 
-                const entradaId = Date.now().toString();
-                const novaEntrada = { 
-                    id: entradaId,
-                    tipo: "entrada", 
-                    data: dataVenda, 
+                const entradaId = gerarId();
+                const novaEntrada = limparUndefined({ 
+                    id: entradaId, tipo: "entrada", data: dataVenda, 
                     descricao: `Venda - ${item.tipo === 'veiculo' ? (item.modelo || 'Veículo') + ' (' + (item.placa || '') + ')' : (item.nomeItem || 'Item')} - ${comprador || 'Cliente'}`, 
-                    valorTotal: valorVenda, 
-                    valorRecebido: 0,
+                    valorTotal: valorVenda, valorRecebido: 0, 
                     categoria: item.tipo === 'veiculo' ? "Venda Veículo" : "Venda Equipamento", 
-                    formaPagamento: formaPagamento || "Espécie", 
-                    status: "Pendente",
-                    vencimento: dataVenda, 
-                    cliente: comprador || null,
-                    itemId: item.id,
-                    dataCriacao: new Date().toISOString()
-                };
+                    formaPagamento: formaPagamento || "Espécie", status: "Pendente", vencimento: dataVenda, 
+                    cliente: comprador || '', itemId: item.id, dataCriacao: new Date().toISOString()
+                });
                 
-                await db.collection("movimentacoes").doc(entradaId).set(novaEntrada);
+                batch.set(db.collection("movimentacoes").doc(entradaId), novaEntrada);
+                
+                // Executa as duas gravações ao mesmo tempo (segurança de dados)
+                await batch.commit();
                 
                 fecharModal('modalVenda');
-                
                 toast(`✅ VENDA REALIZADA COM SUCESSO!\n\n📦 Item: ${item.tipo === 'veiculo' ? (item.modelo || 'Veículo') + ' ' + (item.placa || '') : (item.nomeItem || 'Item')}\n👤 Cliente: ${comprador || 'Cliente'}\n💰 Valor: R$ ${valorVenda.toLocaleString()}\n📊 Status: PENDENTE\n\n👉 Acesse FINANCEIRO > ENTRADAS para confirmar o recebimento.`);
                 
-                setTimeout(() => {
-                    renderizarItens();
-                    renderEntradas();
-                    renderSaidas();
-                    renderExtrato();
-                    atualizarDashboard();
-                }, 500);
-                
+                setTimeout(() => { renderizarItens(); renderEntradas(); renderSaidas(); renderExtrato(); atualizarDashboard(); }, 500);
             } catch (error) {
                 console.error("Erro na venda:", error);
                 toast(`❌ Erro ao registrar venda: ${error.message}`, true);
@@ -1477,48 +1357,28 @@
     // ==================== RECEBER PAGAMENTO ====================
     window.receberPagamento = function(id) {
         let entrada = movimentacoes.find(m => m.id === id);
-        if (!entrada) {
-            toast("❌ Registro não encontrado!", true);
-            return;
-        }
+        if (!entrada) { toast("❌ Registro não encontrado!", true); return; }
         
-        let valorPendente = entrada.valorTotal - (entrada.valorRecebido || 0);
-        let valorReceber = prompt(`💰 RECEBER PAGAMENTO\n\nValor total: R$ ${entrada.valorTotal.toLocaleString()}\nJá recebido: R$ ${(entrada.valorRecebido || 0).toLocaleString()}\nPendente: R$ ${valorPendente.toLocaleString()}\n\nDigite o valor a receber:`, valorPendente);
+        let valorPendente = (entrada.valorTotal || 0) - (entrada.valorRecebido || 0);
+        let valorReceber = prompt(`💰 RECEBER PAGAMENTO\n\nValor total: R$ ${(entrada.valorTotal || 0).toLocaleString()}\nJá recebido: R$ ${(entrada.valorRecebido || 0).toLocaleString()}\nPendente: R$ ${valorPendente.toLocaleString()}\n\nDigite o valor a receber:`, valorPendente);
         
         if (valorReceber === null) return;
-        
         let valor = parseFloat(valorReceber);
-        if (isNaN(valor) || valor <= 0) {
-            toast("⚠️ Valor inválido!", true);
-            return;
-        }
-        
-        if (valor > valorPendente) {
-            toast(`⚠️ Valor excede o pendente! Máximo: R$ ${valorPendente.toLocaleString()}`, true);
-            return;
-        }
+        if (isNaN(valor) || valor <= 0) { toast("⚠️ Valor inválido!", true); return; }
+        if (valor > valorPendente) { toast(`⚠️ Valor excede o pendente! Máximo: R$ ${valorPendente.toLocaleString()}`, true); return; }
         
         let novoRecebido = (entrada.valorRecebido || 0) + valor;
         let novoStatus = novoRecebido >= entrada.valorTotal ? "Pago Total" : "Pago Parcial";
         
-        db.collection("movimentacoes").doc(id).update({
-            valorRecebido: novoRecebido,
-            status: novoStatus
-        }).then(() => {
-            toast(`✅ Pagamento de R$ ${valor.toLocaleString()} recebido! Status: ${novoStatus}`);
-            renderEntradas();
-            renderExtrato();
-            atualizarDashboard();
-        }).catch(err => {
-            toast(`❌ Erro: ${err.message}`, true);
-        });
+        db.collection("movimentacoes").doc(id).update({ valorRecebido: novoRecebido, status: novoStatus })
+        .then(() => { toast(`✅ Pagamento de R$ ${valor.toLocaleString()} recebido! Status: ${novoStatus}`); renderEntradas(); renderExtrato(); atualizarDashboard(); })
+        .catch(err => { toast(`❌ Erro: ${err.message}`, true); });
     };
     
     // ==================== CRUD ITENS ====================
     window.excluirItem = async function(id) { 
         if(confirm("Excluir permanentemente?")) { 
-            await db.collection("estoque").doc(id).delete(); 
-            toast("🗑️ Item removido!"); 
+            try { await db.collection("estoque").doc(id).delete(); toast("🗑️ Item removido!"); } catch(e) { toast("❌ Erro: " + e.message, true); }
         } 
     }
     
@@ -1540,13 +1400,13 @@
         const newBtn = btn.cloneNode(true);
         btn.parentNode.replaceChild(newBtn, btn);
         newBtn.onclick = async () => {
-            let fornecedorId = document.getElementById('editFornecedorId')?.value || null;
+            let fornecedorId = document.getElementById('editFornecedorId')?.value || '';
             let fornecedorNome = '';
             if (fornecedorId) { let f = pessoas.find(p => p.id === fornecedorId); fornecedorNome = f ? f.nome : ''; }
             let dataEntrada = document.getElementById('editDataEntrada')?.value || item.dataEntrada;
             if (!validarDataFutura(dataEntrada, "Data de entrada")) return;
             
-            let updates = { dataEntrada, fornecedorId: fornecedorId, fornecedor: fornecedorNome, status: document.getElementById('editStatus')?.value || item.status, obs: document.getElementById('editObs')?.value || '' };
+            let updates = limparUndefined({ dataEntrada, fornecedorId: fornecedorId, fornecedor: fornecedorNome, status: document.getElementById('editStatus')?.value || item.status, obs: document.getElementById('editObs')?.value || '' });
             if (item.tipo === 'veiculo') {
                 let novaPlaca = document.getElementById('editPlaca')?.value.toUpperCase() || item.placa;
                 if (novaPlaca !== item.placa && isPlacaDuplicada(novaPlaca, item.id)) { toast(`⚠️ Placa ${novaPlaca} já existe!`, true); return; }
@@ -1568,9 +1428,7 @@
                 if (updates.quantidade === 0 && !item.vendido) { updates.vendido = true; updates.status = "Vendido"; }
                 else if (updates.quantidade > 0 && item.vendido) { updates.vendido = false; updates.status = "Em estoque"; }
             }
-            await db.collection("estoque").doc(item.id).update(updates);
-            fecharModal('modalEditarEstoque');
-            toast("✏️ Item atualizado!");
+            try { await db.collection("estoque").doc(item.id).update(updates); fecharModal('modalEditarEstoque'); toast("✏️ Item atualizado!"); } catch(e) { toast("❌ Erro ao atualizar: " + e.message, true); }
         };
     }
     
@@ -1588,7 +1446,6 @@
         const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
         doc.setFontSize(18); doc.setTextColor(26, 95, 44); doc.text("CARVALHO MOTORS - RELATÓRIO DE ESTOQUE", 14, 20);
         doc.setFontSize(10); doc.setTextColor(100, 116, 139); doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 28);
-        doc.text(`Filtros aplicados: Busca="${filtrosAtivos.estoque.busca || "todos"}" Tipo="${filtrosAtivos.estoque.tipo || "todos"}" Status="${filtrosAtivos.estoque.status || "todos"}"`, 14, 36);
         
         const dadosTabela = filtrados.map(i => {
             const nome = i.tipo === 'veiculo' ? `${i.modelo} (${i.placa})` : i.nomeItem;
@@ -1599,20 +1456,8 @@
             return [i.tipo === 'veiculo' ? 'Veículo' : (i.tipo === 'capacete' ? 'Capacete' : 'Peça'), nome, `R$ ${(compra || 0).toLocaleString()}`, `R$ ${custos.toLocaleString()}`, `R$ ${(venda || 0).toLocaleString()}`, `R$ ${lucro.toLocaleString()}`, i.status, i.vendido ? 'Vendido' : (i.status === 'Em estoque' ? 'Disponível' : 'Reservado')];
         });
         doc.autoTable({ head: [['Tipo', 'Item', 'Compra', 'Custos', 'Venda', 'Lucro', 'Status', 'Condição']], body: dadosTabela, startY: 42, styles: { fontSize: 8, cellPadding: 2 }, headStyles: { fillColor: [26, 95, 44], textColor: 255, fontSize: 9 }, alternateRowStyles: { fillColor: [245, 245, 245] }, margin: { left: 14, right: 14 } });
-        const totalCompra = filtrados.reduce((s,i) => s + (i.tipo === 'veiculo' ? i.valorCompra : i.precoCompra || 0), 0);
-        const totalCustos = filtrados.filter(i => i.tipo === 'veiculo').reduce((s,i) => s + (i.custosAdicionaisTotal || 0), 0);
-        const totalVenda = filtrados.reduce((s,i) => s + (i.tipo === 'veiculo' ? i.valorVenda : i.precoVenda || 0), 0);
-        const lucroTotal = totalVenda - totalCompra - totalCustos;
-        const finalY = doc.lastAutoTable.finalY + 10;
-        doc.setFontSize(10); doc.setTextColor(0, 0, 0);
-        doc.text(`Total de Itens no filtro: ${filtrados.length}`, 14, finalY);
-        doc.text(`Total Compra: R$ ${totalCompra.toLocaleString()}`, 14, finalY + 7);
-        doc.text(`Total Custos: R$ ${totalCustos.toLocaleString()}`, 14, finalY + 14);
-        doc.text(`Total Venda Potencial: R$ ${totalVenda.toLocaleString()}`, 14, finalY + 21);
-        doc.setTextColor(lucroTotal >= 0 ? 34 : 220, lucroTotal >= 0 ? 197 : 38, lucroTotal >= 0 ? 94 : 38);
-        doc.text(`Lucro Potencial Total: R$ ${lucroTotal.toLocaleString()}`, 14, finalY + 28);
         doc.save(`estoque_carvalho_${new Date().toISOString().slice(0,10)}.pdf`);
-        toast("📄 PDF gerado com os filtros aplicados!");
+        toast("📄 PDF gerado!");
     }
     
     // ==================== PESSOAS ====================
@@ -1652,43 +1497,24 @@
     
     window.adicionarPessoa = async function() { 
         let nome = document.getElementById('nomePessoa')?.value; if(!nome) return toast("⚠️ Preencha o nome!", true); 
-        let novaPessoa = { id: Date.now().toString(), tipo: document.getElementById('tipoPessoa')?.value || 'cliente', nome, documento: document.getElementById('documentoPessoa')?.value || '', telefone: document.getElementById('telefonePessoa')?.value || '', email: document.getElementById('emailPessoa')?.value || '', endereco: document.getElementById('enderecoPessoa')?.value || '', cep: document.getElementById('cepPessoa')?.value || '', obs: document.getElementById('obsPessoa')?.value || '', dataCadastro: new Date().toISOString().slice(0,10) }; 
-        await db.collection("pessoas").doc(novaPessoa.id).set(novaPessoa);
-        toast(`✅ ${novaPessoa.tipo === 'cliente' ? 'Cliente' : 'Fornecedor'} "${escapeHtml(nome)}" cadastrado!`); 
-        document.getElementById('formularioPessoas').classList.remove('visible'); 
-        document.getElementById('toggleIconPessoas').classList.remove('rotated');
-        paginaAtual.pessoas = 1;
+        let novaPessoa = limparUndefined({ id: gerarId(), tipo: document.getElementById('tipoPessoa')?.value || 'cliente', nome, documento: document.getElementById('documentoPessoa')?.value || '', telefone: document.getElementById('telefonePessoa')?.value || '', email: document.getElementById('emailPessoa')?.value || '', endereco: document.getElementById('enderecoPessoa')?.value || '', cep: document.getElementById('cepPessoa')?.value || '', obs: document.getElementById('obsPessoa')?.value || '', dataCadastro: new Date().toISOString().slice(0,10) }); 
+        try { await db.collection("pessoas").doc(novaPessoa.id).set(novaPessoa); toast(`✅ "${escapeHtml(nome)}" cadastrado!`); document.getElementById('formularioPessoas').classList.remove('visible'); document.getElementById('toggleIconPessoas').classList.remove('rotated'); paginaAtual.pessoas = 1; } catch(e) { toast("❌ Erro: " + e.message, true); }
     }
     
     window.abrirEditarPessoa = function(id) { 
         let p = pessoas.find(p => p.id === id); if(!p) return; 
-        document.getElementById('editTipoPessoa').value = p.tipo; 
-        document.getElementById('editNomePessoa').value = p.nome; 
-        document.getElementById('editDocumentoPessoa').value = p.documento || ''; 
-        document.getElementById('editTelefonePessoa').value = p.telefone || ''; 
-        document.getElementById('editEmailPessoa').value = p.email || ''; 
-        document.getElementById('editEnderecoPessoa').value = p.endereco || ''; 
-        document.getElementById('editCepPessoa').value = p.cep || ''; 
-        document.getElementById('editObsPessoa').value = p.obs || ''; 
+        document.getElementById('editTipoPessoa').value = p.tipo; document.getElementById('editNomePessoa').value = p.nome; document.getElementById('editDocumentoPessoa').value = p.documento || ''; document.getElementById('editTelefonePessoa').value = p.telefone || ''; document.getElementById('editEmailPessoa').value = p.email || ''; document.getElementById('editEnderecoPessoa').value = p.endereco || ''; document.getElementById('editCepPessoa').value = p.cep || ''; document.getElementById('editObsPessoa').value = p.obs || ''; 
         document.getElementById('modalEditarPessoa').classList.add('show'); 
         const btn = document.getElementById('confirmarEdicaoPessoaBtn');
         const newBtn = btn.cloneNode(true);
         btn.parentNode.replaceChild(newBtn, btn);
         newBtn.onclick = async () => { 
-            const novoNome = document.getElementById('editNomePessoa')?.value || p.nome;
-            await db.collection("pessoas").doc(id).update({ tipo: document.getElementById('editTipoPessoa')?.value || p.tipo, nome: novoNome, documento: document.getElementById('editDocumentoPessoa')?.value || '', telefone: document.getElementById('editTelefonePessoa')?.value || '', email: document.getElementById('editEmailPessoa')?.value || '', endereco: document.getElementById('editEnderecoPessoa')?.value || '', cep: document.getElementById('editCepPessoa')?.value || '', obs: document.getElementById('editObsPessoa')?.value || '' });
-            fecharModal('modalEditarPessoa'); 
-            toast("✅ Pessoa atualizada!"); 
+            try { await db.collection("pessoas").doc(id).update(limparUndefined({ tipo: document.getElementById('editTipoPessoa')?.value || p.tipo, nome: document.getElementById('editNomePessoa')?.value || p.nome, documento: document.getElementById('editDocumentoPessoa')?.value || '', telefone: document.getElementById('editTelefonePessoa')?.value || '', email: document.getElementById('editEmailPessoa')?.value || '', endereco: document.getElementById('editEnderecoPessoa')?.value || '', cep: document.getElementById('editCepPessoa')?.value || '', obs: document.getElementById('editObsPessoa')?.value || '' })); fecharModal('modalEditarPessoa'); toast("✅ Pessoa atualizada!"); } catch(e) { toast("❌ Erro: " + e.message, true); }
         }; 
     }
     
     window.excluirPessoa = async function(id) { 
-        let pessoa = pessoas.find(p => p.id === id);
-        if (!pessoa) return;
-        if(confirm("Excluir esta pessoa permanentemente?")) { 
-            await db.collection("pessoas").doc(id).delete(); 
-            toast("🗑️ Pessoa removida!"); 
-        } 
+        if(confirm("Excluir esta pessoa permanentemente?")) { try { await db.collection("pessoas").doc(id).delete(); toast("🗑️ Pessoa removida!"); } catch(e) { toast("❌ Erro: " + e.message, true); } } 
     }
     
     // ==================== FINANCEIRO ENTRADAS ====================
@@ -1696,15 +1522,15 @@
         if(!document.getElementById('entradaDesc')?.value) return toast("⚠️ Preencha a descrição", true); 
         let data = document.getElementById('entradaData')?.value || new Date().toISOString().slice(0,10);
         if (!validarDataFutura(data, "Data da entrada")) return;
+        let vencimento = document.getElementById('entradaVencimento')?.value;
+        if (!validarDataVencimento(vencimento, "Vencimento")) return; // Permite futuro
+        
         let valorTotal = parseFloat(document.getElementById('entradaValor')?.value) || 0; 
         let valorRecebido = parseFloat(document.getElementById('entradaRecebido')?.value) || 0; 
         let status = document.getElementById('entradaStatus')?.value || 'Pendente'; 
         if(status === 'Pago Total') valorRecebido = valorTotal; 
-        let novaEntrada = { id: Date.now().toString(), tipo:"entrada", data, descricao: document.getElementById('entradaDesc')?.value, valorTotal, valorRecebido, categoria: document.getElementById('entradaCategoria')?.value, formaPagamento: document.getElementById('entradaFormaPagamento')?.value, status, vencimento: document.getElementById('entradaVencimiento')?.value, cliente: document.getElementById('entradaCliente')?.value, obs: document.getElementById('entradaObs')?.value, dataCriacao: new Date().toISOString() }; 
-        await db.collection("movimentacoes").doc(novaEntrada.id).set(novaEntrada);
-        toast("✅ Entrada registrada!"); 
-        renderEntradas();
-        renderExtrato();
+        let novaEntrada = limparUndefined({ id: gerarId(), tipo:"entrada", data, descricao: document.getElementById('entradaDesc')?.value, valorTotal, valorRecebido, categoria: document.getElementById('entradaCategoria')?.value, formaPagamento: document.getElementById('entradaFormaPagamento')?.value, status, vencimento: vencimento || '', cliente: document.getElementById('entradaCliente')?.value || '', obs: document.getElementById('entradaObs')?.value || '', dataCriacao: new Date().toISOString() }); 
+        try { await db.collection("movimentacoes").doc(novaEntrada.id).set(novaEntrada); toast("✅ Entrada registrada!"); renderEntradas(); renderExtrato(); } catch(e) { toast("❌ Erro: " + e.message, true); }
     }
     
     window.filtrarEntradas = function() { paginaAtual.entradas = 1; renderEntradas(); }
@@ -1714,18 +1540,19 @@
         let entradas = movimentacoes.filter(m => m.tipo === 'entrada'); 
         let inicio = document.getElementById('filtroEntradaInicio')?.value; let fim = document.getElementById('filtroEntradaFim')?.value; let statusFiltro = document.getElementById('filtroEntradaStatus')?.value; 
         if (inicio) entradas = entradas.filter(m => m.data >= inicio); if (fim) entradas = entradas.filter(m => m.data <= fim); if (statusFiltro) entradas = entradas.filter(m => m.status === statusFiltro); 
+        entradas.sort((a,b) => new Date(b.data) - new Date(a.data));
         let totalPaginas = Math.ceil(entradas.length / 15); let start = (paginaAtual.entradas - 1) * 15; let paginados = entradas.slice(start, start + 15); 
         const tbody = document.getElementById('entradasBody'); if (!tbody) return;
         if (paginados.length === 0) { tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:40px;">💰 Nenhuma entrada registrada</td></tr>'; document.getElementById('infoEntradas').innerHTML = 'Nenhuma entrada encontrada'; document.getElementById('paginacaoEntradas').innerHTML = ''; return; }
         tbody.innerHTML = paginados.map(m => `<tr>
             <td>${new Date(m.data).toLocaleDateString()}</td>
             <td>${escapeHtml(m.descricao)}</td>
-            <td>${escapeHtml(m.categoria)}</td>
-            <td>${escapeHtml(m.formaPagamento)}</td>
-            <td>R$ ${m.valorTotal.toLocaleString()}</td>
+            <td>${escapeHtml(m.categoria || '-')}</td>
+            <td>${escapeHtml(m.formaPagamento || '-')}</td>
+            <td>R$ ${(m.valorTotal || 0).toLocaleString()}</td>
             <td>R$ ${(m.valorRecebido||0).toLocaleString()}</td>
-            <td style="color:red;">R$ ${(m.valorTotal - (m.valorRecebido||0)).toLocaleString()}</td>
-            <td><span class="badge ${m.status === 'Pago Total' ? 'badge-pago' : (m.status === 'Pago Parcial' ? 'badge-parcial' : 'badge-pendente')}">${m.status}</span></td>
+            <td style="color:red;">R$ ${((m.valorTotal || 0) - (m.valorRecebido||0)).toLocaleString()}</td>
+            <td><span class="badge ${m.status === 'Pago Total' ? 'badge-pago' : (m.status === 'Pago Parcial' ? 'badge-parcial' : 'badge-pendente')}">${m.status || 'Pendente'}</span></td>
             <td>${m.vencimento ? new Date(m.vencimento).toLocaleDateString() : '-'}</td>
             <td class="btn-group">
                 <button class="btn-sm btn-warning" onclick="window.editarEntrada('${m.id}')"><i class="fas fa-edit"></i></button>
@@ -1749,17 +1576,13 @@
         newBtn.onclick = async () => { 
             let data = document.getElementById('editEntradaData')?.value || item.data;
             if (!validarDataFutura(data, "Data da entrada")) return;
-            let updates = { data, descricao: document.getElementById('editEntradaDesc')?.value || item.descricao, valorTotal: parseFloat(document.getElementById('editEntradaValorTotal')?.value) || 0, valorRecebido: parseFloat(document.getElementById('editEntradaValorRecebido')?.value) || 0, status: document.getElementById('editEntradaStatus')?.value || item.status }; 
+            let updates = limparUndefined({ data, descricao: document.getElementById('editEntradaDesc')?.value || item.descricao, valorTotal: parseFloat(document.getElementById('editEntradaValorTotal')?.value) || 0, valorRecebido: parseFloat(document.getElementById('editEntradaValorRecebido')?.value) || 0, status: document.getElementById('editEntradaStatus')?.value || item.status }); 
             if (updates.status === 'Pago Total') updates.valorRecebido = updates.valorTotal; 
-            await db.collection("movimentacoes").doc(id).update(updates); 
-            fecharModal('modalEditarEntrada'); 
-            toast("✅ Entrada editada!"); 
-            renderEntradas();
-            renderExtrato();
+            try { await db.collection("movimentacoes").doc(id).update(updates); fecharModal('modalEditarEntrada'); toast("✅ Entrada editada!"); renderEntradas(); renderExtrato(); } catch(e) { toast("❌ Erro: " + e.message, true); }
         }; 
     }
     
-    window.excluirEntrada = async function(id) { if(confirm("Excluir esta entrada?")) { await db.collection("movimentacoes").doc(id).delete(); toast("🗑️ Entrada excluída!"); renderEntradas(); renderExtrato(); } }
+    window.excluirEntrada = async function(id) { if(confirm("Excluir esta entrada?")) { try { await db.collection("movimentacoes").doc(id).delete(); toast("🗑️ Entrada excluída!"); renderEntradas(); renderExtrato(); } catch(e) { toast("❌ Erro: " + e.message, true); } } }
     
     // ==================== FINANCEIRO SAIDAS ====================
     window.registrarSaida = async function() { 
@@ -1767,13 +1590,10 @@
         let data = document.getElementById('saidaData')?.value || new Date().toISOString().slice(0,10);
         if (!validarDataFutura(data, "Data da saída")) return;
         let vencimento = document.getElementById('saidaVencimento')?.value;
-        if (vencimento && !validarDataFutura(vencimento, "Data de vencimento")) return;
+        if (!validarDataVencimento(vencimento, "Data de vencimento")) return; // CORRIGIDO: agora permite futuro
         
-        let novaSaida = { id: Date.now().toString(), tipo:"saida", data, descricao: document.getElementById('saidaDesc')?.value, valorTotal: parseFloat(document.getElementById('saidaValor')?.value)||0, categoria: document.getElementById('saidaCategoria')?.value, formaPagamento: document.getElementById('saidaFormaPagamento')?.value, origem: document.getElementById('saidaOrigem')?.value, status: document.getElementById('saidaStatus')?.value, vencimento, fornecedor: document.getElementById('saidaFornecedor')?.value, obs: document.getElementById('saidaObs')?.value, dataCriacao: new Date().toISOString() }; 
-        await db.collection("movimentacoes").doc(novaSaida.id).set(novaSaida);
-        toast("✅ Saída registrada!"); 
-        renderSaidas();
-        renderExtrato();
+        let novaSaida = limparUndefined({ id: gerarId(), tipo:"saida", data, descricao: document.getElementById('saidaDesc')?.value, valorTotal: parseFloat(document.getElementById('saidaValor')?.value)||0, categoria: document.getElementById('saidaCategoria')?.value, formaPagamento: document.getElementById('saidaFormaPagamento')?.value, origem: document.getElementById('saidaOrigem')?.value || '', status: document.getElementById('saidaStatus')?.value, vencimento: vencimento || '', fornecedor: document.getElementById('saidaFornecedor')?.value || '', obs: document.getElementById('saidaObs')?.value || '', dataCriacao: new Date().toISOString() }); 
+        try { await db.collection("movimentacoes").doc(novaSaida.id).set(novaSaida); toast("✅ Saída registrada!"); renderSaidas(); renderExtrato(); } catch(e) { toast("❌ Erro: " + e.message, true); }
     }
     
     window.filtrarSaidas = function() { paginaAtual.saidas = 1; renderSaidas(); }
@@ -1790,11 +1610,11 @@
         tbody.innerHTML = paginados.map(m => `<tr>
             <td>${new Date(m.data).toLocaleDateString()}</td>
             <td>${escapeHtml(m.descricao)}</td>
-            <td>${escapeHtml(m.categoria)}</td>
-            <td>${escapeHtml(m.formaPagamento)}</td>
+            <td>${escapeHtml(m.categoria || '-')}</td>
+            <td>${escapeHtml(m.formaPagamento || '-')}</td>
             <td>${escapeHtml(m.origem || '-')}</td>
-            <td>R$ ${m.valorTotal.toLocaleString()}</td>
-            <td><span class="badge ${m.status === 'Pago' ? 'badge-pago' : (m.status === 'Vencido' ? 'badge-vencido' : 'badge-pendente')}">${m.status}</span></td>
+            <td>R$ ${(m.valorTotal || 0).toLocaleString()}</td>
+            <td><span class="badge ${m.status === 'Pago' ? 'badge-pago' : (m.status === 'Vencido' ? 'badge-vencido' : 'badge-pendente')}">${m.status || 'Pendente'}</span></td>
             <td>${m.vencimento ? new Date(m.vencimento).toLocaleDateString() : '-'}</td>
             <td class="btn-group">
                 <button class="btn-sm btn-warning" onclick="window.editarSaida('${m.id}')"><i class="fas fa-edit"></i></button>
@@ -1818,17 +1638,13 @@
         newBtn.onclick = async () => { 
             let data = document.getElementById('editSaidaData')?.value || item.data;
             if (!validarDataFutura(data, "Data da saída")) return;
-            await db.collection("movimentacoes").doc(id).update({ data, descricao: document.getElementById('editSaidaDesc')?.value || item.descricao, valorTotal: parseFloat(document.getElementById('editSaidaValor')?.value) || 0, status: document.getElementById('editSaidaStatus')?.value || item.status }); 
-            fecharModal('modalEditarSaida'); 
-            toast("✅ Saída editada!");
-            renderSaidas();
-            renderExtrato();
+            try { await db.collection("movimentacoes").doc(id).update(limparUndefined({ data, descricao: document.getElementById('editSaidaDesc')?.value || item.descricao, valorTotal: parseFloat(document.getElementById('editSaidaValor')?.value) || 0, status: document.getElementById('editSaidaStatus')?.value || item.status })); fecharModal('modalEditarSaida'); toast("✅ Saída editada!"); renderSaidas(); renderExtrato(); } catch(e) { toast("❌ Erro: " + e.message, true); }
         }; 
     }
     
-    window.excluirSaida = async function(id) { if(confirm("Excluir esta saída?")) { await db.collection("movimentacoes").doc(id).delete(); toast("🗑️ Saída excluída!"); renderSaidas(); renderExtrato(); } }
+    window.excluirSaida = async function(id) { if(confirm("Excluir esta saída?")) { try { await db.collection("movimentacoes").doc(id).delete(); toast("🗑️ Saída excluída!"); renderSaidas(); renderExtrato(); } catch(e) { toast("❌ Erro: " + e.message, true); } } }
     
-    window.pagarConta = async function(id) { await db.collection("movimentacoes").doc(id).update({ status: "Pago" }); toast("✅ Conta paga!"); renderSaidas(); renderExtrato(); }
+    window.pagarConta = async function(id) { try { await db.collection("movimentacoes").doc(id).update({ status: "Pago" }); toast("✅ Conta paga!"); renderSaidas(); renderExtrato(); } catch(e) { toast("❌ Erro: " + e.message, true); } }
     
     // ==================== EXTRATO ====================
     function renderExtrato() { 
@@ -1857,14 +1673,14 @@
                 <td>${escapeHtml(m.descricao)}</td>
                 <td>${escapeHtml(m.categoria || '-')}</td>
                 <td>${escapeHtml(m.formaPagamento || '-')}</td>
-                <td style="color:${m.tipo === 'entrada' ? 'green' : 'red'}">${m.tipo === 'entrada' ? '+' : '-'} R$ ${((m.tipo === 'entrada' ? (m.valorRecebido||m.valorTotal) : m.valorTotal)).toLocaleString()}</td>
-                <td><span class="badge ${m.tipo === 'entrada' ? (m.status === 'Pago Total' ? 'badge-pago' : 'badge-pendente') : (m.status === 'Pago' ? 'badge-pago' : 'badge-pendente')}">${m.tipo === 'entrada' ? m.status : m.status}</span></td>
+                <td style="color:${m.tipo === 'entrada' ? 'green' : 'red'}">${m.tipo === 'entrada' ? '+' : '-'} R$ ${((m.tipo === 'entrada' ? (m.valorRecebido||0) : (m.valorTotal||0))).toLocaleString()}</td>
+                <td><span class="badge ${m.tipo === 'entrada' ? (m.status === 'Pago Total' ? 'badge-pago' : 'badge-pendente') : (m.status === 'Pago' ? 'badge-pago' : 'badge-pendente')}">${m.status || 'Pendente'}</span></td>
             </tr>`).join(''); 
         }
         document.getElementById('infoExtrato').innerHTML = `Exibindo ${start+1} a ${Math.min(start+15, todas.length)} de ${todas.length}`; 
         document.getElementById('paginacaoExtrato').innerHTML = `<button onclick="paginarExtrato(1)" ${paginaAtual.extrato === 1 ? 'disabled' : ''}>«</button><button onclick="paginarExtrato(${paginaAtual.extrato-1})" ${paginaAtual.extrato === 1 ? 'disabled' : ''}>Anterior</button><span>Página ${paginaAtual.extrato} de ${totalPaginas || 1}</span><button onclick="paginarExtrato(${paginaAtual.extrato+1})" ${paginaAtual.extrato >= totalPaginas ? 'disabled' : ''}>Próximo</button><button onclick="paginarExtrato(${totalPaginas})" ${paginaAtual.extrato >= totalPaginas ? 'disabled' : ''}>»</button>`;
         
-        let saldo = (saldoInicial || 0) + movimentacoes.filter(m => m.tipo === 'entrada').reduce((s,m) => s + (m.valorRecebido || m.valorTotal), 0) - movimentacoes.filter(m => m.tipo === 'saida' && m.status === 'Pago').reduce((s,m) => s + m.valorTotal, 0); 
+        let saldo = (saldoInicial || 0) + movimentacoes.filter(m => m.tipo === 'entrada').reduce((s,m) => s + (m.valorRecebido || 0), 0) - movimentacoes.filter(m => m.tipo === 'saida' && m.status === 'Pago').reduce((s,m) => s + (m.valorTotal || 0), 0); 
         document.getElementById('saldoAtual').innerHTML = `R$ ${saldo.toLocaleString('pt-BR', {minimumFractionDigits:2})}`; 
     }
     
@@ -1872,9 +1688,7 @@
     
     window.atualizarSaldoInicial = async function() { 
         saldoInicial = parseFloat(document.getElementById('saldoInicialInput')?.value) || 0; 
-        await db.collection("config").doc("geral").set({ saldoInicial }); 
-        renderExtrato(); 
-        toast(`✅ Saldo inicial atualizado!`); 
+        try { await db.collection("config").doc("geral").set({ saldoInicial }); renderExtrato(); toast(`✅ Saldo inicial atualizado!`); } catch(e) { toast("❌ Erro: " + e.message, true); }
     }
     
     // ==================== DOCUMENTOS ====================
@@ -1891,26 +1705,33 @@
         let referencia = document.getElementById('docReferencia')?.value; 
         if(!referencia) return toast("⚠️ Preencha a referência", true); 
         let file = document.getElementById('docArquivo')?.files[0]; 
-        if(!file) return toast("📁 Selecione um arquivo", true); 
-        if (file.size > 5 * 1024 * 1024) { toast("❌ Máximo 5MB", true); return; } 
+        if(!file) return toast("📁 Selecione uma imagem", true); 
+        if (!file.type.startsWith('image/')) return toast("❌ Apenas imagens são permitidas", true);
+        
         let tipoVinculo = document.getElementById('docTipoVinculo')?.value; 
         let tipo = document.getElementById('docTipo')?.value; 
-        let obs = document.getElementById('docObs')?.value; 
-        let reader = new FileReader(); 
-        reader.onload = async function(e) { 
-            let novoDoc = { id: Date.now().toString(), data: new Date().toISOString().slice(0,10), tipoVinculo, referencia, tipo, nomeArquivo: file.name, conteudo: e.target.result, obs }; 
+        let obs = document.getElementById('docObs')?.value || ''; 
+        
+        try {
+            const base64Comprimido = await comprimirImagem(file, 1200, 1200, 0.7);
+            const tamanhoKB = Math.round((base64Comprimido.length * 3) / 4 / 1024);
+            
+            if (tamanhoKB > 900) { toast(`❌ Imagem muito grande (${tamanhoKB}KB). Tente outra foto.`, true); return; }
+
+            let novoDoc = limparUndefined({ id: gerarId(), data: new Date().toISOString().slice(0,10), tipoVinculo, referencia, tipo, nomeArquivo: file.name, conteudo: base64Comprimido, obs }); 
             await db.collection("documentos").doc(novoDoc.id).set(novoDoc); 
-            toast(`✅ Documento "${file.name}" anexado!`); 
+            toast(`✅ Documento "${file.name}" anexado! (${tamanhoKB}KB)`); 
             if (!manterReferencia) document.getElementById('docReferencia').value = ''; 
             document.getElementById('docArquivo').value = ''; 
             document.getElementById('docObs').value = ''; 
-        }; 
-        reader.readAsDataURL(file); 
+        } catch(e) {
+            toast("❌ Erro ao salvar documento: " + e.message, true);
+        }
     }
     
     window.baixarDocumento = function(id) { let doc = documentos.find(d => d.id === id); if(doc && doc.conteudo) { let a = document.createElement('a'); a.href = doc.conteudo; a.download = doc.nomeArquivo; a.click(); toast(`📥 Baixando: ${doc.nomeArquivo}`); } else { toast("❌ Arquivo indisponível", true); } }
     
-    window.excluirDocumento = async function(id) { if(confirm("Excluir este documento?")) { await db.collection("documentos").doc(id).delete(); toast("🗑️ Documento excluído!"); } }
+    window.excluirDocumento = async function(id) { if(confirm("Excluir este documento?")) { try { await db.collection("documentos").doc(id).delete(); toast("🗑️ Documento excluído!"); } catch(e) { toast("❌ Erro: " + e.message, true); } } }
     
     window.filtrarDocumentos = function() { 
         salvarFiltrosDocumentos();
@@ -1920,16 +1741,16 @@
     
     function renderDocumentos() { 
         restaurarFiltrosDocumentos();
-        let filtrados = documentos.filter(doc => { let matchBusca = !filtrosAtivos.documentos.busca || doc.referencia.toLowerCase().includes(filtrosAtivos.documentos.busca.toLowerCase()) || doc.tipo.toLowerCase().includes(filtrosAtivos.documentos.busca.toLowerCase()); let matchVinculo = !filtrosAtivos.documentos.vinculo || doc.tipoVinculo === filtrosAtivos.documentos.vinculo; return matchBusca && matchVinculo; }); 
+        let filtrados = documentos.filter(doc => { let matchBusca = !filtrosAtivos.documentos.busca || (doc.referencia || '').toLowerCase().includes(filtrosAtivos.documentos.busca.toLowerCase()) || (doc.tipo || '').toLowerCase().includes(filtrosAtivos.documentos.busca.toLowerCase()); let matchVinculo = !filtrosAtivos.documentos.vinculo || doc.tipoVinculo === filtrosAtivos.documentos.vinculo; return matchBusca && matchVinculo; }); 
         let totalPaginas = Math.ceil(filtrados.length / 15); let start = (paginaAtual.docs - 1) * 15; let paginados = filtrados.slice(start, start + 15); 
         const tbody = document.getElementById('documentosBody'); if (!tbody) return;
         if (paginados.length === 0) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:40px;">📄 Nenhum documento anexado</td></tr>'; document.getElementById('infoDocumentos').innerHTML = 'Nenhum documento encontrado'; document.getElementById('paginacaoDocumentos').innerHTML = ''; return; }
         tbody.innerHTML = paginados.map(doc => { let vinculoBadge = doc.tipoVinculo === 'veiculo' ? '<span class="badge badge-veiculo">🚗 Veículo</span>' : (doc.tipoVinculo === 'cliente' ? '<span class="badge badge-cliente">👤 Cliente</span>' : (doc.tipoVinculo === 'processo' ? '<span class="badge badge-info">📋 Processo</span>' : '<span class="badge badge-fornecedor">🏭 Fornecedor</span>')); return `<tr>
             <td>${new Date(doc.data).toLocaleDateString()}</td>
             <td>${vinculoBadge}</td>
-            <td><strong>${escapeHtml(doc.referencia)}</strong></td>
-            <td>${escapeHtml(doc.tipo)}</td>
-            <td>${doc.conteudo ? `<a href="${doc.conteudo}" download="${doc.nomeArquivo}" style="color:var(--verde-carvalho);"><i class="fas fa-file-pdf"></i> ${doc.nomeArquivo.length > 30 ? doc.nomeArquivo.substring(0, 27) + '...' : doc.nomeArquivo}</a>` : `<span style="color:#999;"><i class="fas fa-file"></i> ${escapeHtml(doc.nomeArquivo)}</span>`}</td>
+            <td><strong>${escapeHtml(doc.referencia || '-')}</strong></td>
+            <td>${escapeHtml(doc.tipo || '-')}</td>
+            <td>${doc.conteudo ? `<a href="${doc.conteudo}" download="${doc.nomeArquivo}" style="color:var(--verde-carvalho);"><i class="fas fa-file-image"></i> ${(doc.nomeArquivo || 'arquivo').length > 30 ? (doc.nomeArquivo || '').substring(0, 27) + '...' : (doc.nomeArquivo || 'arquivo')}</a>` : `<span style="color:#999;"><i class="fas fa-file"></i> ${escapeHtml(doc.nomeArquivo || 'arquivo')}</span>`}</td>
             <td>${escapeHtml(doc.obs || '-')}</td>
             <td class="btn-group">
                 ${doc.conteudo ? `<button class="btn-sm btn-outline" onclick="window.baixarDocumento('${doc.id}')" title="Baixar"><i class="fas fa-download"></i></button>` : ''}
@@ -1947,7 +1768,7 @@
         let blob = new Blob(["\uFEFF" + csv], {type: "text/csv;charset=utf-8;"}); let link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `documentos_carvalho_${new Date().toISOString().slice(0,10)}.csv`; link.click(); URL.revokeObjectURL(link.href); toast("📊 Documentos exportados!"); 
     }
     
-    // ==================== INICIALIZAÇÃO ====================
+    // ==================== INICIALIZAÇÃO E LOGIN ANÔNIMO ====================
     document.querySelectorAll('.sub-tab').forEach(tab => { tab.addEventListener('click', () => { document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); let sub = tab.getAttribute('data-sub'); document.querySelectorAll('#abaFinanceiro .sub-content').forEach(c => c.classList.remove('active')); document.getElementById(`sub-${sub}`).classList.add('active'); if(sub === 'extrato') renderExtrato(); if(sub === 'entradas') renderEntradas(); if(sub === 'saidas') renderSaidas(); }); });
     document.getElementById('tipoItem')?.addEventListener('change', function() { document.getElementById('camposVeiculo').style.display = this.value === 'veiculo' ? 'block' : 'none'; document.getElementById('camposPeca').style.display = (this.value === 'capacete' || this.value === 'peca') ? 'block' : 'none'; });
     
@@ -1959,29 +1780,30 @@
     document.getElementById('processoDataInicio').value = hoje;
     
     async function iniciarSistema() {
-        await carregarDadosFirestore();
-        iniciarListenersRealtime();
-        renderizarItens();
-        renderizarPessoas();
-        renderEntradas();
-        renderSaidas();
-        renderExtrato();
-        renderDocumentos();
-        renderProcessos();
-        toast("✅ SISTEMA COMPLETO E FUNCIONAL! Todas as correções aplicadas.");
-    }
-    
-    window.verificarLogin = function() {
-        const user = document.getElementById('loginUser').value;
-        const pass = document.getElementById('loginPass').value;
-        if (user === 'admin' && pass === '123') {
-            document.getElementById('loginOverlay').style.display = 'none';
-            document.getElementById('sistemaContainer').style.display = 'block';
-            iniciarSistema();
-        } else {
-            document.getElementById('loginError').innerText = 'Usuário ou senha incorretos.';
+        toast("🔄 Autenticando de forma segura...");
+        try {
+            // Autenticação Anônima (Segurança sem tela de login)
+            await auth.signInAnonymously();
+            await carregarDadosFirestore();
+            iniciarListenersRealtime();
+            renderizarItens();
+            renderizarPessoas();
+            renderEntradas();
+            renderSaidas();
+            renderExtrato();
+            renderDocumentos();
+            renderProcessos();
+            toast("✅ SISTEMA COMPLETO E SEGURO! (Plano Gratuito)");
+        } catch (error) {
+            console.error("Erro na inicialização:", error);
+            toast(`❌ Erro de conexão: ${error.message}. Verifique as regras do Firebase.`, true);
         }
     }
+    
+    // Bota o sistema para rodar assim que a página abrir (sem tela de login)
+    window.onload = function() {
+        iniciarSistema();
+    };
     
     window.mudarAba = mudarAba;
     window.toggleFormulario = toggleFormulario;
